@@ -5,7 +5,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Project files
 set(CPP_SOURCES
-    browser-types.hpp
     config.cpp
     config.h
     dialog_chooseurlfromlist.cpp
@@ -114,6 +113,7 @@ target_link_libraries(uchmviewer
     ebook
     chmlib
     extra
+    ubrowser
     Qt::Core
     Qt::Network
     Qt::PrintSupport
