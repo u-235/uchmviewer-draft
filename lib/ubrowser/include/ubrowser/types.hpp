@@ -16,21 +16,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#ifndef UBROWSER_TYPES_HPP
+#define UBROWSER_TYPES_HPP
 
-/** 
- * The structure holds the settings for the ViewWindow.
- */
-struct BrowserSettings
+
+namespace UBrowser
 {
-	bool enableJS;
-	bool enableJava;
-	bool enablePlugins;
-	bool enableImages;
-	bool enableOfflineStorage;
-	bool enableLocalStorage;
-	bool highlightSearchResults;
+
+//------------------------------------------------------------------------------
+// Start BrowserAPI group.
+/// @addtogroup BrowserAPI
+/// @{
+
+enum OpenMode
+{
+	/// The link should open in the current tab.
+	OPEN_IN_CURRENT,
+	/// The link should open in the new foregraund tab.
+	OPEN_IN_NEW,
+	/// The link should open in the new backgraund tab.
+	OPEN_IN_BACKGROUND
 };
 
-#endif // BROWSER_SETTINGS_HPP
+/// @}
+// End BrowserAPI group.
+//------------------------------------------------------------------------------
+
+} // namespace UBrowser
+
+#endif // UBROWSER_TYPES_HPP

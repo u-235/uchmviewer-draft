@@ -24,7 +24,6 @@ QT += \
     printsupport
 
 HEADERS += \
-    browser-types.hpp \
     config.h \
     dialog_chooseurlfromlist.h \
     dialog_setup.h \
@@ -87,6 +86,9 @@ RESOURCES += resources/images.qrc
 INCLUDEPATH *= ../lib/libebook
 LIBS *= -L"../lib/libebook"
 
+INCLUDEPATH *= ../lib/ubrowser/include
+LIBS *= -L"../lib/ubrowser"
+
 !isEmpty(USE_STATIC_CHMLIB) {
     INCLUDEPATH *= ../lib/CHMLib/src
     LIBS *= -L"../lib"
@@ -97,7 +99,7 @@ LIBS *= -L"../lib/libebook"
 
 !isEmpty(LIBZIP_ROOT): LIBS *= -L"$$LIBZIP_ROOT/lib"
 
-LIBS *= -lebook -lchm -lzip
+LIBS *= -lebook -lchm -lzip -lubrowser
 
 # This is used by cross-build on 64-bit when building a 32-bit version
 linux-g++-32: {
@@ -113,9 +115,9 @@ defined(USE_MAC_APP, var) | macx:{
 
 win32:{
     CONFIG( debug, debug|release ) {
-            LIBS *= -L"../lib/libebook/debug" -L"../lib/debug"
+            LIBS *= -L"../lib/libebook/debug" -L"../lib/debug" -L"../lib/ubrowser/debug"
     } else {
-            LIBS *= -L"../lib/libebook/release" -L"../lib/release"
+            LIBS *= -L"../lib/libebook/release" -L"../lib/release" -L"../lib/ubrowser/release"
     }
 
     LIBS += -loleaut32

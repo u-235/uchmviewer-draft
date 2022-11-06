@@ -31,9 +31,9 @@
 
 class QPrinter;
 
-#include <browser-settings.hpp>
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/settings.hpp>
+#include <ubrowser/types.hpp>
 
 #include "../mainwindow.h"
 #include "../viewwindowmgr.h"
@@ -58,7 +58,7 @@ ViewWindow::ViewWindow( QWidget* parent )
 
 	connect( this, SIGNAL( loadFinished( bool ) ), this, SLOT( onLoadFinished( bool ) ) );
 	connect( this, &QWebView::linkClicked,
-	         [this]( const QUrl & link ) { onLinkClicked( link ) } );
+	         [this]( const QUrl & link ) { onLinkClicked( link ); } );
 
 	// Search results highlighter
 	QPalette pal = palette();
@@ -87,7 +87,7 @@ void ViewWindow::load( const QUrl& url )
 	mainWindow->viewWindowMgr()->setTabName( this );
 }
 
-void ViewWindow::applySettings( BrowserSettings& settings )
+void ViewWindow::applySettings( UBrowser::Settings& settings )
 {
 	QWebSettings* setup = QWebSettings::globalSettings();
 
@@ -253,7 +253,7 @@ void ViewWindow::contextMenuEvent( QContextMenuEvent* e )
 	emit contextMenuRequested( e->globalPos(), link );
 }
 
-void onLinkClicked( const QUrl& link )
+void ViewWindow::onLinkClicked( const QUrl& link )
 {
 	if ( ( QApplication::keyboardModifiers() & Qt::ShiftModifier ) != 0 )
 		emit linkClicked( link, UBrowser::OPEN_IN_NEW );
