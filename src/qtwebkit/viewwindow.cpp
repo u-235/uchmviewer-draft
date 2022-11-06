@@ -37,7 +37,7 @@
 
 #include "../i18n.h"
 
-#include "../browser-settings.hpp"  // BrowserSettings
+#include <browser/browser-settings.hpp>  // BrowserSettings
 #include "../mainwindow.h"          // ::mainWindow
 #include "../viewwindow.h"          // ViewWindow, QWebView
 #include "../viewwindowmgr.h"       // ViewWindowMgr

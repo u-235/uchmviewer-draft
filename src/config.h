@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include "browser-settings.hpp"
+#include <browser/browser-settings.hpp>
 
 
 class Config

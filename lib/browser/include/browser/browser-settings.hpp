@@ -19,7 +19,8 @@
 #ifndef BROWSER_SETTINGS_HPP
 #define BROWSER_SETTINGS_HPP
 
-/** 
+
+/**
  * The structure holds the settings for the ViewWindow.
  */
 struct BrowserSettings
