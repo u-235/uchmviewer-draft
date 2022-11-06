@@ -27,7 +27,8 @@
 #include <QSpinBox>
 #include <QString>
 
-#include "browser-settings.hpp"
+#include <ubrowser/settings.hpp>
+
 #include "config.h"
 #include "i18n.h"
 #include "mainwindow.h"

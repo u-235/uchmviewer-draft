@@ -29,7 +29,7 @@ class QMenu;
 class QPoint;
 class QUrl;
 
-#include <browser-types.hpp>
+#include <ubrowser/browser.hpp>
 
 #include "settings.h"
 

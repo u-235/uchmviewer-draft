@@ -36,8 +36,8 @@ class QPoint;
 class QSharedMemory;
 class QTemporaryFile;
 
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/browser.hpp>
 
 class NavigationPanel;
 class RecentFiles;

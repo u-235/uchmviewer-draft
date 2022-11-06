@@ -1,6 +1,7 @@
 
 TEMPLATE = app
 TARGET = uchmviewer
+MODULES *= ubrowser
 
 include(../common.pri)
 
@@ -23,7 +24,6 @@ QT += \
     printsupport
 
 HEADERS += \
-    browser-types.hpp \
     config.h \
     dialog_chooseurlfromlist.h \
     dialog_setup.h \

@@ -33,6 +33,8 @@ option(USE_MACOS_BUNDLE   "Install as macOS bundle"                          ON)
 use_in(USE_DBUS           "Use D-Bus integration"                       "Linux")
 use_in(USE_MAC_APP        "Use derived QApplication"                   "Darwin")
 
+set(USE_STATIC_UBROWSER ON)
+
 # Init cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 

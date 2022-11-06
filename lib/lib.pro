@@ -1,6 +1,6 @@
 
 TEMPLATE = subdirs
-SUBDIRS = libebook
+SUBDIRS = libebook ubrowser
 
 !isEmpty(USE_STATIC_CHMLIB) {
     exists(CHMLib/src/chm_lib.h) {

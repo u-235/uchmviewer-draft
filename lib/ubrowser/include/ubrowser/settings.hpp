@@ -1,6 +1,6 @@
 /*
  *  uChmViewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2022  Nick Egorrov, nicegorov@yandex.ru
+ *  Copyright (C) 2022-2025 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,13 +16,22 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#ifndef UBROWSER_SETTINGS_HPP
+#define UBROWSER_SETTINGS_HPP
 
-/** 
- * The structure holds the settings for the ViewWindow.
+
+namespace UBrowser
+{
+
+//------------------------------------------------------------------------------
+// Start BrowserAPI group.
+/// @addtogroup BrowserAPI
+/// @{
+
+/**
+ * The structure holds the settings for the UBrowser::Browser.
  */
-struct BrowserSettings
+struct Settings
 {
 	bool enableJS;
 	bool enableJava;
@@ -33,4 +42,10 @@ struct BrowserSettings
 	bool highlightSearchResults;
 };
 
-#endif // BROWSER_SETTINGS_HPP
+/// @}
+// End BrowserAPI group.
+//------------------------------------------------------------------------------
+
+} // namespace UBrowser
+
+#endif // UBROWSER_SETTINGS_HPP

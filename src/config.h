@@ -21,7 +21,7 @@
 
 #include <QString>
 
-#include "browser-settings.hpp"
+#include <ubrowser/settings.hpp>
 
 
 class Config
@@ -68,7 +68,7 @@ class Config
 		bool                m_HistoryStoreExtra;
 		ToolbarMode         m_toolbarMode;
 
-		BrowserSettings     browser;
+		UBrowser::Settings  browser;
 		bool                m_browserEnableRemoteContent;
 
 		bool                m_tocOpenAllEntries;

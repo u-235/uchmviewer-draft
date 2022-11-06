@@ -13,7 +13,11 @@ Usage (from source root):
 
 or
 
-    astyle  --options=tools/astyle.cfg -I -r 'module/*.cpp' 'module/*.h'
+    astyle  --options=tools/astyle.cfg -I -r 'module/*.cpp' 'module/*.h' 'module/*.hpp'
+
+or
+
+    astyle --options=tools/astyle.cfg -I -r '*.cpp' '*.h' '*.hpp'
 
 
 codespell
@@ -43,7 +47,7 @@ https://include-what-you-use.org
 
 To use IWYU, run qmake with the optional USE flag:
 
-    qmake  -r CHECK_IWYU=1 path/to/uchmviewer.pro
+    qmake -r CHECK_IWYU=1 path/to/uchmviewer.pro
 
 The following additional parameters are possible:
 
