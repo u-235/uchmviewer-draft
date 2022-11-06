@@ -46,10 +46,8 @@
 class QMouseEvent;
 class QPoint;
 
-#include <browser-settings.hpp>  // for BrowserSettings
-
-#include <browser-settings.hpp> // for BrowserSettings
-#include <browser-types.hpp>    // for OPEN_IN_NEW, OpenMode
+#include <browser/settings.hpp>         // for BrowserSettings
+#include <browser/types.hpp>            // for OPEN_IN_NEW, OpenMode
 
 #include "config.h"         // for Config, pConfig
 #include "i18n.h"           // for i18n

@@ -30,6 +30,8 @@
 #include <QVariant>         // for QVariant
 #include <QtGlobal>         // for QFlags, qPrintable, qWarning
 
+#include <browser/settings.hpp> // for Settings
+
 #include "config.h"
 
 

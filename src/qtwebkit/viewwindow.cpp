@@ -33,10 +33,10 @@
 
 class QPrinter;
 
-#include <browser-types.hpp>    // for OPEN_IN_BACKGROUND, OPEN_IN_CURRENT, OPEN_IN_NEW
+#include <browser/settings.hpp> // for BrowserSettings
+#include <browser/types.hpp>    // for OPEN_IN_BACKGROUND, OPEN_IN_CURRENT, OPEN_IN_NEW
 #include <ebook.h>              // for EBook
 
-#include "../browser-settings.hpp"  // for BrowserSettings
 #include "../mainwindow.h"          // for MainWindow, mainWindow
 #include "../viewwindowmgr.h"       // for ViewWindowMgr
 #include "dataprovider.h"           // for KCHMNetworkAccessManager
@@ -96,7 +96,7 @@ void ViewWindow::load( const QUrl& url )
 	mainWindow->viewWindowMgr()->setTabName( this );
 }
 
-void ViewWindow::applySettings(BrowserSettings& settings)
+void ViewWindow::applySettings(Browser::Settings& settings)
 {
 	QWebSettings* setup = QWebSettings::globalSettings();
 

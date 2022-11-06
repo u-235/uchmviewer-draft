@@ -26,7 +26,7 @@
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
 
-#include <browser-types.hpp>    //
+#include <browser/types.hpp>    //
 #include <ebook_chm.h>          // EBook_CHM::URL_SCHEME_CHM
 #include <ebook_epub.h>         // EBook_EPUB::URL_SCHEME_EPUB
 

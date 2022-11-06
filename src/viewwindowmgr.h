@@ -29,7 +29,7 @@ class QMenu;
 class QPoint;
 class QUrl;
 
-#include <browser-types.hpp>    // for OpenMode
+#include <browser/types.hpp>    // for OpenMode
 
 #include "settings.h"           // for Settings, Settings::viewindow_saved_settings_t
 #include "ui_window_browser.h"  // for TabbedBrowser

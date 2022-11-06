@@ -19,10 +19,18 @@
 #ifndef BROWSER_SETTINGS_HPP
 #define BROWSER_SETTINGS_HPP
 
-/** 
- * The structure holds the settings for the ViewWindow.
+
+namespace Browser {
+
+//------------------------------------------------------------------------------
+// Start BrowserAPI group.
+/// @addtogroup BrowserAPI
+/// @{
+
+/**
+ * The structure holds the settings for the Browser::Controller.
  */
-struct BrowserSettings
+struct Settings
 {
 	bool enableJS;
 	bool enableJava;
@@ -32,5 +40,11 @@ struct BrowserSettings
 	bool enableLocalStorage;
 	bool highlightSearchResults;
 };
+
+/// @}
+// End BrowserAPI group.
+//------------------------------------------------------------------------------
+
+} // namespace Browser
 
 #endif // BROWSER_SETTINGS_HPP

@@ -37,7 +37,7 @@ class QPoint;
 class QSharedMemory;
 class QTemporaryFile;
 
-#include <browser-types.hpp>    // for OPEN_IN_CURRENT, OpenMode
+#include <browser/types.hpp>    // for OPEN_IN_CURRENT, OpenMode
 #include <ebook.h>              // for EBookTocEntry, EBookTocEntry::Icon, EBookTocEntry::MAX_BUILTIN_ICONS
 
 #include "ui_mainwindow.h"

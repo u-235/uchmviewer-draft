@@ -33,9 +33,11 @@ class QPoint;
 class QPrinter;
 class QWidget;
 
-#include <browser-types.hpp>    // for OPEN_IN_CURRENT, OpenMode
+#include <browser/types.hpp>    // for OPEN_IN_CURRENT, OpenMode
 
-class BrowserSettings;
+namespace Browser {
+class Settings;
+}
 
 
 class ViewWindow : public QWebEngineView
@@ -60,7 +62,7 @@ class ViewWindow : public QWebEngineView
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
-		static  void    applySettings(BrowserSettings& settings);
+		static  void    applySettings(Browser::Settings& settings);
 
 		//! Invalidate current view, doing all the cleanups etc.
 		void    invalidate();

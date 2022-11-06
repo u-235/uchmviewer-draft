@@ -71,7 +71,7 @@
 
 class QCloseEvent;
 
-#include <browser-types.hpp>      // for OPEN_IN_BACKGROUND, OPEN_IN_NEW, OpenMode
+#include <browser/types.hpp>      // for OPEN_IN_BACKGROUND, OPEN_IN_NEW, OpenMode
 #include <ebook.h>                // for EBook, EBook::FEATURE_ENCODING, EBook::FEATURE_TOC, EBook::FEATURE_INDEX, EBookTocEntry, EBookTocEntry::Icon
 
 #include "config.h"               // for Config, pConfig, Config::ACTION_ALWAYS_OPEN, Config::ACTION_ASK_USER, Config::ACTION_DONT_OPEN, Config::STARTUP_LOA...
