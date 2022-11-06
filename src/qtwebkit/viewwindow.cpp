@@ -33,13 +33,11 @@
 #include <Qt>           // for Vertical, MidButton
 #include <QtGlobal>     // for qreal
 
-#include <ebook.h>  // for EBook
-
-#include "../browser-settings.hpp"  // for BrowserSettings
-#include "../i18n.h"                // for i18n
-#include "../mainwindow.h"          // for MainWindow, mainWindow
-#include "../viewwindowmgr.h"       // for ViewWindowMgr
-#include "dataprovider.h"           // for KCHMNetworkAccessManager
+#include <browser/browser-settings.hpp> // for BrowserSettings
+#include "../i18n.h"                    // for i18n
+#include "../mainwindow.h"              // for MainWindow, mainWindow
+#include "../viewwindowmgr.h"           // for ViewWindowMgr
+#include "dataprovider.h"               // for KCHMNetworkAccessManager
 #include "viewwindow.h"
 
 

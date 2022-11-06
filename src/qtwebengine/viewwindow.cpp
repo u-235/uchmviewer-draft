@@ -40,13 +40,11 @@
 	#include <QWebEngineContextMenuData>
 #endif
 
-#include <ebook.h>  // for EBook
-
-#include "../browser-settings.hpp"  // for BrowserSettings
-#include "../i18n.h"                // for i18n
-#include "../mainwindow.h"          // for MainWindow, mainWindow
-#include "../viewwindowmgr.h"       // for ViewWindowMgr
-#include "webenginepage.h"          // for WebEnginePage
+#include <browser/browser-settings.hpp> // for BrowserSettings
+#include "../i18n.h"                    // for i18n
+#include "../mainwindow.h"              // for MainWindow, mainWindow
+#include "../viewwindowmgr.h"           // for ViewWindowMgr
+#include "webenginepage.h"              // for WebEnginePage
 #include "viewwindow.h"
 
 

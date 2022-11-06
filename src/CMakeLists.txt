@@ -114,6 +114,7 @@ target_link_libraries(uchmviewer
     ebook
     chmlib
     extra
+    uchmviewerbrowser
     Qt::Core
     Qt::Network
     Qt::PrintSupport

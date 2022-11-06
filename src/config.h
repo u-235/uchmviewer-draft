@@ -21,7 +21,7 @@
 
 #include <QString>  // for QString
 
-#include "browser-settings.hpp" // for BrowserSettings
+#include <browser/browser-settings.hpp> // for BrowserSettings
 
 
 class Config
