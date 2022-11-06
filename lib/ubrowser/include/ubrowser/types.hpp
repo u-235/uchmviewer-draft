@@ -1,6 +1,6 @@
 /*
  *  uChmViewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2022  Nick Egorrov, nicegorov@yandex.ru
+ *  Copyright (C) 2022-2025 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#ifndef UBROWSER_TYPES_HPP
+#define UBROWSER_TYPES_HPP
 
-/** 
- * The structure holds the settings for the ViewWindow.
- */
-struct BrowserSettings
+
+namespace UBrowser
 {
-	bool enableJS;
-	bool enableJava;
-	bool enablePlugins;
-	bool enableImages;
-	bool enableOfflineStorage;
-	bool enableLocalStorage;
-	bool highlightSearchResults;
+
+//------------------------------------------------------------------------------
+// Start BrowserAPI group.
+/// @addtogroup BrowserAPI
+/// @{
+
+enum OpenMode
+{
+	/// The link should open in the current tab.
+	OPEN_IN_CURRENT,
+	/// The link should open in the new foregraund tab.
+	OPEN_IN_NEW,
+	/// The link should open in the new backgraund tab.
+	OPEN_IN_BACKGROUND
 };
 
-#endif // BROWSER_SETTINGS_HPP
+/// @}
+// End BrowserAPI group.
+//------------------------------------------------------------------------------
+
+} // namespace UBrowser
+
+#endif // UBROWSER_TYPES_HPP

@@ -48,9 +48,9 @@
 class QMouseEvent;
 class QPoint;
 
-#include <browser-settings.hpp>
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/settings.hpp>
+#include <ubrowser/types.hpp>
 
 #include "config.h"
 #include "i18n.h"

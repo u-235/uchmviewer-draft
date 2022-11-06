@@ -40,9 +40,9 @@
 
 class QPrinter;
 
-#include <browser-settings.hpp>
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/settings.hpp>
+#include <ubrowser/types.hpp>
 
 #include "../mainwindow.h"
 #include "../viewwindowmgr.h"
@@ -238,7 +238,7 @@ void ViewWindow::onLinkClicked( const QUrl& url, UBrowser::OpenMode mode )
 	emit linkClicked( url, mode );
 }
 
-void ViewWindow::applySettings( BrowserSettings& settings )
+void ViewWindow::applySettings( UBrowser::Settings& settings )
 {
 	QWebEngineSettings* setup = QWebEngineProfile::defaultProfile()->settings();
 
