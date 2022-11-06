@@ -1,6 +1,6 @@
 /*
  *  uChmViewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2022  Nick Egorrov, nicegorov@yandex.ru
+ *  Copyright (C) 2022-2025 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,31 +16,36 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_TYPES_HPP
-#define BROWSER_TYPES_HPP
+#ifndef UBROWSER_API_EXPORT_HPP
+#define UBROWSER_API_EXPORT_HPP
 
+#include <QtCore/QtGlobal>
 
-namespace UBrowser
-{
 
 //------------------------------------------------------------------------------
 // Start BrowserAPI group.
 /// @addtogroup BrowserAPI
 /// @{
 
-enum OpenMode {
-	/// The link should open in the current tab.
-	OPEN_IN_CURRENT,
-	/// The link should open in the new foregraund tab.
-	OPEN_IN_NEW,
-	/// The link should open in the new backgraund tab.
-	OPEN_IN_BACKGROUND
-};
+/**
+  * #BROWSER_API_DECL macro for declaring an API symbol exported by the library
+  * or imported by client code.
+  *
+  * @see https://learn.microsoft.com/en-us/cpp/cpp/dllexport-dllimport
+  * @see https://doc.qt.io/qt-5/sharedlibrary.html
+  */
+#ifndef UBROWSER_API_STATIC
+	#ifdef UBROWSER_API_EXPORT
+		#define UBROWSER_API_DECL Q_DECL_EXPORT
+	#else
+		#define UBROWSER_API_DECL Q_DECL_IMPORT
+	#endif
+#else
+	#define UBROWSER_API_DECL
+#endif
 
 /// @}
 // End BrowserAPI group.
 //------------------------------------------------------------------------------
 
-} // namespace UBrowser
-
-#endif // BROWSER_TYPES_HPP
+#endif // UBROWSER_API_EXPORT_HPP

@@ -35,6 +35,8 @@
 	using QStringList = QList<QString>;
 #endif
 
+#include <ubrowser/settings.hpp>
+
 #include "config.h"
 
 

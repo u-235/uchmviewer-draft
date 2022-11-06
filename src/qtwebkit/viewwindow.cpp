@@ -31,9 +31,9 @@
 
 class QPrinter;
 
-#include <browser-settings.hpp>
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/settings.hpp>
+#include <ubrowser/types.hpp>
 
 #include "../mainwindow.h"
 #include "../viewwindowmgr.h"
@@ -90,7 +90,7 @@ void ViewWindow::load( const QUrl& url )
 	mainWindow->viewWindowMgr()->setTabName( this );
 }
 
-void ViewWindow::applySettings( BrowserSettings& settings )
+void ViewWindow::applySettings( UBrowser::Settings& settings )
 {
 	QWebSettings* setup = QWebSettings::globalSettings();
 

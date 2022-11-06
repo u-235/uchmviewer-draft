@@ -24,3 +24,4 @@ else ()
 endif ()
 
 add_subdirectory(libebook)
+add_subdirectory(ubrowser)

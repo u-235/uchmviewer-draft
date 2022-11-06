@@ -27,9 +27,9 @@
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
 
-#include <browser-types.hpp>
 #include <ebook_chm.h>
 #include <ebook_epub.h>
+#include <ubrowser/types.hpp>
 
 #include "dataprovider.h"
 
