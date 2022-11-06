@@ -29,6 +29,8 @@
 #include <QVariant>
 #include <QtGlobal>
 
+#include <ubrowser/settings.hpp>
+
 #include "config.h"
 
 

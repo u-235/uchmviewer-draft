@@ -32,12 +32,14 @@ unix {
     APP_DEF_DIR = $${APP_DATA_ROOT_DIR}/applications
     APP_ICONS_DIR = $${APP_DATA_ROOT_DIR}/icons
     APP_LOCALE_DIR = $${APP_DATA_ROOT_DIR}/locale
+    APP_LIB_DIR = lib
 }
 
 win32 {
     APP_BIN_DIR = bin
     APP_ICONS_DIR = icons
     APP_LOCALE_DIR = locale
+    APP_LIB_DIR = bin
 }
 
 

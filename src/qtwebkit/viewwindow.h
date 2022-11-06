@@ -33,9 +33,12 @@ class QPoint;
 class QPrinter;
 class QWidget;
 
-#include <browser-types.hpp>
+#include <ubrowser/types.hpp>
 
-struct BrowserSettings;
+namespace UBrowser
+{
+struct Settings;
+}
 
 
 class ViewWindow : public QWebView
@@ -58,7 +61,7 @@ class ViewWindow : public QWebView
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
-		static  void    applySettings( BrowserSettings& settings );
+		static  void    applySettings( UBrowser::Settings& settings );
 
 		//! Invalidate current view, doing all the cleanups etc.
 		void    invalidate();
