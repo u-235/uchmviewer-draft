@@ -72,8 +72,8 @@
 
 class QCloseEvent;
 
-#include <browser-types.hpp>
 #include <ebook.h>
+#include <ubrowser/types.hpp>
 
 #include "config.h"
 #include "dialog_setup.h"
