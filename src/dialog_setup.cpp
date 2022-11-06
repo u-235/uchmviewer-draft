@@ -32,12 +32,12 @@
 	#include <QFileDialog>      // for QFileDialog
 #endif
 
-#include "browser-settings.hpp" // for BrowserSettings
-#include "config.h"             // for Config, pConfig, Config::ACTION_ALWAYS_OPEN, Config::ACTION_ASK_USER, Config::ACTION_DONT_OPEN, Config::STARTUP_DO_N...
+#include <browser/settings.hpp> // for BrowserSettings
+#include "config.h"                     // for Config, pConfig, Config::ACTION_ALWAYS_OPEN, Config::ACTION_ASK_USER, Config::ACTION_DONT_OPEN, Config::STARTUP_DO_N...
 #include "dialog_setup.h"
-#include "i18n.h"               // for i18n
-#include "mainwindow.h"         // for MainWindow, mainWindow
-#include "ui_dialog_setup.h"    // for DialogSetup
+#include "i18n.h"                       // for i18n
+#include "mainwindow.h"                 // for MainWindow, mainWindow
+#include "ui_dialog_setup.h"            // for DialogSetup
 
 
 DialogSetup::DialogSetup(QWidget* parent)

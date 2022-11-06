@@ -39,9 +39,8 @@
 
 class QPrinter;
 
-#include <ebook.h>  // for EBook
+#include <browser/settings.hpp> // for BrowserSettings
 
-#include "../browser-settings.hpp"  // for BrowserSettings
 #include "../mainwindow.h"          // for MainWindow, mainWindow
 #include "../viewwindowmgr.h"       // for ViewWindowMgr
 #include "webenginepage.h"          // for WebEnginePage
@@ -244,7 +243,7 @@ void ViewWindow::onLinkClicked(const QUrl& url, bool middleButton)
 	emit linkClicked( url, middleButton );
 }
 
-void ViewWindow::applySettings(BrowserSettings& settings)
+void ViewWindow::applySettings(Browser::Settings& settings)
 {
 	QWebEngineSettings* setup = QWebEngineProfile::defaultProfile()->settings();
 

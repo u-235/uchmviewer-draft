@@ -45,12 +45,13 @@
 
 class QMouseEvent;
 
-#include <browser-settings.hpp>  // for BrowserSettings
+#include <browser/settings.hpp>  // for BrowserSettings
 
 #include "config.h"         // for Config, pConfig
 #include "i18n.h"           // for i18n
 #include "mainwindow.h"     // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
 #include "settings.h"       // for Settings::viewindow_saved_settings_t, Settings::SavedViewWindow, Settings
+#include "ui_window_browser.h"  // for TabbedBrowser
 #include "viewwindow.h"     // for ViewWindow
 #include "viewwindowmgr.h"  // IWYU pragma: associated
 

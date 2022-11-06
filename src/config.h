@@ -21,7 +21,7 @@
 
 #include <QString>  // for QString
 
-#include "browser-settings.hpp" // for Settings
+#include <browser/settings.hpp> // for Settings
 
 
 class Config
@@ -68,7 +68,7 @@ class Config
 		bool                m_HistoryStoreExtra;
 		ToolbarMode         m_toolbarMode;
 
-		BrowserSettings     browser;
+		Browser::Settings   browser;
 		bool                m_browserEnableRemoteContent;
 
 		bool                m_tocOpenAllEntries;

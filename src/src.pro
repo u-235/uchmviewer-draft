@@ -86,6 +86,9 @@ RESOURCES += resources/images.qrc
 INCLUDEPATH *= ../lib/libebook
 LIBS *= -L"../lib/libebook"
 
+INCLUDEPATH *= ../lib/browser/include
+LIBS *= -L"../lib/browser"
+
 !isEmpty(USE_STATIC_CHMLIB) {
     INCLUDEPATH *= ../lib/CHMLib/src
     LIBS *= -L"../lib"
@@ -96,7 +99,7 @@ LIBS *= -L"../lib/libebook"
 
 !isEmpty(LIBZIP_ROOT): LIBS *= -L"$$LIBZIP_ROOT/lib"
 
-LIBS *= -lebook -lchm -lzip
+LIBS *= -lebook -lchm -lzip -luchmviewerbrowser
 
 # This is used by cross-build on 64-bit when building a 32-bit version
 linux-g++-32: {
@@ -112,9 +115,9 @@ macx:{
 
 win32:{
     CONFIG( debug, debug|release ) {
-            LIBS *= -L"../lib/libebook/debug" -L"../lib/debug"
+            LIBS *= -L"../lib/libebook/debug" -L"../lib/debug" -L"../lib/browser/debug"
     } else {
-            LIBS *= -L"../lib/libebook/release" -L"../lib/release"
+            LIBS *= -L"../lib/libebook/release" -L"../lib/release" -L"../lib/browser/release"
     }
 
     LIBS += -loleaut32
