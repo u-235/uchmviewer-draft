@@ -15,7 +15,7 @@ HEADERS += \
 #   include/browser/browser-history-item-impl.hpp \
 #   include/browser/browser-page.hpp \
     include/browser/browser-settings.hpp \
-#   include/browser/content-provider.hpp
+    include/browser/content-provider.hpp
 
 SOURCES += \
 #   abstract-browser-page.cpp \

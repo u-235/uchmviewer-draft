@@ -11,6 +11,7 @@ QT += \
 
 HEADERS += \
     config.h \
+    content-provider-impl.hpp \
     dialog_chooseurlfromlist.h \
     dialog_setup.h \
     kde-qt.h \
@@ -36,6 +37,7 @@ HEADERS += \
 
 SOURCES += \
     config.cpp \
+    content-provider-impl.cpp \
     dialog_chooseurlfromlist.cpp \
     dialog_setup.cpp \
     main.cpp \

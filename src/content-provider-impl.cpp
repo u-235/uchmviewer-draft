@@ -16,31 +16,46 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#include <QByteArray>
+#include <QString>
+#include <QUrl>
+
+#include <content-provider-impl.hpp>
+#include <ebook.h>
+#include "mimehelper.h"
 
 
-//------------------------------------------------------------------------------
-// Start BrowserAPI group.
-/// @addtogroup BrowserAPI
-/// @{
-
-/**
- * The structure holds the settings for the BrowserPage.
- */
-struct BrowserSettings
+ContentProviderImpl::ContentProviderImpl(EBookPtr ebook)
 {
-	bool enableJS;
-	bool enableJava;
-	bool enablePlugins;
-	bool enableImages;
-	bool enableOfflineStorage;
-	bool enableLocalStorage;
-	bool highlightSearchResults;
-};
+	m_ebook = ebook;
+}
 
-/// @}
-// End BrowserAPI group.
-//------------------------------------------------------------------------------
+ContentProviderImpl::~ContentProviderImpl()
+{
+}
 
-#endif // BROWSER_SETTINGS_HPP
+EBookPtr ContentProviderImpl::ebook()
+{
+	return m_ebook;
+}
+
+QString ContentProviderImpl::urlScheme()
+{
+	return m_ebook->urlScheme();
+}
+
+bool ContentProviderImpl::isSupportedUrl(const QUrl& url)
+{
+	return m_ebook->isSupportedUrl(url);
+}
+
+bool ContentProviderImpl::getContent(ContentData& data, const QUrl& url) const
+{
+	if (!m_ebook->getFileContentAsBinary(data.buffer, url)) {
+		return false;
+	}
+
+	data.encoding = m_ebook->currentEncoding();
+	data.mime = MimeHelper::mimeType(url, data.buffer);
+	return true;
+}

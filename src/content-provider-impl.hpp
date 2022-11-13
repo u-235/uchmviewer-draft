@@ -16,31 +16,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#ifndef CONTENTPROVIDERIMPL_HPP
+#define CONTENTPROVIDERIMPL_HPP
+
+#include <browser/content-provider.hpp>
+#include <ebook.h>
+
+class QByteArray;
+class QString;
+class QUrl;
 
 
-//------------------------------------------------------------------------------
-// Start BrowserAPI group.
-/// @addtogroup BrowserAPI
-/// @{
-
-/**
- * The structure holds the settings for the BrowserPage.
- */
-struct BrowserSettings
+class ContentProviderImpl : public ContentProvider
 {
-	bool enableJS;
-	bool enableJava;
-	bool enablePlugins;
-	bool enableImages;
-	bool enableOfflineStorage;
-	bool enableLocalStorage;
-	bool highlightSearchResults;
+	public:
+		ContentProviderImpl(EBookPtr ebook);
+		~ContentProviderImpl();
+
+		EBookPtr ebook();
+
+		QString urlScheme() override;
+
+		bool isSupportedUrl(const QUrl& url) override;
+
+		bool getContent(ContentData& data, const QUrl& url) const override;
+
+	protected:
+		EBookPtr m_ebook;
 };
 
-/// @}
-// End BrowserAPI group.
-//------------------------------------------------------------------------------
-
-#endif // BROWSER_SETTINGS_HPP
+#endif // CONTENTPROVIDERIMPL_HPP

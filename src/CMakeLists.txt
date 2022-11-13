@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Project files
 set(CPP_SOURCES
     config.cpp
+    content-provider-impl.cpp
     dialog_chooseurlfromlist.cpp
     dialog_setup.cpp
     main.cpp
