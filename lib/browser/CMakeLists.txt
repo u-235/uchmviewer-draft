@@ -10,6 +10,7 @@ add_library(Browser::API ALIAS uchmviewerbrowser)
 target_include_directories(uchmviewerbrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_sources(uchmviewerbrowser PRIVATE
+    include/browser/content-provider.hpp
     include/browser/settings.hpp
 )
 
