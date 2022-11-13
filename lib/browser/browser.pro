@@ -9,6 +9,7 @@ include(../../common.pri)
 INCLUDEPATH *= include
 
 HEADERS += \
+    include/browser/content-provider.hpp \
     include/browser/settings.hpp \
     include/browser/types.hpp
 
