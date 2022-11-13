@@ -19,6 +19,8 @@
 #ifndef INCLUDE_EBOOK_H
 #define INCLUDE_EBOOK_H
 
+#include <memory>   // for shared_ptr
+
 #include <QList>    // for QList
 #include <QString>  // for QString
 #include <QUrl>     // for QUrl
@@ -103,6 +105,12 @@ class EBook
 		 * \ingroup init
 		 */
 		virtual void close() = 0;
+
+		/*!
+		 * \brief Returns the URL scheme used by the ebook implementation.
+		 * \return A non-empty string with a URL scheme.
+		 */
+		virtual const QString urlScheme() = 0;
 
 		/*!
 		 * \brief Gets the title name of the opened ebook.
@@ -232,5 +240,9 @@ class EBook
 		virtual bool    load( const QString& archiveName ) = 0;
 };
 
+/**
+ * @brief The EBookPtr is a shared pointer to EBook.
+ */
+typedef std::shared_ptr<EBook> EBookPtr;
 
 #endif // INCLUDE_LIBCHMFILE_H

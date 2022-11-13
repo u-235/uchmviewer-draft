@@ -92,6 +92,11 @@ void EBook_CHM::close()
 	m_lookupTablesValid = false;
 }
 
+const QString EBook_CHM::urlScheme()
+{
+	return (URL_SCHEME_CHM);
+}
+
 QString EBook_CHM::title() const
 {
 	return encodeWithCurrentCodec( m_title );

@@ -23,7 +23,7 @@ target_sources(uchmviewerbrowser PUBLIC
 #   ${HEADER_DIR}/browser-history-item-impl.hpp
 #   ${HEADER_DIR}/browser-page.hpp
     ${HEADER_DIR}/browser-settings.hpp
-#   ${HEADER_DIR}/content-provider.hpp
+    ${HEADER_DIR}/content-provider.hpp
 )
 
 qt_wrap_cpp(MOC_SOURCES

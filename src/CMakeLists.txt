@@ -7,6 +7,8 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CPP_SOURCES
     config.cpp
     config.h
+    content-provider-impl.cpp
+    content-provider-impl.hpp
     dialog_chooseurlfromlist.cpp
     dialog_chooseurlfromlist.h
     dialog_setup.cpp
