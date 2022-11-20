@@ -19,6 +19,7 @@ target_sources(ubrowser PRIVATE
     include/ubrowser/browser.hpp
     include/ubrowser/contentprovider.hpp
     include/ubrowser/export.hpp
+    include/ubrowser/history.hpp
     include/ubrowser/settings.hpp
 )
 

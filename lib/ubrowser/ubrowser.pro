@@ -20,6 +20,7 @@ HEADERS += \
     include/ubrowser/browser.hpp \
     include/ubrowser/contentprovider.hpp \
     include/ubrowser/export.hpp \
+    include/ubrowser/history.hpp \
     include/ubrowser/settings.hpp
 
 isEmpty(USE_STATIC_UBROWSER) {
