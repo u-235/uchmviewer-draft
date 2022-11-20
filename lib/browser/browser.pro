@@ -10,5 +10,6 @@ INCLUDEPATH *= include
 
 HEADERS += \
     include/browser/content-provider.hpp \
+    include/browser/history.hpp \
     include/browser/settings.hpp
 
