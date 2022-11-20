@@ -8,11 +8,18 @@ cmake_minimum_required(VERSION 3.11)
 add_library(uchmviewerbrowser SHARED)
 add_library(Browser::API ALIAS uchmviewerbrowser)
 target_include_directories(uchmviewerbrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_compile_definitions(uchmviewerbrowser PRIVATE BROWSER_API_EXPORT)
 
 target_sources(uchmviewerbrowser PRIVATE
     include/browser/content-provider.hpp
+    include/browser/export.hpp
     include/browser/history.hpp
+    include/browser/history-impl.hpp
     include/browser/settings.hpp
+)
+
+target_sources(uchmviewerbrowser PRIVATE
+    src/history-impl.cpp
 )
 
 

@@ -23,6 +23,8 @@
 #include <QString>  // for QString
 #include <QUrl>     // for QUrl
 
+#include "export.hpp"   // for BROWSER_API_DECL
+
 
 namespace Browser {
 
@@ -46,7 +48,7 @@ struct HistoryItem
  * @brief The Browser::History interface represents the history of the browser
  * navigation.
  */
-class History : public QObject
+class BROWSER_API_DECL History : public QObject
 {
 		Q_OBJECT
 
