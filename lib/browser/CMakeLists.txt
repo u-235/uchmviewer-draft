@@ -11,6 +11,7 @@ target_include_directories(uchmviewerbrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/
 
 target_sources(uchmviewerbrowser PRIVATE
     include/browser/content-provider.hpp
+    include/browser/history.hpp
     include/browser/settings.hpp
     include/browser/types.hpp
 )
