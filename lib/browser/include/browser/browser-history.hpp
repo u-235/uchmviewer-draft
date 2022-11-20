@@ -51,7 +51,7 @@ class BrowserHistory : public QObject
 	public:
 		explicit BrowserHistory(QObject* parent) : QObject(parent) {}
 
-		virtual ~BrowserHistory();
+		virtual ~BrowserHistory() {}
 
 		/**
 		 * @brief Adds a new element to the browsing history.
