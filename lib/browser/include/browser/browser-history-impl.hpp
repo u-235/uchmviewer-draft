@@ -23,6 +23,7 @@
 #include <QList>
 
 #include <browser/browser-history.hpp>
+#include "export.hpp"
 
 
 /**
@@ -36,7 +37,7 @@
  * URL from the specified history element and, if successful, call
  * restoreResponse() with the same index.
  */
-class BrowserHistoryImpl : public BrowserHistory
+class BROWSER_API_DECL BrowserHistoryImpl : public BrowserHistory
 {
 		Q_OBJECT
 
