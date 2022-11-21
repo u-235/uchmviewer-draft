@@ -23,6 +23,8 @@
 #include <QString>
 #include <QUrl>
 
+#include "export.hpp"
+
 
 //------------------------------------------------------------------------------
 // Start BrowserAPI group.
@@ -44,7 +46,7 @@ struct BrowserHistoryItem
  * @brief The BrowserHistory interface represents the history of the browser
  * navigation.
  */
-class BrowserHistory : public QObject
+class BROWSER_API_DECL BrowserHistory : public QObject
 {
 		Q_OBJECT
 
