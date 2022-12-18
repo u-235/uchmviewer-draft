@@ -12,30 +12,30 @@ add_library(uchmviewerbrowser SHARED)
 target_link_libraries(uchmviewerbrowser Qt::Core)
 target_include_directories(uchmviewerbrowser PUBLIC ${INCLUDE_DIR})
 target_compile_definitions(uchmviewerbrowser PRIVATE BROWSER_API_EXPORT)
+set_target_properties(uchmviewerbrowser PROPERTIES VERSION 0.3)
 
 target_sources(uchmviewerbrowser PUBLIC
-#   ${HEADER_DIR}/abstract-browser-page.hpp
 #   ${HEADER_DIR}/browser-builder.hpp
+    ${HEADER_DIR}/browser-controller.hpp
     ${HEADER_DIR}/browser-history.hpp
     ${HEADER_DIR}/browser-history-impl.hpp
-#   ${HEADER_DIR}/browser-page.hpp
     ${HEADER_DIR}/browser-settings.hpp
+    ${HEADER_DIR}//browser-types.hpp
     ${HEADER_DIR}/content-provider.hpp
     ${HEADER_DIR}/export.hpp
 )
 
 qt_wrap_cpp(MOC_SOURCES
-#   ${HEADER_DIR}/abstract-browser-page.hpp
 #   ${HEADER_DIR}/browser-builder.hpp
+    ${HEADER_DIR}/browser-controller.hpp
     ${HEADER_DIR}/browser-history.hpp
     ${HEADER_DIR}/browser-history-impl.hpp
-#   ${HEADER_DIR}/browser-page.hpp
 )
 
 target_sources(uchmviewerbrowser PRIVATE
     ${MOC_SOURCES}
-    abstract-browser-page.cpp
+    browser-controller.cpp
     browser-history-impl.cpp
 )
 
-install(TARGETS uchmviewerbrowser DESTINATION ${APP_LIB_INSTALL_DIR})
+install(TARGETS uchmviewerbrowser RUNTIME DESTINATION ${APP_LIB_INSTALL_DIR})
