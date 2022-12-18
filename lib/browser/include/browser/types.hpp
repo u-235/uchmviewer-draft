@@ -28,6 +28,53 @@ namespace Browser
 /// @addtogroup BrowserAPI
 /// @{
 
+/**
+ * @brief The Feature enumeration is used in the Browser::Controller::hasFeature()
+ * method.
+ */
+enum Feature {
+	/// The controller supports @ref browser-feature-copytext
+	/// "text selection and copying".
+	FEATURE_COPY,
+	/// The controller supports @ref browser-feature-findtext
+	/// "searching in the text" of the page.
+	FEATURE_SEARCH,
+	/// The controller supports @ref browser-feature-history
+	/// "the navigation history".
+	FEATURE_HISTORY,
+	/// The controller supports @ref browser-feature-print "the page printing".
+	FEATURE_PRINT,
+	/// The controller supports @ref browser-feature-scroll "the page scrolling".
+	FEATURE_SCROLL,
+	/// The controller supports @ref browser-feature-zoom "the page zooming".
+	FEATURE_ZOOM
+};
+
+/**
+ * @brief The Options enumeration is used in the Browser::Controller::hasOption()
+ * method.
+ */
+enum Option {
+	/// The controller supports settings for highlighting search results.
+	OPTION_HIGH_LIGHT_SEARCH_RESULT,
+	/// The controller supports image display disabled/enabled.
+	OPTION_IMAGES,
+	/// The controller supports Java enable/disable.
+	OPTION_JAVA,
+	/// The controller supports JavaScript enable/disable.
+	OPTION_JAVA_SCRIPT,
+	/// The controller supports local storage enable/disable.
+	OPTION_LOCAL_STORAGE,
+	/// The controller supports offline storage enable/disable.
+	OPTION_OFFLINE_STORAGE,
+	/// The controller supports plugins enable/disable.
+	OPTION_PLUGINS
+};
+
+/**
+ * @brief The OpenMode enumeration used in the Browser::Controller::linkClicked()
+ * signal.
+ */
 enum OpenMode {
 	/// The link should open in the current tab.
 	OPEN_IN_CURRENT,

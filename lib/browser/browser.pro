@@ -12,6 +12,7 @@ DEFINES *= BROWSER_API_EXPORT
 
 HEADERS += \
     include/browser/content-provider.hpp \
+    include/browser/controller.hpp \
     include/browser/export.hpp \
     include/browser/history.hpp \
     include/browser/history-impl.hpp \
@@ -19,5 +20,6 @@ HEADERS += \
     include/browser/types.hpp
 
 SOURCES += \
+    src/controller.cpp \
     src/history-impl.cpp
 

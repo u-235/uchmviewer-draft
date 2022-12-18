@@ -12,6 +12,7 @@ target_compile_definitions(uchmviewerbrowser PRIVATE BROWSER_API_EXPORT)
 
 target_sources(uchmviewerbrowser PRIVATE
     include/browser/content-provider.hpp
+    include/browser/controller.hpp
     include/browser/export.hpp
     include/browser/history.hpp
     include/browser/history-impl.hpp
@@ -20,6 +21,7 @@ target_sources(uchmviewerbrowser PRIVATE
 )
 
 target_sources(uchmviewerbrowser PRIVATE
+    src/controller.cpp
     src/history-impl.cpp
 )
 
