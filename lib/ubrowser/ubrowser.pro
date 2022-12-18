@@ -11,6 +11,7 @@ INCLUDEPATH *= include
 DEFINES *= UBROWSER_API_EXPORT
 
 HEADERS += \
+    include/ubrowser/browser.hpp \
     include/ubrowser/content-provider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/history.hpp \
@@ -18,6 +19,7 @@ HEADERS += \
     include/ubrowser/types.hpp
 
 SOURCES += \
+    src/browser.cpp \
     src/content-provider.cpp
 
 target.path = $${PREFIX}/$${APP_LIB_DIR}
