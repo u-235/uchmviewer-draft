@@ -22,6 +22,10 @@ target_sources(ubrowser PRIVATE
     include/ubrowser/history.hpp
     include/ubrowser/settings.hpp
 )
+ 
+target_sources(ubrowser PRIVATE
+    src/browser.cpp
+)
 
 
 # Qt

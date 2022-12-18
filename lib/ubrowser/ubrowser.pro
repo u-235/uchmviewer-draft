@@ -23,6 +23,9 @@ HEADERS += \
     include/ubrowser/history.hpp \
     include/ubrowser/settings.hpp
 
+SOURCES += \
+    src/browser.cpp
+
 isEmpty(USE_STATIC_UBROWSER) {
     target.path = $${PREFIX}/$${APP_LIB_DIR}
     INSTALLS += target
