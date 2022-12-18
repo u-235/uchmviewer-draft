@@ -28,6 +28,55 @@ namespace UBrowser
 /// @addtogroup BrowserAPI
 /// @{
 
+/**
+ * @brief The Feature enumeration is used in the UBrowser::Browser::hasFeature()
+ * method.
+ */
+enum Feature
+{
+	/// The browser supports @ref browser-feature-copytext
+	/// "text selection and copying".
+	FEATURE_COPY,
+	/// The browser supports @ref browser-feature-findtext
+	/// "searching in the text" of the page.
+	FEATURE_SEARCH,
+	/// The browser supports @ref browser-feature-history
+	/// "the navigation history".
+	FEATURE_HISTORY,
+	/// The browser supports @ref browser-feature-print "the page printing".
+	FEATURE_PRINT,
+	/// The browser supports @ref browser-feature-scroll "the page scrolling".
+	FEATURE_SCROLL,
+	/// The browser supports @ref browser-feature-zoom "the page zooming".
+	FEATURE_ZOOM
+};
+
+/**
+ * @brief The Options enumeration is used in the UBrowser::Browser::hasOption()
+ * method.
+ */
+enum Option
+{
+	/// The browser supports settings for highlighting search results.
+	OPTION_HIGH_LIGHT_SEARCH_RESULT,
+	/// The browser supports image display disabled/enabled.
+	OPTION_IMAGES,
+	/// The browser supports Java enable/disable.
+	OPTION_JAVA,
+	/// The browser supports JavaScript enable/disable.
+	OPTION_JAVA_SCRIPT,
+	/// The browser supports local storage enable/disable.
+	OPTION_LOCAL_STORAGE,
+	/// The browser supports offline storage enable/disable.
+	OPTION_OFFLINE_STORAGE,
+	/// The browser supports plugins enable/disable.
+	OPTION_PLUGINS
+};
+
+/**
+ * @brief The OpenMode enumeration used in the UBrowser::Browser::linkClicked()
+ * signal.
+ */
 enum OpenMode
 {
 	/// The link should open in the current tab.
