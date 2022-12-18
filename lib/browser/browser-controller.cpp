@@ -16,31 +16,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef BROWSER_SETTINGS_HPP
-#define BROWSER_SETTINGS_HPP
+#include <QObject>
+#include <QtGlobal>     // qreal
+
+#include <browser/browser-controller.hpp>
 
 
-//------------------------------------------------------------------------------
-// Start BrowserAPI group.
-/// @addtogroup BrowserAPI
-/// @{
+BrowserController::BrowserController(
+    ContentProviderPtr contentProvider,
+    QObject* parent)
+	:
+	QObject(parent),
+	m_contentProvider(contentProvider) {}
 
-/**
- * The structure holds the settings for the BrowserController.
- */
-struct BrowserSettings
-{
-	bool enableJS;
-	bool enableJava;
-	bool enablePlugins;
-	bool enableImages;
-	bool enableOfflineStorage;
-	bool enableLocalStorage;
-	bool highlightSearchResults;
-};
+BrowserController::~BrowserController() {}
 
-/// @}
-// End BrowserAPI group.
-//------------------------------------------------------------------------------
+void BrowserController::zoomIncrease() {
+	setZoomFactor(zoomFactor() + ZOOM_STEP);
+}
 
-#endif // BROWSER_SETTINGS_HPP
+void BrowserController::zoomDecrease() {
+	setZoomFactor(zoomFactor() - ZOOM_STEP);
+}
