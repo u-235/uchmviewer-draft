@@ -1,10 +1,10 @@
 
-build/
+/build/
+/doc/
 
 # Qt project files
 CMakeLists.txt.user*
-*.pro.user
+*.pro.user*
 
 # KDev project files
-.kdev4
-*.kdev4
+*.kdev4*

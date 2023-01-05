@@ -47,11 +47,20 @@ add_library(extra INTERFACE)
 find_package(libzip REQUIRED)
 
 # Prepare to find Qt modules.
-set(APP_QT_VERSION 5.0)
+if (NOT DEFINED APP_QT_VERSION)
+    if (${USE_WEBENGINE})
+        set(APP_QT_VERSION 5.9 CACHE STRING "Required version of Qt")
+    else ()
+        set(APP_QT_VERSION 5.0 CACHE STRING "Required version of Qt")
+    endif ()
+endif ()
+
 set(APP_QT_MODULES Core Network PrintSupport Widgets Xml)
 # Modules for WebKit or WebEngine.
 if (${USE_WEBENGINE})
-    set(APP_QT_VERSION 5.9)
+    if (APP_QT_VERSION LESS 5.9)
+        message(FATAL_ERROR "Build with QtWebEngine requires Qt version 5.9 or higher.")
+    endif ()
     list(APPEND APP_QT_MODULES WebEngineWidgets)
     target_link_libraries(extra INTERFACE Qt::WebEngineWidgets)
     target_compile_definitions(extra INTERFACE USE_WEBENGINE)

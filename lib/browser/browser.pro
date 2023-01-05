@@ -9,6 +9,7 @@ INCLUDEPATH *= include
 DEFINES *= BROWSER_API_EXPORT
 
 HEADERS += \
+    include/browser/abstract-browser-controller.hpp \
 #   include/browser/browser-builder.hpp \
     include/browser/browser-controller.hpp \
     include/browser/browser-history.hpp \
@@ -19,5 +20,6 @@ HEADERS += \
     include/browser/export.hpp
 
 SOURCES += \
+    abstract-browser-controller.cpp \
     browser-controller.cpp \
     browser-history-impl.cpp
