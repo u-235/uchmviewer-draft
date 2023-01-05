@@ -150,7 +150,8 @@ class BrowserHistory;
  *
  * * The hasFeature() method called with the Browser::FEATURE_SCROLL must
  *   return @c true.
- * * The scrollTop() and setScrollTop() methods must be fully implemented.
+ * * The scrollTop(), setScrollTop() and setAutoScroll() methods must be fully
+ *   implemented.
  *
  */
 class BrowserController : public QObject
@@ -210,14 +211,11 @@ class BrowserController : public QObject
 		 * @brief Loads the page.
 		 *
 		 * The page is loaded from the specified address. When the page finishes
-		 * loading, the page scrolls, then the loadFinished() signal is emitted.
+		 * loading, the loadFinished() signal is emitted.
 		 *
-		 * @param url[in] The address from which the page is loaded.
-		 * @param scroll[in] The scroll position after the page loads. Values
-		 *     less than 0 indicate that scrolling is not needed. Controllers
-		 *     that do not support scrolling ignore this parameter.
+		 * @param[in] url The address from which the page is loaded.
 		 */
-		virtual void load(const QUrl& url, int scroll = -1) = 0;
+		virtual void load(const QUrl& url) = 0;
 
 		/**
 		 * @brief Reloads the page.
@@ -368,13 +366,10 @@ class BrowserController : public QObject
 		/**
 		 * @brief Returns the position of the scroll bar in the view window.
 		 *
-		 * The controller should return a negative value in three cases:
-		 * * The controller does not have the Browser::FEATURE_SCROLL feature.
-		 * * The user or user script did not change the scroll position.
-		 * * The scroll position was changed when the anchor link was clicked.
+		 * If controller has not Browser::FEATURE_SCROLL feature, the method
+		 * must returns @c 0.
 		 *
-		 * @return Returns the scroll position or negative value if the user
-		 *     did not explicitly change the scroll position.
+		 * @return Returns the scroll position.
 		 * @see setScrollTop()
 		 */
 		virtual int scrollTop() = 0;
@@ -382,41 +377,37 @@ class BrowserController : public QObject
 		/**
 		 * @brief Sets the position of the scroll bar in the view window.
 		 *
-		 * A negative value of the @c pos parameter should be ignored and
-		 * should not change the scroll position.
-		 *
-		 * @code
-		 * void SomeController::setScrollTop(int pos)
-		 * {
-		 *     if (pos < 0)
-		 *         return;
-		 *     // Below we change the scroll position.
-		 *     ...
-		 * }
-		 * @endcode
-		 *
 		 * If controller has not Browser::FEATURE_SCROLL feature, the method
 		 * does nothing.
 		 *
-		 * @param pos[in] The position of the scroll bar. The negative value is
-		 *     ignored.
+		 * @param[in] pos The position of the scroll bar.
 		 * @see scrollTop()
 		 */
 		virtual void setScrollTop(int pos) = 0;
 
 		/**
-		 * @brief Selects or deselects all text on the page.
+		 * @brief Sets the scroll position after page loading.
+		 *
+		 * For automatic page scrolling after loading, this method must be
+		 * called before load() method. Automatic scrolling is triggered once.
+		 *
+		 * If controller has not Browser::FEATURE_SCROLL feature, the method
+		 * does nothing.
+		 *
+		 * @param[in] pos The position of the scroll bar.
+		 */
+		virtual void setAutoScroll(int pos) =0 ;
+
+		/**
+		 * @brief Selects all text on the page.
 		 *
 		 * If controller has not Browser::FEATURE_COPY feature, the method
 		 * does nothing.
 		 *
-		 * @param select[in] @c true to select the entire test or @c false
-		 *     to deselect it.
-		 *
 		 * @see selectedText()
 		 * @see selectedCopy()
 		 */
-		virtual void selectAll(bool select = true) = 0;
+		virtual void selectAll() = 0;
 
 		/**
 		 * @brief Returns the selected text.
@@ -483,9 +474,10 @@ class BrowserController : public QObject
 		 * The load(), reload(), back() and forward() methods can trigger this
 		 * signal.
 		 *
-		 * @param ok Indicates if load was successful.
+		 * @param[in] self Pointer to the controller that emits the signal.
+		 * @param[in] ok Indicates if load was successful.
 		 */
-		void loadFinished(bool ok);
+		void loadFinished(BrowserController* self, bool ok);
 
 		/**
 		 * @brief The signal is emitted when the url of the page is changed.
@@ -494,29 +486,32 @@ class BrowserController : public QObject
 		 * Also it can be triggered by clicking a link to an anchor inside
 		 * the page.
 		 *
-		 * @param url[in] The new address of the displayed page.
+		 * @param[in] self Pointer to the controller that emits the signal.
+		 * @param[in] newUrl The new address of the displayed page.
 		 */
-		void urlChanged(const QUrl& url);
+		void urlChanged(BrowserController* self, const QUrl& newUrl);
 
 		/**
 		 * @brief The signal is triggered by pressing the right mouse button.
 		 *
+		 * @param[in] self Pointer to the controller that emits the signal.
 		 * @param[in] pos Global position of requested menu.
 		 *     See QMenu::exec(QPoint&, QAction*) and QWidget::mapToGlobal().
 		 * @param[in] link Url of the link that was right-clicked. If the user
 		 *     right-clicked not on the link, this parameter should be empty.
 		 * @see QWidget::customContextMenuRequested()
 		 */
-		void contextMenuRequested(const QPoint& pos, const QUrl& link);
+		void contextMenuRequested(BrowserController* self, const QPoint& pos, const QUrl& link);
 
 		/**
 		 * @brief The signal is emitted when the link is activated.
 		 *
+		 * @param[in] self Pointer to the controller that emits the signal.
 		 * @param[in] link Url link that has been activated.
 		 * @param[in] flag How to open the link: in the current tab or create
 		 *     a new one.
 		 */
-		void linkClicked(const QUrl& link, Browser::OpenFlag flag);
+		void linkClicked(BrowserController* self, const QUrl& link, Browser::OpenFlag flag);
 
 		/**
 		 * @brief The signal is emitted when the history of the page is changed.
@@ -528,8 +523,10 @@ class BrowserController : public QObject
 		 *
 		 * The signal works if the controller supports the
 		 * Browser::FEATURE_HISTORY feature.
+		 *
+		 * @param[in] self Pointer to the controller that emits the signal.
 		 */
-		void historyChanged();
+		void historyChanged(BrowserController* self);
 
 		/**
 		 * @brief The signal is emitted when the search is finished.
@@ -537,12 +534,13 @@ class BrowserController : public QObject
 		 * The signal works if the controller supports the
 		 * Browser::FEATURE_SEARCH feature.
 		 *
+		 * @param[in] self Pointer to the controller that emits the signal.
 		 * @param[in] hit Indicates whether text has been found.
 		 * @param[in] count The number of matches found.  If the controller does
 		 *     not support match counting, it must pass a negative value.
 		 * @param[in] pos Index of the current highlighted match.
 		 */
-		void findTextFinished(bool hit, int count, int pos);
+		void findTextFinished(BrowserController* self, bool hit, int count, int pos);
 
 		/**
 		 * @brief The signal is emitted when the print is finished.
@@ -550,9 +548,10 @@ class BrowserController : public QObject
 		 * The signal works if the controller supports the
 		 * Browser::FEATURE_PRINT feature.
 		 *
+		 * @param[in] self Pointer to the controller that emits the signal.
 		 * @param[in] ok Indicates if print was successful.
 		 */
-		void printFinished(bool ok);
+		void printFinished(BrowserController* self, bool ok);
 };
 
 /// @}
