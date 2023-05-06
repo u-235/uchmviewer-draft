@@ -213,9 +213,9 @@ class BrowserController : public QObject
 		 * The page is loaded from the specified address. When the page finishes
 		 * loading, the loadFinished() signal is emitted.
 		 *
-		 * @param[in] url The address from which the page is loaded.
+		 * @param[in] address The address from which the page is loaded.
 		 */
-		virtual void load(const QUrl& url) = 0;
+		virtual void load(const QUrl& address) = 0;
 
 		/**
 		 * @brief Reloads the page.
@@ -396,7 +396,7 @@ class BrowserController : public QObject
 		 *
 		 * @param[in] pos The position of the scroll bar.
 		 */
-		virtual void setAutoScroll(int pos) =0 ;
+		virtual void setAutoScroll(int pos) = 0 ;
 
 		/**
 		 * @brief Selects all text on the page.

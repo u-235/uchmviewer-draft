@@ -17,7 +17,7 @@ set_target_properties(uchmviewerbrowser PROPERTIES VERSION ${PROJECT_VERSION})
 target_sources(uchmviewerbrowser
     PUBLIC
     ${HEADER_DIR}/abstract-browser-controller.hpp
-#   ${HEADER_DIR}/browser-builder.hpp
+    ${HEADER_DIR}/browser-builder.hpp
     ${HEADER_DIR}/browser-controller.hpp
     ${HEADER_DIR}/browser-history.hpp
     ${HEADER_DIR}/browser-history-impl.hpp
@@ -33,7 +33,6 @@ target_sources(uchmviewerbrowser
 
 set(MOC_HEADERS
     ${HEADER_DIR}/abstract-browser-controller.hpp
-    #   ${HEADER_DIR}/browser-builder.hpp
     ${HEADER_DIR}/browser-controller.hpp
     ${HEADER_DIR}/browser-history.hpp
     ${HEADER_DIR}/browser-history-impl.hpp

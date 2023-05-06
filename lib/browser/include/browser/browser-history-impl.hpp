@@ -26,6 +26,11 @@
 #include "export.hpp"
 
 
+//------------------------------------------------------------------------------
+// Start BrowserAPI group.
+/// @addtogroup BrowserAPI
+/// @{
+
 /**
  * @brief The BrowserHistoryImpl class implements the BrowserHistory interface.
  *
@@ -128,5 +133,9 @@ class BROWSER_API_DECL BrowserHistoryImpl : public BrowserHistory
 		/// History item returned for an invalid index.
 		BrowserHistoryItem m_fakeItem;
 };
+
+/// @}
+// End BrowserAPI implementation group.
+//------------------------------------------------------------------------------
 
 #endif // BROWSER_HISTORY_IMPL_HPP

@@ -54,15 +54,15 @@ QUrl AbstractBrowserController::url() const
 	return m_currentUrl;
 }
 
-void AbstractBrowserController::load(const QUrl& url)
+void AbstractBrowserController::load(const QUrl& address)
 {
 	if (!m_history->isEmpty()) {
 		m_history->currentItem().scroll = scrollTop();
 	}
 
 	m_recoveryMode = false;
-	m_requestUrl = url;
-	loadImpl(url);
+	m_requestUrl = address;
+	loadImpl(address);
 }
 
 void AbstractBrowserController::reload()

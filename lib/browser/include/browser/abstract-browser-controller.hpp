@@ -100,7 +100,7 @@ class AbstractBrowserController : public BrowserController
 
 	public:
 		QUrl url() const override;
-		void load(const QUrl& url) override;
+		void load(const QUrl& address) override;
 		void reload() override;
 
 		/**
@@ -164,9 +164,9 @@ class AbstractBrowserController : public BrowserController
 		 * loading the page. The onLoadFinished() slot must be activated when
 		 * the page finishes loading.
 		 *
-		 * @param url[in] The address from which the page is loaded.
+		 * @param[in] address The address from which the page is loaded.
 		 */
-		virtual void loadImpl(const QUrl& url) = 0;
+		virtual void loadImpl(const QUrl& address) = 0;
 
 	protected slots:
 		/**

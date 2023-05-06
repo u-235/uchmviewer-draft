@@ -2,7 +2,7 @@
 TEMPLATE = lib
 TARGET = uchmviewerbrowser
 CONFIG *= c++11 warn_on sharedlib
-QT *= core
+QT *= core widgets
 
 INCLUDEPATH *= include
 
@@ -10,7 +10,7 @@ DEFINES *= BROWSER_API_EXPORT
 
 HEADERS += \
     include/browser/abstract-browser-controller.hpp \
-#   include/browser/browser-builder.hpp \
+    include/browser/browser-builder.hpp \
     include/browser/browser-controller.hpp \
     include/browser/browser-history.hpp \
     include/browser/browser-history-impl.hpp \
