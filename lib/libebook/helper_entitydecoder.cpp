@@ -16,11 +16,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QChar>
-#include <QByteArray>
-#include <QString>
-#include <QTextCodec>
-#include <QtGlobal>     // qPrintable, qWarning
+#include <QByteArray>   // for QByteArray
+#include <QChar>        // for QChar, operator==
+#include <QString>      // for QString, operator<
+#include <QTextCodec>   // for QTextCodec
+#include <QtGlobal>     // for qPrintable, qWarning
 
 #include "helper_entitydecoder.h"
 
