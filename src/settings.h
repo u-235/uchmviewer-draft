@@ -19,9 +19,9 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <QList>
-#include <QString>
-#include <QtGlobal> // qreal
+#include <QList>    // for QList, QSet
+#include <QString>  // for QString
+#include <QtGlobal> // for qreal
 
 
 class Settings
