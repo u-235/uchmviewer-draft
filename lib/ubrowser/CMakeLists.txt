@@ -10,6 +10,7 @@ target_compile_definitions(ubrowser PRIVATE UBROWSER_API_EXPORT)
 
 target_sources(ubrowser PRIVATE
     include/ubrowser/browser.hpp
+    include/ubrowser/builder.hpp
     include/ubrowser/contentprovider.hpp
     include/ubrowser/export.hpp
     include/ubrowser/history.hpp
