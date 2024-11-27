@@ -11,6 +11,7 @@ INCLUDEPATH *= include
 DEFINES *= UBROWSER_API_EXPORT
 
 HEADERS += \
+    include/ubrowser/abstractbrowser.hpp \
     include/ubrowser/browser.hpp \
     include/ubrowser/builder.hpp \
     include/ubrowser/content-provider.hpp \
@@ -21,6 +22,7 @@ HEADERS += \
     include/ubrowser/types.hpp
 
 SOURCES += \
+    src/abstractbrowser.cpp \
     src/browser.cpp \
     src/content-provider.cpp \
     src/history-impl.cpp
