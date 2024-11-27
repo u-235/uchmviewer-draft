@@ -12,6 +12,7 @@ DEFINES *= UBROWSER_API_EXPORT
 
 HEADERS += \
     include/ubrowser/browser.hpp \
+    include/ubrowser/builder.hpp \
     include/ubrowser/content-provider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/history.hpp \
