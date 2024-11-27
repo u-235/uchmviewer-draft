@@ -11,6 +11,7 @@ INCLUDEPATH *= include
 DEFINES *= BROWSER_API_EXPORT
 
 HEADERS += \
+    include/browser/abstract-controller.hpp \
     include/browser/content-provider.hpp \
     include/browser/controller.hpp \
     include/browser/export.hpp \
@@ -20,6 +21,7 @@ HEADERS += \
     include/browser/types.hpp
 
 SOURCES += \
+    src/abstract-controller.cpp \
     src/controller.cpp \
     src/history-impl.cpp
 
