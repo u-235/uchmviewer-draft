@@ -18,6 +18,7 @@ VERSION = 0.8.0.0
 
 HEADERS += \
     include/ubrowser/browser.hpp \
+    include/ubrowser/builder.hpp \
     include/ubrowser/contentprovider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/history.hpp \
