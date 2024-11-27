@@ -4,6 +4,7 @@
 #===========================================================
 
 cmake_minimum_required(VERSION 3.11)
+project(BrowserAPI VERSION 0.3)
 
 add_library(uchmviewerbrowser SHARED)
 add_library(Browser::API ALIAS uchmviewerbrowser)
@@ -11,6 +12,7 @@ target_include_directories(uchmviewerbrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/
 target_compile_definitions(uchmviewerbrowser PRIVATE BROWSER_API_EXPORT)
 
 target_sources(uchmviewerbrowser PRIVATE
+    include/browser/abstract-controller.hpp
     include/browser/content-provider.hpp
     include/browser/controller.hpp
     include/browser/export.hpp
@@ -21,6 +23,7 @@ target_sources(uchmviewerbrowser PRIVATE
 )
 
 target_sources(uchmviewerbrowser PRIVATE
+    src/abstract-controller.cpp
     src/controller.cpp
     src/history-impl.cpp
 )
