@@ -17,6 +17,7 @@ INCLUDEPATH *= include
 VERSION = 0.8.0.0
 
 HEADERS += \
+    include/ubrowser/abstractbrowser.hpp \
     include/ubrowser/browser.hpp \
     include/ubrowser/builder.hpp \
     include/ubrowser/contentprovider.hpp \
@@ -26,6 +27,7 @@ HEADERS += \
     include/ubrowser/settings.hpp
 
 SOURCES += \
+    src/abstractbrowser.cpp \
     src/browser.cpp \
     src/history-impl.cpp
 
