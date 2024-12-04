@@ -34,8 +34,10 @@
 #include <QWebEngineSettings>   // for QWebEngineSettings, QWebEngineSettings::AutoLoadImages, QWebEngineSettings::JavascriptEnabled, QWebEngineSettin...
 #include <QtGlobal>             // for QAtomicInt, QT_VERSION, QT_VERSION_CHECK, qreal, Q_UNUSED
 
-#if (QT_VERSION >= QT_VERSION_CHECK(6, 2, 0))
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
 	#include <QWebEngineContextMenuRequest>
+	#include <QWebEngineFindTextResult>
 #else
 	#include <QWebEngineContextMenuData>
 #endif
@@ -229,6 +231,36 @@ void ViewWindow::setScrollbarPosition(int pos, bool force)
 	else
 		page()->runJavaScript( QString( "document.body.scrollTop=%1" ).arg( pos )
 		                       , QWebEngineScript::UserWorld );
+}
+
+void ViewWindow::findText(const QString& text,
+                          bool backward,
+                          bool caseSensitively,
+                          bool highlightSearchResults,
+                          std::function<void (bool found, bool wrapped)> result)
+{
+	Q_UNUSED(highlightSearchResults);
+	QWebEnginePage::FindFlags webkitflags;
+
+	if ( caseSensitively )
+		webkitflags |= QWebEnginePage::FindCaseSensitively;
+
+	if ( backward )
+		webkitflags |= QWebEnginePage::FindBackward;
+
+#if QT_VERSION <= QT_VERSION_CHECK(6, 2, 0)
+	QWebEngineView::findText( text, webkitflags,
+	                          [ = ](bool found)
+	{
+		result(found, false);
+	});
+#else
+	QWebEngineView::findText( text, webkitflags,
+	                          [ = ](const QWebEngineFindTextResult & found)
+	{
+		result(found.numberOfMatches() > 0, false);
+	});
+#endif
 }
 
 void ViewWindow::clipSelectAll()

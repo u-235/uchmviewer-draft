@@ -18,42 +18,39 @@
 
 #include <cstdlib>  // for abort
 
-#include <QAction>      // for QAction
-#include <QApplication> // for QApplication
-#include <QCheckBox>    // for QCheckBox
-#include <QClipboard>   // for QClipboard
-#include <QColor>       // for QColor
-#include <QFrame>       // for QFrame
-#include <QIcon>        // for QIcon
-#include <QKeySequence> // for QKeySequence
-#include <QLabel>       // for QLabel
-#include <QLineEdit>    // for QLineEdit
-#include <QList>        // for QList, QList<>::iterator
-#include <QMenu>        // for QMenu
-#include <QMouseEvent>  // for QMouseEvent
-#include <QObject>      // for SIGNAL, SLOT, emit, qobject_cast
-#include <QPalette>     // for QPalette, QPalette::Active, QPalette::Base
-#include <QString>      // for QString, operator!=, operator+
-#include <QTabBar>      // for QTabBar
-#include <QTabWidget>   // for QTabWidget
-#include <QToolButton>  // for QToolButton
-#include <QUrl>         // for QUrl
-#include <QVBoxLayout>  // for QVBoxLayout
-#include <QWebPage>     // for QWebPage, QWebPage::FindFlags, QWebPage::HighlightAllOccurrences, QWebPage::FindBackward, QWebPage::FindCaseSensiti...
-#include <QWidget>      // for QWidget
-#include <Qt>           // for ArrowCursor, Key_Escape, MidButton, ShortcutFocusReason, TopLeftCorner, white
-#include <QtGlobal>     // for QFlags, Q_ASSERT, qFatal
+#include <QAction>          // for QAction
+#include <QApplication>     // for QApplication
+#include <QCheckBox>        // for QCheckBox
+#include <QClipboard>       // for QClipboard
+#include <QColor>           // for QColor
+#include <QFrame>           // for QFrame
+#include <QIcon>            // for QIcon
+#include <QKeySequence>     // for QKeySequence
+#include <QLabel>           // for QLabel
+#include <QLineEdit>        // for QLineEdit
+#include <QMenu>            // for QMenu
+#include <QMouseEvent>      // for QMouseEvent
+#include <QObject>          // for SIGNAL, SLOT, emit, qobject_cast
+#include <QPalette>         // for QPalette, QPalette::Active, QPalette::Base
+#include <QString>          // for QString, operator+
+#include <QTabBar>          // for QTabBar
+#include <QTabWidget>       // for QTabWidget
+#include <QToolButton>      // for QToolButton
+#include <QUrl>             // for QUrl
+#include <QVBoxLayout>      // for QVBoxLayout
+#include <QWidget>          // for QWidget
+#include <Qt>               // for ArrowCursor, Key_Escape, MiddleButton, ShortcutFocusReason, TopLeftCorner, white
+#include <QtGlobal>         // for QT_VERSION, QT_VERSION_CHECK, Q_ASSERT, qFatal
 
 class QMouseEvent;
 
-#include "../browser-settings.hpp"  // for BrowserSettings
-#include "../config.h"              // for Config, pConfig
-#include "../i18n.h"                // for i18n
-#include "../mainwindow.h"          // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
-#include "../settings.h"            // for Settings::viewindow_saved_settings_t, Settings::SavedViewWindow, Settings
-#include "../viewwindowmgr.h"       // IWYU pragma: associated
-#include "ui_window_browser.h"      // for TabbedBrowser
-#include "viewwindow.h"             // for ViewWindow
+#include "config.h"         // for Config, pConfig
+#include "i18n.h"           // for i18n
+#include "mainwindow.h"     // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
+#include "settings.h"       // for Settings::viewindow_saved_settings_t, Settings::SavedViewWindow, Settings
+#include "viewwindow.h"     // for ViewWindow
+#include "viewwindowmgr.h"  // IWYU pragma: associated
+
 
 // A small overriden class to handle a middle click
 class ViewWindowTabWidget : public QTabWidget
@@ -64,7 +61,7 @@ class ViewWindowTabWidget : public QTabWidget
 	protected:
 		void mouseReleaseEvent ( QMouseEvent* event )
 		{
-			if ( event->button() == Qt::MidButton)
+			if ( event->button() == Qt::MiddleButton)
 			{
 				int tab = tabBar()->tabAt( event->pos() );
 
@@ -384,61 +381,29 @@ void ViewWindowMgr::onActivateFind()
 
 void ViewWindowMgr::find( bool backward )
 {
-	QWebPage::FindFlags webkitflags;
-
-	if ( checkCase->isChecked() )
-		webkitflags |= QWebPage::FindCaseSensitively;
-
-	if ( backward )
-		webkitflags |= QWebPage::FindBackward;
-
-	if ( pConfig->browser.highlightSearchResults )
-	{
-		// From the doc:
-		// If the HighlightAllOccurrences flag is passed, the
-		// function will highlight all occurrences that exist
-		// in the page. All subsequent calls will extend the
-		// highlight, rather than replace it, with occurrences
-		// of the new string.
-
-		// If the search text is different, we run the empty string search
-		// to discard old highlighting
-		if ( m_lastSearchedWord != editFind->text() )
-			current()->findText( "", webkitflags | QWebPage::HighlightAllOccurrences );
-
-		m_lastSearchedWord = editFind->text();
-
-		// Now we call search with highlighting enabled, while the main search below will have
-		// it disabled. This leads in both having the highlighting results AND working forward/
-		// backward buttons.
-		current()->findText( editFind->text(), webkitflags | QWebPage::HighlightAllOccurrences );
-	}
-
 	// Pre-hide the wrapper
 	labelWrapped->hide();
 
-	bool found = current()->findText( editFind->text(), webkitflags );
-
-	// If we didn't find anything, enable the wrap and try again
-	if ( !found )
+	current()->findText( editFind->text(),
+	                     backward, checkCase->isChecked(),
+	                     pConfig->browser.highlightSearchResults,
+	                     [ = ](bool found, bool wrapped)
 	{
-		found = current()->findText( editFind->text(), webkitflags | QWebPage::FindWrapsAroundDocument );
+		if ( !frameFind->isVisible() )
+			frameFind->show();
 
-		if ( found )
+		if ( wrapped )
 			labelWrapped->show();
-	}
 
-	if ( !frameFind->isVisible() )
-		frameFind->show();
+		QPalette p = editFind->palette();
 
-	QPalette p = editFind->palette();
+		if ( !found )
+			p.setColor( QPalette::Active, QPalette::Base, QColor(255, 102, 102) );
+		else
+			p.setColor( QPalette::Active, QPalette::Base, Qt::white );
 
-	if ( !found )
-		p.setColor( QPalette::Active, QPalette::Base, QColor(255, 102, 102) );
-	else
-		p.setColor( QPalette::Active, QPalette::Base, Qt::white );
-
-	editFind->setPalette( p );
+		editFind->setPalette( p );
+	});
 }
 
 void ViewWindowMgr::editTextEdited(const QString&)
