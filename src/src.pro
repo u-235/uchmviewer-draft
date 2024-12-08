@@ -146,8 +146,8 @@ unix:!macx: {
 } else {
     QT += webkit webkitwidgets
     DEFINES += USE_WEBKIT
-    SOURCES += qtwebkit/viewwindow.cpp qtwebkit/dataprovider.cpp
-    HEADERS += qtwebkit/dataprovider.h qtwebkit/viewwindow.h
+    SOURCES += qtwebkit/dataprovider.cpp qtwebkit/webkitcontroller.cpp
+    HEADERS += qtwebkit/dataprovider.h qtwebkit/webkitcontroller.h
 }
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat

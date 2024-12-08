@@ -25,7 +25,8 @@
 #include <QUrl>                     // for QUrl
 #include <QtGlobal>                 // for qMakeForeachContainer, Q_FOREACH
 
-#include <ebook.h>  // for EBook
+#include <ebook.h>                  // for EBook
+#include <browser/controller.hpp>   // for Browser::Controller
 
 #include "i18n.h"               // for i18n
 #include "mainwindow.h"         // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE
@@ -36,7 +37,6 @@
 #include "tab_index.h"          // for TabIndex
 #include "tab_search.h"         // for TabSearch
 #include "treeitem_toc.h"       // for TreeItem_TOC
-#include "viewwindow.h"         // for ViewWindow
 
 
 NavigationPanel::NavigationPanel( QWidget* parent )

@@ -16,7 +16,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>      // for abort
 #include <stdexcept>    // for invalid_argument
 
 #include <QAction>          // for QAction
@@ -45,15 +44,17 @@
 
 class QMouseEvent;
 
-#include <browser/settings.hpp>  // for BrowserSettings
+#include <browser/content-provider.hpp> // for ContentProvider::Ptr
+#include <browser/controller.hpp>       // for Browser::Controller
+#include <browser/settings.hpp>         // for BrowserSettings
 
-#include "config.h"         // for Config, pConfig
-#include "i18n.h"           // for i18n
-#include "mainwindow.h"     // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
-#include "settings.h"       // for Settings::viewindow_saved_settings_t, Settings::SavedViewWindow, Settings
+#include "config.h"             // for Config, pConfig
+#include "i18n.h"               // for i18n
+#include "mainwindow.h"         // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
+#include "settings.h"           // for Settings::viewindow_saved_settings_t, Settings::SavedViewWindow, Settings
 #include "ui_window_browser.h"  // for TabbedBrowser
-#include "viewwindow.h"     // for ViewWindow
-#include "viewwindowmgr.h"  // IWYU pragma: associated
+#include "viewwindow.h"         // for ViewWindow
+#include "viewwindowmgr.h"      // IWYU pragma: associated
 
 
 // A small overriden class to handle a middle click
@@ -81,6 +82,7 @@ ViewWindowMgr::ViewWindowMgr( QWidget* parent )
 {
 	// UIC
 	setupUi( this );
+	m_stube = new Browser::Controller(nullptr, this);
 
 	// Set up the initial settings
 	applyBrowserSettings();
@@ -136,29 +138,28 @@ void ViewWindowMgr::createMenu( MainWindow*, QMenu* menuWindow, QAction* actionC
 void ViewWindowMgr::invalidate()
 {
 	closeAllWindows();
-	addNewTab( true );
 }
 
-ViewWindow* ViewWindowMgr::current()
+Browser::Controller* ViewWindowMgr::current()
 {
 	try {
 		return findTabData( m_tabWidget->currentWidget() ).controller;
 	} catch ( const std::invalid_argument& ) {
-		abort();
+		return m_stube;
 	}
 }
 
-ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
+Browser::Controller* ViewWindowMgr::addNewTab( bool set_active )
 {
-	ViewWindow* viewvnd = new ViewWindow( m_tabWidget );
+	Browser::Controller* controller = new WebKitController( m_tabWidget );
 
 	editFind->installEventFilter( this );
 
 	// Create the tab data structure
 	TabData tabdata;
-	tabdata.controller = viewvnd;
+	tabdata.controller = controller;
 	tabdata.action = new QAction( "window", this ); // temporary name; real name is set in setTabName
-	tabdata.widget = viewvnd;
+	tabdata.widget = controller->view();
 
 	connect( tabdata.action,
 	         SIGNAL( triggered() ),
@@ -174,22 +175,23 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 		m_tabWidget->setCurrentWidget( tabdata.widget );
 
 	// Handle clicking on link in browser window
-	connect( viewvnd,
+	connect( controller,
 	         SIGNAL( linkClicked ( const QUrl&, bool ) ),
 	         ::mainWindow,
 	         SLOT( activateUrl( const QUrl&, bool ) ) );
 
-	connect( viewvnd,
-	         SIGNAL( contextMenuRequest(ViewWindow*, const QPoint&, const QUrl&) ),
+	connect( controller,
+	         SIGNAL( contextMenuRequest(Browser::Controller*, const QPoint&, const QUrl&) ),
 	         ::mainWindow,
-	         SLOT( showBrowserContextMenu(ViewWindow*, const QPoint&, const QUrl&) ) );
+	         SLOT( showBrowserContextMenu(Browser::Controller*, const QPoint&, const QUrl&) ) );
 
-	connect( viewvnd,
+	connect( controller,
 	         SIGNAL( urlChanged( const QUrl& ) ),
 	         this,
 	         SLOT( onUrlChanged( const QUrl& ) ) );
 
-	connect( viewvnd, SIGNAL(dataLoaded(ViewWindow*)), this, SLOT(onWindowContentChanged(ViewWindow*)));
+	//TODO
+	connect( controller, SIGNAL(dataLoaded(Browser::Controller*)), this, SLOT(onWindowContentChanged(Browser::Controller*)));
 
 	// Set up the accelerator if we have room
 	if ( m_Windows.size() < 10 )
@@ -198,7 +200,7 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 	// Add it to the "Windows" menu
 	m_menuWindow->addAction( tabdata.action );
 
-	return viewvnd;
+	return controller;
 }
 
 void ViewWindowMgr::closeAllWindows( )
@@ -207,7 +209,7 @@ void ViewWindowMgr::closeAllWindows( )
 		closeWindow( m_Windows.first().widget );
 }
 
-void ViewWindowMgr::setTabName(ViewWindow* controller )
+void ViewWindowMgr::setTabName(Browser::Controller* controller )
 {
 	try {
 		const TabData& tab = findTabData( controller );
@@ -217,7 +219,7 @@ void ViewWindowMgr::setTabName(ViewWindow* controller )
 		if ( title.length() > 25 )
 			title = title.left( 22 ) + "...";
 
-		m_tabWidget->setTabText( m_tabWidget->indexOf( controller ), title );
+		m_tabWidget->setTabText( m_tabWidget->indexOf( controller->view() ), title );
 		tab.action->setText( title );
 		updateCloseButtons();
 	} catch ( const std::invalid_argument& ) {
@@ -276,15 +278,12 @@ void ViewWindowMgr::closeTab(const TabData& data)
 
 void ViewWindowMgr::restoreSettings( const Settings::viewindow_saved_settings_t& settings )
 {
-	// Destroy automatically created tab
-	closeWindow( m_Windows.first().widget );
-
 	for ( int i = 0; i < settings.size(); i++ )
 	{
-		ViewWindow* window = addNewTab( false );
-		window->load( settings[i].url ); // will call setTabName()
-		window->setAutoScroll( settings[i].scroll_y );
-		window->setZoomFactor( settings[i].zoom );
+		Browser::Controller* contr = addNewTab( false );
+		contr->load( settings[i].url ); // will call setTabName()
+		contr->setAutoScroll( settings[i].scroll_y );
+		contr->setZoomFactor( settings[i].zoom );
 	}
 }
 
@@ -366,7 +365,7 @@ ViewWindowMgr::TabData ViewWindowMgr::findTabData(QWidget* widget) noexcept(fals
 	throw std::invalid_argument("");
 }
 
-ViewWindowMgr::TabData ViewWindowMgr::findTabData(ViewWindow* controll) noexcept(false)
+ViewWindowMgr::TabData ViewWindowMgr::findTabData(Browser::Controller* controll) noexcept(false)
 {
 	for ( int i = 0; i < m_Windows.size(); ++i )
 		if ( m_Windows[i].controller == controll )
@@ -440,7 +439,7 @@ void ViewWindowMgr::onFindPrevious()
 	find( true );
 }
 
-void ViewWindowMgr::onWindowContentChanged(ViewWindow* controller)
+void ViewWindowMgr::onWindowContentChanged(Browser::Controller* controller)
 {
 	setTabName( controller );
 }
@@ -455,5 +454,5 @@ void ViewWindowMgr::copyUrlToClipboard()
 
 void ViewWindowMgr::applyBrowserSettings()
 {
-	ViewWindow::applySettings(pConfig->browser);
+	WebKitController::applySettings(pConfig->browser);
 }

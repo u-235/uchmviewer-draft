@@ -32,8 +32,11 @@ class QUrl;
 #include "ui_window_browser.h"  // for TabbedBrowser
 
 class MainWindow;
-class ViewWindow;
 class ViewWindowTabWidget;
+
+namespace Browser {
+class Controller;
+}
 
 
 class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
@@ -44,14 +47,14 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		~ViewWindowMgr( );
 
 		// Returns a handle to a currently viewed window.
-		// Guaranteeed to return a valid handle, or aborts.
-		ViewWindow*     current();
+		// Guaranteeed to return a valid handle.
+		Browser::Controller*     current() ;
 
 		// Adds a new tab, creating a new browser window
-		ViewWindow*     addNewTab( bool set_active );
+		Browser::Controller* addNewTab( bool set_active );
 
 		// Sets the tab name and updates Windows menu
-		void    setTabName( ViewWindow* controller );
+		void    setTabName(Browser::Controller* controller );
 
 		void    invalidate();
 
@@ -86,7 +89,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    onActivateFind();
 		void    onFindNext();
 		void    onFindPrevious();
-		void    onWindowContentChanged(ViewWindow* controller );
+		void    onWindowContentChanged(Browser::Controller* controller );
 		void    copyUrlToClipboard();
 
 	protected slots:
@@ -106,7 +109,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		struct TabData
 		{
 			QWidget*                widget;
-			ViewWindow*             controller;
+			Browser::Controller*    controller;
 			QAction*                action;
 
 			bool operator==(const TabData& an) const
@@ -119,7 +122,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    closeWindow( QWidget* widget );
 		void    closeTab( const TabData& data );
 		TabData findTabData( QWidget* widget ) noexcept(false);
-		TabData findTabData( ViewWindow* controll ) noexcept(false);
+		TabData findTabData( Browser::Controller* controll ) noexcept(false);
 		TabData findTabData( int tabIndex ) noexcept(false);
 
 		// Storage of all available windows
@@ -136,7 +139,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 
 		// Last word searched
 		QString                 m_lastSearchedWord;
-
+		Browser::Controller*    m_stube;
 		ViewWindowTabWidget*        m_tabWidget;
 };
 

@@ -56,6 +56,7 @@
 #include <QUrl>             // for QUrl
 #include <QVariant>         // for QVariant
 #include <QWhatsThis>       // for QWhatsThis
+#include <QWidget>          // for QWidget
 #include <Qt>               // for ApplicationShortcut, operator|, LeftDockWidgetArea, NoButton, ControlModifier, KeyboardModifiers, LeftToRight, Othe...
 #include <QtGlobal>         // for qPrintable, qFatal, QFlags, qWarning, QSysInfo, qVersion, qDebug, qreal
 
@@ -71,6 +72,7 @@
 
 class QCloseEvent;
 
+#include <browser/controller.hpp>
 #include <ebook.h>                // for EBook, EBook::FEATURE_ENCODING, EBook::FEATURE_TOC, EBook::FEATURE_INDEX, EBookTocEntry, EBookTocEntry::Icon
 
 #include "config.h"               // for Config, pConfig, Config::ACTION_ALWAYS_OPEN, Config::ACTION_ASK_USER, Config::ACTION_DONT_OPEN, Config::STARTUP_LOA...
@@ -84,7 +86,6 @@ class QCloseEvent;
 #include "toolbarmanager.h"       // for ToolbarManager
 #include "ui_dialog_about.h"      // for DialogAbout
 #include "version.h"              // for APP_VERSION
-#include "viewwindow.h"           // for ViewWindow
 #include "viewwindowmgr.h"        // for ViewWindowMgr
 
 
@@ -424,7 +425,7 @@ void MainWindow::activateUrl( const QUrl& link, bool middleButton )
 		openPage( link, OPF_CONTENT_TREE );
 }
 
-void MainWindow::showBrowserContextMenu(ViewWindow* controller,
+void MainWindow::showBrowserContextMenu(Browser::Controller* controller,
                                         const QPoint& globalPos,
                                         const QUrl& link)
 {
@@ -478,16 +479,16 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 		return false; // do not change the current page.
 	}
 
-	ViewWindow* vwnd = currentBrowser();
+	Browser::Controller* controller = currentBrowser();
 
-	if ( flags & OPF_NEW_TAB )
+	if ( currentBrowser()->view() == nullptr || flags & OPF_NEW_TAB )
 	{
 		qreal zoom = currentBrowser()->zoomFactor();
-		vwnd = m_viewWindowMgr->addNewTab( !(flags & OPF_BACKGROUND) );
-		vwnd->setZoomFactor( zoom );
+		controller = m_viewWindowMgr->addNewTab( !(flags & OPF_BACKGROUND) );
+		controller->setZoomFactor( zoom );
 	}
 
-	vwnd->load (url);
+	controller->load( url );
 
 	// Open all the tree items to show current item (if needed)
 	if ( (flags & OPF_CONTENT_TREE) != 0 )
@@ -495,7 +496,7 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 
 	// Focus on the view window so keyboard scroll works; do not do it for the background tabs
 	if ( (flags & OPF_BACKGROUND) == 0 )
-		vwnd->setFocus( Qt::OtherFocusReason );
+		controller->view()->setFocus( Qt::OtherFocusReason );
 
 	return true;
 }
@@ -722,7 +723,7 @@ bool MainWindow::parseCmdLineArgs(const QStringList& args, bool from_another_app
 	return false;
 }
 
-ViewWindow* MainWindow::currentBrowser( ) const
+Browser::Controller* MainWindow::currentBrowser( ) const
 {
 	return m_viewWindowMgr->current();
 }
@@ -747,7 +748,7 @@ void MainWindow::onOpenPageInNewBackgroundTab( )
 	openPage( getNewTabLink(), OPF_NEW_TAB | OPF_BACKGROUND );
 }
 
-void MainWindow::browserChanged(ViewWindow* newbrowser )
+void MainWindow::browserChanged(Browser::Controller* newbrowser )
 {
 	m_navPanel->findUrlInContents( newbrowser->url() );
 }

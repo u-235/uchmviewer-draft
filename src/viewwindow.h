@@ -5,7 +5,7 @@
 #if defined (USE_WEBENGINE)
 	#include "qtwebengine/viewwindow.h" // IWYU pragma: export
 #else
-	#include "qtwebkit/viewwindow.h"    // IWYU pragma: export
+	#include "qtwebkit/webkitcontroller.h"    // IWYU pragma: export
 #endif
 
 #endif // VIEWWINDOW_H

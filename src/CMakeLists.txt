@@ -79,10 +79,10 @@ set(UIS
 
 if (${USE_WEBENGINE})
     list(APPEND CPP_SOURCES
-        qtwebengine/viewwindow.cpp
-        qtwebengine/viewwindow.h
         qtwebengine/dataprovider.cpp
         qtwebengine/dataprovider.h
+        qtwebengine/webkitcontroller.cpp
+        qtwebengine/webkitcontroller.h
         )
     list(APPEND MOC_HEADERS qtwebengine/viewwindow.h  qtwebengine/webenginepage.h)
 else ()

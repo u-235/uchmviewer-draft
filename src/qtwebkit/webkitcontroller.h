@@ -16,15 +16,14 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VIEWWINDOW_WEBKIT_H
-#define VIEWWINDOW_WEBKIT_H
+#ifndef WEBKITCONTROLLER_H
+#define WEBKITCONTROLLER_H
 
 #include <functional>   // for function
 
-#include <QObject>  // for slots, Q_OBJECT, signals
+#include <QObject>  // for Q_OBJECT, signals, slots
 #include <QString>  // for QString
 #include <QUrl>     // for QUrl
-#include <QWebView> // for QWebView
 #include <QtGlobal> // for qreal
 
 class QContextMenuEvent;
@@ -32,30 +31,38 @@ class QMenu;
 class QMouseEvent;
 class QPoint;
 class QPrinter;
+class QWebView;
 class QWidget;
 
+#include <browser/controller.hpp> // for Controller
+#include <browser/types.hpp>       // for Option
+
 namespace Browser {
-class Settings;
+struct Settings;
 }
 
 
-class ViewWindow : public QWebView
+class WebKitController : public Browser::Controller
 {
 		Q_OBJECT
 
 	public:
-		ViewWindow( QWidget* parent );
-		virtual ~ViewWindow();
+		WebKitController( QWidget* parent );
+		virtual ~WebKitController();
+
+		QWidget* view() override;
+
+		bool hasOption(Browser::Option option) override;
 
 		//! Open a page from current chm archive
-		void    load (const QUrl& url );
+		void    load (const QUrl& url ) override;
 
-		QUrl    url() const   { return QWebView::url(); }
+		QUrl    url() const override;
 
 	signals:
-		void    dataLoaded( ViewWindow* window );
+		void    dataLoaded( Browser::Controller* window );
 		void    linkClicked( const QUrl& link, bool middleButton );
-		void    contextMenuRequest(ViewWindow* controller,
+		void    contextMenuRequest(Browser::Controller* controller,
 		                           const QPoint& globalPos,
 		                           const QUrl& url);
 
@@ -64,50 +71,50 @@ class ViewWindow : public QWebView
 		static  void    applySettings(Browser::Settings& settings);
 
 		//! Invalidate current view, doing all the cleanups etc.
-		void    invalidate();
+		void    invalidate() override;
 
 		//! Prints the current page on the printer.
-		void print( QPrinter* printer, std::function<void (bool success)> result );
+		void print( QPrinter* printer, std::function<void (bool success)> result ) override;
 
 		//! Return current ZoomFactor.
-		qreal   zoomFactor() const;
+		qreal   zoomFactor() const override;
 
 		//! Sets ZoomFactor. The value returned by getZoomFactor(), given to this function, should give the same result.
-		void    setZoomFactor( qreal zoom );
+		void    setZoomFactor( qreal zoom ) override;
 
 		/*!
 		* Return current scrollbar position in view window. Saved on program exit.
 		* There is no restriction on returned value, except that giving this value to
 		* setScrollbarPosition() should move the scrollbar in the same position.
 		*/
-		int     scrollTop();
+		int     scrollTop() override;
 
 		//! Sets the scrollbar position.
-		void    setScrollTop(int pos);
-		void    setAutoScroll(int pos);
+		void    setScrollTop(int pos) override;
+		void    setAutoScroll(int pos) override;
 
 		void findText(const QString& text,
 		              bool backward,
 		              bool caseSensitively,
 		              bool highlightSearchResults,
-		              std::function<void (bool found, bool wrapped)> result);
+		              std::function<void (bool found, bool wrapped)> result) override;
 
 		//! Select the content of the whole page
-		void    selectAll();
+		void    selectAll() override;
 
 		//! Copies the selected content to the clipboard
-		void    selectedCopy();
+		void    selectedCopy() override;
 
 		//! Returns the window title
-		QString title() const;
+		QString title() const override;
 
-		bool    canGoBack() const;
+		bool    canGoBack() const override;
 
-		bool    canGoForward() const;
+		bool    canGoForward() const override;
 
-	public slots:
-		void    zoomIncrease();
-		void    zoomDecrease();
+		void    back() override;
+
+		void    forward() override;
 
 	protected:
 		bool            openPage ( const QUrl& url );
@@ -126,6 +133,7 @@ class ViewWindow : public QWebView
 		void            onLoadFinished ( bool ok );
 
 	private:
+		QWebView*               m_webView;
 		QString                 m_lastSearchedWord;
 		QMenu*                  m_contextMenu;
 		QMenu*                  m_contextMenuLink;
@@ -134,4 +142,4 @@ class ViewWindow : public QWebView
 		int                     m_storedScrollbarPosition;
 };
 
-#endif
+#endif // WEBKITCONTROLLER_H
