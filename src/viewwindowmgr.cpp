@@ -16,7 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>  // for abort
+#include <cstdlib>      // for abort
+#include <stdexcept>    // for invalid_argument
 
 #include <QAction>          // for QAction
 #include <QApplication>     // for QApplication
@@ -137,12 +138,11 @@ void ViewWindowMgr::invalidate()
 
 ViewWindow* ViewWindowMgr::current()
 {
-	TabData* tab = findTab( m_tabWidget->currentWidget() );
-
-	if ( !tab )
+	try {
+		return findTabData( m_tabWidget->currentWidget() ).controller;
+	} catch ( const std::invalid_argument& ) {
 		abort();
-
-	return tab->controller;
+	}
 }
 
 ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
@@ -201,10 +201,8 @@ void ViewWindowMgr::closeAllWindows( )
 
 void ViewWindowMgr::setTabName(ViewWindow* controller )
 {
-	TabData* tab = findTab( controller );
-
-	if ( tab )
-	{
+	try {
+		const TabData& tab = findTabData( controller );
 		QString title = controller->title().trimmed();
 
 		// Trim too long string
@@ -212,9 +210,9 @@ void ViewWindowMgr::setTabName(ViewWindow* controller )
 			title = title.left( 22 ) + "...";
 
 		m_tabWidget->setTabText( m_tabWidget->indexOf( controller ), title );
-		tab->action->setText( title );
-
+		tab.action->setText( title );
 		updateCloseButtons();
+	} catch ( const std::invalid_argument& ) {
 	}
 }
 
@@ -224,8 +222,10 @@ void ViewWindowMgr::onCloseCurrentWindow( )
 	if ( m_Windows.size() == 1 )
 		return;
 
-	TabData* tab = findTab( m_tabWidget->currentWidget() );
-	closeWindow( tab->widget );
+	try {
+		closeTab( findTabData( m_tabWidget->currentWidget()));
+	} catch ( const std::invalid_argument& ) {
+	}
 }
 
 void ViewWindowMgr::onCloseWindow( int num )
@@ -234,30 +234,30 @@ void ViewWindowMgr::onCloseWindow( int num )
 	if ( m_Windows.size() == 1 )
 		return;
 
-	TabData* tab = findTab( m_tabWidget->widget( num ));
-
-	if ( tab )
-		closeWindow( tab->widget );
+	try {
+		closeTab( findTabData( num ));
+	} catch ( const std::invalid_argument& ) {
+	}
 }
 
 void ViewWindowMgr::closeWindow( QWidget* widget )
 {
-	WindowsIterator it;
-
-	for ( it = m_Windows.begin(); it != m_Windows.end(); ++it )
-		if ( it->widget == widget )
-			break;
-
-	if ( it == m_Windows.end() )
+	try {
+		closeTab( findTabData( widget));
+	} catch ( const std::invalid_argument& ) {
 		qFatal( "ViewWindowMgr::closeWindow called with unknown widget!" );
+	}
+}
 
-	m_menuWindow->removeAction( it->action );
+void ViewWindowMgr::closeTab(const TabData& data)
+{
+	m_menuWindow->removeAction( data.action );
 
-	m_tabWidget->removeTab( m_tabWidget->indexOf( it->widget ) );
-	delete it->controller;
-	delete it->action;
+	m_tabWidget->removeTab( m_tabWidget->indexOf( data.widget ) );
+	delete data.controller;
+	delete data.action;
 
-	m_Windows.erase( it );
+	m_Windows.removeOne( data );
 	updateCloseButtons();
 
 	// Change the accelerators, as we might have removed the item in the middle
@@ -284,17 +284,15 @@ void ViewWindowMgr::saveSettings( Settings::viewindow_saved_settings_t& settings
 {
 	settings.clear();
 
-	for ( int i = 0; i < m_tabWidget->count(); i++ )
-	{
-		QWidget* p = m_tabWidget->widget( i );
-		TabData* tab = findTab( p );
-
-		if ( !tab )
-			abort();
-
-		settings.push_back( Settings::SavedViewWindow( tab->controller->getOpenedPage().toString(),
-		                                               tab->controller->getScrollbarPosition(),
-		                                               tab->controller->getZoomFactor()) );
+	try {
+		for ( int i = 0; i < m_tabWidget->count(); i++ )
+		{
+			const TabData& tab = findTabData( i );
+			settings.push_back( Settings::SavedViewWindow( tab.controller->getOpenedPage().toString(),
+			                                               tab.controller->getScrollbarPosition(),
+			                                               tab.controller->getZoomFactor()) );
+		}
+	} catch ( const std::invalid_argument& ) {
 	}
 }
 
@@ -311,13 +309,12 @@ void ViewWindowMgr::onTabChanged( int newtabIndex )
 	if ( newtabIndex == -1 )
 		return;
 
-	TabData* tab = findTab( m_tabWidget->widget( newtabIndex ) );
-
-	if ( tab )
-	{
+	try {
+		const TabData& tab = findTabData( newtabIndex );
 		emit historyChanged();
-		mainWindow->browserChanged( tab->controller );
-		tab->widget->setFocus();
+		mainWindow->browserChanged( tab.controller );
+		tab.widget->setFocus();
+	} catch ( const std::invalid_argument& ) {
 	}
 }
 
@@ -352,13 +349,27 @@ void ViewWindowMgr::closeSearch()
 	m_tabWidget->currentWidget()->setFocus();
 }
 
-ViewWindowMgr::TabData* ViewWindowMgr::findTab(QWidget* widget)
+ViewWindowMgr::TabData ViewWindowMgr::findTabData(QWidget* widget) noexcept(false)
 {
-	for ( WindowsIterator it = m_Windows.begin(); it != m_Windows.end(); ++it )
-		if ( it->widget == widget )
-			return (it.operator->());
+	for ( int i = 0; i < m_Windows.size(); ++i )
+		if ( m_Windows[i].widget == widget )
+			return m_Windows[i];
 
-	return 0;
+	throw std::invalid_argument("");
+}
+
+ViewWindowMgr::TabData ViewWindowMgr::findTabData(ViewWindow* controll) noexcept(false)
+{
+	for ( int i = 0; i < m_Windows.size(); ++i )
+		if ( m_Windows[i].controller == controll )
+			return m_Windows[i];
+
+	throw std::invalid_argument("");
+}
+
+ViewWindowMgr::TabData ViewWindowMgr::findTabData(int tabIndex) noexcept(false)
+{
+	return findTabData( m_tabWidget->widget( tabIndex ) );
 }
 
 void ViewWindowMgr::setCurrentPage(int index)
