@@ -273,7 +273,7 @@ void ViewWindowMgr::restoreSettings( const Settings::viewindow_saved_settings_t&
 	for ( int i = 0; i < settings.size(); i++ )
 	{
 		ViewWindow* window = addNewTab( false );
-		window->openUrl( settings[i].url ); // will call setTabName()
+		window->load( settings[i].url ); // will call setTabName()
 		window->setScrollbarPosition( settings[i].scroll_y );
 		window->setZoomFactor( settings[i].zoom );
 	}
@@ -287,7 +287,7 @@ void ViewWindowMgr::saveSettings( Settings::viewindow_saved_settings_t& settings
 		for ( int i = 0; i < m_tabWidget->count(); i++ )
 		{
 			const TabData& tab = findTabData( i );
-			settings.push_back( Settings::SavedViewWindow( tab.controller->getOpenedPage().toString(),
+			settings.push_back( Settings::SavedViewWindow( tab.controller->url().toString(),
 			                                               tab.controller->getScrollbarPosition(),
 			                                               tab.controller->getZoomFactor()) );
 		}
@@ -324,7 +324,7 @@ void ViewWindowMgr::onUrlChanged(const QUrl&)
 
 void ViewWindowMgr::openNewTab()
 {
-	::mainWindow->openPage( current()->getOpenedPage(), MainWindow::OPF_NEW_TAB | MainWindow::OPF_CONTENT_TREE );
+	::mainWindow->openPage( current()->url(), MainWindow::OPF_NEW_TAB | MainWindow::OPF_CONTENT_TREE );
 }
 
 void ViewWindowMgr::activateWindow()
@@ -438,7 +438,7 @@ void ViewWindowMgr::onWindowContentChanged(ViewWindow* controller)
 
 void ViewWindowMgr::copyUrlToClipboard()
 {
-	QString url = current()->getOpenedPage().toString();
+	QString url = current()->url().toString();
 
 	if ( !url.isEmpty() )
 		QApplication::clipboard()->setText( url );
