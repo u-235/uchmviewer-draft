@@ -34,9 +34,11 @@ class QUrl;
 #include "settings.h"           // for Settings, Settings::viewindow_saved_settings_t
 #include "ui_window_browser.h"  // for TabbedBrowser
 
-class MainWindow;
-class ViewWindow;
 class ViewWindowTabWidget;
+
+namespace Browser {
+class Controller;
+}
 
 
 class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
@@ -47,19 +49,19 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		~ViewWindowMgr( );
 
 		// Returns a handle to a currently viewed window.
-		// Guaranteeed to return a valid handle, or aborts.
-		ViewWindow*     current();
+		// Guaranteeed to return a valid handle.
+		Browser::Controller*     current() ;
 
 		// Adds a new tab, creating a new browser window
-		ViewWindow*     addNewTab( bool set_active );
+		Browser::Controller* addNewTab( bool set_active );
 
 		// Sets the tab name and updates Windows menu
-		void    setTabName( ViewWindow* controller );
+		void    setTabName(Browser::Controller* controller );
 
 		void    invalidate();
 
 		// Creates a Window menu
-		void    createMenu( MainWindow* parent, QMenu* menuWindow, QAction* actionCloseWindow );
+		void    createMenu(QMenu* menuWindow, QAction* actionCloseWindow );
 
 		// Saves and restores current settings between sessions
 		void    restoreSettings( const Settings::viewindow_saved_settings_t& settings );
@@ -75,7 +77,8 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    applyBrowserSettings();
 
 	signals:
-		void    browserChanged(ViewWindow* controller);
+		void    loadFinished(Browser::Controller* controller, bool success);
+		void    browserChanged(Browser::Controller* controller);
 		/**
 		 * This signal is emitted when tabs are switched or when the url of
 		 * the ViewWindow changes.
@@ -84,7 +87,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		 */
 		void    historyChanged();
 		void    linkClicked(const QUrl& url, Browser::OpenMode mode);
-		void    contextMenuRequested(ViewWindow* controller,
+		void    contextMenuRequested(Browser::Controller* controller,
 		                             const QPoint& globalPos,
 		                             const QUrl& url);
 
@@ -94,14 +97,11 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    onActivateFind();
 		void    onFindNext();
 		void    onFindPrevious();
-		void    onWindowContentChanged(ViewWindow* controller );
 		void    copyUrlToClipboard();
 
 	protected slots:
 		void    openNewTab();
 		void    onTabChanged( int newtabIndex );
-		//! Connected to ViewWindow::urlChanged()
-		void    onUrlChanged(const QUrl& );
 		void    updateCloseButtons();
 		void    activateWindow();
 		void    closeSearch();
@@ -114,7 +114,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		struct TabData
 		{
 			QWidget*                widget;
-			ViewWindow*             controller;
+			Browser::Controller*    controller;
 			QAction*                action;
 
 			bool operator==(const TabData& an) const
@@ -127,7 +127,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    closeWindow( QWidget* widget );
 		void    closeTab( const TabData& data );
 		TabData findTabData( QWidget* widget ) noexcept(false);
-		TabData findTabData( ViewWindow* controll ) noexcept(false);
+		TabData findTabData( Browser::Controller* controll ) noexcept(false);
 		TabData findTabData( int tabIndex ) noexcept(false);
 
 		// Storage of all available windows
@@ -144,7 +144,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 
 		// Last word searched
 		QString                 m_lastSearchedWord;
-
+		Browser::Controller*    m_stube;
 		ViewWindowTabWidget*        m_tabWidget;
 };
 

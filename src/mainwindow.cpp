@@ -56,6 +56,7 @@
 #include <QUrl>             // for QUrl
 #include <QVariant>         // for QVariant
 #include <QWhatsThis>       // for QWhatsThis
+#include <QWidget>          // for QWidget
 #include <Qt>               // for ApplicationShortcut, operator|, LeftDockWidgetArea, NoButton, ControlModifier, KeyboardModifiers, LeftToRight, Othe...
 #include <QtGlobal>         // for qPrintable, qFatal, QFlags, qWarning, QSysInfo, qVersion, qDebug, qreal
 
@@ -71,6 +72,7 @@
 
 class QCloseEvent;
 
+#include <browser/controller.hpp>
 #include <browser/types.hpp>      // for OPEN_IN_BACKGROUND, OPEN_IN_NEW, OpenMode
 #include <ebook.h>                // for EBook, EBook::FEATURE_ENCODING, EBook::FEATURE_TOC, EBook::FEATURE_INDEX, EBookTocEntry, EBookTocEntry::Icon
 
@@ -85,7 +87,6 @@ class QCloseEvent;
 #include "toolbarmanager.h"       // for ToolbarManager
 #include "ui_dialog_about.h"      // for DialogAbout
 #include "version.h"              // for APP_VERSION
-#include "viewwindow.h"           // for ViewWindow
 #include "viewwindowmgr.h"        // for ViewWindowMgr
 
 
@@ -416,7 +417,7 @@ void MainWindow::refreshCurrentBrowser( )
 	m_navPanel->refresh();
 }
 
-void MainWindow::showBrowserContextMenu(ViewWindow* controller,
+void MainWindow::showBrowserContextMenu(Browser::Controller* controller,
                                         const QPoint& globalPos,
                                         const QUrl& link)
 {
@@ -473,23 +474,23 @@ bool MainWindow::openPage(const QUrl& url, Browser::OpenMode mode )
 		return false; // do not change the current page.
 	}
 
-	ViewWindow* controller = currentBrowser();
+	Browser::Controller* controller = currentBrowser();
 
-	if ( mode == Browser::OPEN_IN_NEW || mode == Browser::OPEN_IN_BACKGROUND )
+	if ( currentBrowser()->view() == nullptr || mode != Browser::OPEN_IN_CURRENT )
 	{
 		qreal zoom = currentBrowser()->zoomFactor();
 		controller = m_viewWindowMgr->addNewTab( mode != Browser::OPEN_IN_BACKGROUND );
 		controller->setZoomFactor( zoom );
 	}
 
-	controller->load (url);
+	controller->load( url );
 
 	if ( mode != Browser::OPEN_IN_BACKGROUND )
 	{
 		// Open all the tree items to show current item (if needed)
 		m_navPanel->findUrlInContents( url );
 		// Focus on the view window so keyboard scroll works; do not do it for the background tabs
-		controller->setFocus( Qt::OtherFocusReason );
+		controller->view()->setFocus( Qt::OtherFocusReason );
 	}
 
 	return true;
@@ -717,7 +718,7 @@ bool MainWindow::parseCmdLineArgs(const QStringList& args, bool from_another_app
 	return false;
 }
 
-ViewWindow* MainWindow::currentBrowser( ) const
+Browser::Controller* MainWindow::currentBrowser( ) const
 {
 	return m_viewWindowMgr->current();
 }
@@ -742,7 +743,7 @@ void MainWindow::onOpenPageInNewBackgroundTab( )
 	openPage( getNewTabLink(), Browser::OPEN_IN_BACKGROUND );
 }
 
-void MainWindow::browserChanged(ViewWindow* controller)
+void MainWindow::browserChanged(Browser::Controller* controller)
 {
 	m_navPanel->findUrlInContents( controller->url() );
 }
@@ -1230,7 +1231,7 @@ void MainWindow::setupActions()
 	connect( nav_actionNextPageToc, SIGNAL( triggered() ), m_navPanel, SLOT( showNextInToc() ) );
 
 	// m_viewWindowMgr fills and maintains 'Window' menu
-	m_viewWindowMgr->createMenu( this, menu_Windows, action_Close_window );
+	m_viewWindowMgr->createMenu( menu_Windows, action_Close_window );
 
 	m_navPanel->setBookmarkMenu( menu_Bookmarks );
 

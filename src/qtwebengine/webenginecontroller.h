@@ -33,82 +33,82 @@ class QPoint;
 class QPrinter;
 class QWidget;
 
+#include <browser/controller.hpp>
 #include <browser/types.hpp>    // for OPEN_IN_CURRENT, OpenMode
 
 namespace Browser {
-class Settings;
+struct Settings;
 }
 
+class WebEngineWidget;
 
-class ViewWindow : public QWebEngineView
+
+class WebEngineController : public Browser::Controller
 {
 		Q_OBJECT
 
 	public:
-		ViewWindow( QWidget* parent );
-		virtual ~ViewWindow();
+		WebEngineController( QWidget* parent );
+		virtual ~WebEngineController();
+
+		QWidget* view() override;
+
+		bool hasOption(Browser::Option option) override;
 
 		//! Open a page from current chm archive
-		void    load (const QUrl& url );
+		void load (const QUrl& url ) override;
 
-		QUrl    url() const   { return QWebEngineView::url(); }
-
-	signals:
-		void    dataLoaded( ViewWindow* window );
-
-		// This signal is emitted whenever the user clicks on a link.
-		void    linkClicked(const QUrl& url, Browser::OpenMode mode);
-		void    contextMenuRequested(const QPoint& globalPos, const QUrl& url);
+		QUrl url() const override;
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
 		static  void    applySettings(Browser::Settings& settings);
 
 		//! Invalidate current view, doing all the cleanups etc.
-		void    invalidate();
+		void    invalidate() override;
 
 		//! Prints the current page on the printer.
-		void print( QPrinter* printer, std::function<void (bool success)> result );
+		void print( QPrinter* printer, std::function<void (bool success)> result ) override;
 
 		//! Return current ZoomFactor.
-		qreal   zoomFactor() const;
+		qreal   zoomFactor() const override;
 
 		//! Sets ZoomFactor. The value returned by getZoomFactor(), given to this function, should give the same result.
-		void    setZoomFactor( qreal zoom );
+		void    setZoomFactor( qreal zoom ) override;
 
 		/*!
 		* Return current scrollbar position in view window. Saved on program exit.
 		* There is no restriction on returned value, except that giving this value to
 		* setScrollbarPosition() should move the scrollbar in the same position.
 		*/
-		int     scrollTop();
+		int     scrollTop() override;
 
 		//! Sets the scrollbar position.
-		void    setScrollTop(int pos);
-		void    setAutoScroll(int pos);
+		void    setScrollTop(int pos) override;
+		void    setAutoScroll(int pos) override;
 
 		void findText(const QString& text,
 		              bool backward,
 		              bool caseSensitively,
 		              bool highlightSearchResults,
-		              std::function<void (bool found, bool wrapped)> result);
+		              std::function<void (bool found, bool wrapped)> result) override;
 
 		//! Select the content of the whole page
-		void    selectAll();
+		void    selectAll() override;
 
 		//! Copies the selected content to the clipboard
-		void    selectedCopy();
+		void    selectedCopy() override;
 
 		//! Returns the window title
-		QString title() const;
+		QString title() const override;
 
-		bool    canGoBack() const;
+		bool    canGoBack() const override;
 
-		bool    canGoForward() const;
+		bool    canGoForward() const override;
 
-	public slots:
-		void    zoomIncrease();
-		void    zoomDecrease();
+		void back() override;
+
+		void forward() override;
 
 	protected:
 		bool            openPage ( const QUrl& url );
@@ -117,16 +117,15 @@ class ViewWindow : public QWebEngineView
 		// Overriden to change the source
 		void            setSource ( const QUrl& name );
 
-		// Overloaded to provide custom context menu
-		void            contextMenuEvent( QContextMenuEvent* e );
-		//void          mouseReleaseEvent ( QMouseEvent * event );
-
 	private slots:
 		// Used to restore the scrollbar position and the navigation button status
-		void            onLoadFinished ( bool ok );
+		void            onLoadFinished ( bool success );
 		void            onLinkClicked(const QUrl& url, Browser::OpenMode mode = Browser::OPEN_IN_CURRENT);
 
 	private:
+		WebEngineWidget* m_widget;
+		QMenu*                  m_contextMenu;
+
 		// Keeps the scrollbar position to move after the page is loaded
 		int                     m_storedScrollbarPosition;
 };

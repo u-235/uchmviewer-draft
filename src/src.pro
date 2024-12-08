@@ -141,13 +141,13 @@ unix:!macx: {
 
     QT += webenginewidgets
     DEFINES += USE_WEBENGINE
-    SOURCES += qtwebengine/viewwindow.cpp qtwebengine/dataprovider.cpp
-    HEADERS += qtwebengine/dataprovider.h qtwebengine/viewwindow.h qtwebengine/webenginepage.h
+    SOURCES += qtwebengine/dataprovider.cpp qtwebengine/webenginecontroller.cpp qtwebengine/webenginewidget.cpp
+    HEADERS += qtwebengine/dataprovider.h qtwebengine/webenginecontroller.h qtwebengine/webenginewidget.h qtwebengine/webenginepage.h
 } else {
     QT += webkit webkitwidgets
     DEFINES += USE_WEBKIT
-    SOURCES += qtwebkit/viewwindow.cpp qtwebkit/dataprovider.cpp
-    HEADERS += qtwebkit/dataprovider.h qtwebkit/viewwindow.h
+    SOURCES += qtwebkit/dataprovider.cpp qtwebkit/webkitcontroller.cpp qtwebkit/webkitwidget.cpp
+    HEADERS += qtwebkit/dataprovider.h qtwebkit/webkitcontroller.h qtwebkit/webkitwidget.h
 }
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat

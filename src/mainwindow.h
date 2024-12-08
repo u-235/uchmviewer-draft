@@ -46,8 +46,11 @@ class NavigationPanel;
 class RecentFiles;
 class Settings;
 class ToolbarManager;
-class ViewWindow;
 class ViewWindowMgr;
+
+namespace Browser {
+class Controller;
+}
 
 
 //! Those events could be sent to main window to do useful things. See handleUserEvents()
@@ -80,7 +83,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		const QString&  getOpenedFileName () { return m_ebookFilename; }
 		const QString&  getOpenedFileBaseName () { return m_ebookFileBasename; }
 
-		ViewWindow* currentBrowser() const;
+		Browser::Controller* currentBrowser() const;
 		Settings*    currentSettings() const { return m_currentSettings; }
 		ViewWindowMgr*  viewWindowMgr() const { return m_viewWindowMgr; }
 		NavigationPanel* navigator() const { return m_navPanel; }
@@ -106,7 +109,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 	public slots:
 		// Called from WindowMgr when another browser tab is activated
-		void        browserChanged(ViewWindow* controller);
+		void        browserChanged(Browser::Controller* controller);
 
 		// Navigation toolbar icons
 		void        navSetBackEnabled( bool enabled );
@@ -153,7 +156,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		void        actionOpenRecentFile( const QString& file );
 		void        actionEncodingChanged( QAction* action );
 
-		void        showBrowserContextMenu(ViewWindow* controller,
+		void        showBrowserContextMenu(Browser::Controller* controller,
 		                                   const QPoint& globalPos,
 		                                   const QUrl& link);
 

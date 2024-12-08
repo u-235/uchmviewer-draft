@@ -30,14 +30,14 @@
 #include <QVariant>         // for QVariant
 #include <Qt>               // for CustomContextMenu, DisplayRole, ToolTipRole, WhatsThisRole
 
-#include <ebook.h>  // for EBook
+#include <browser/controller.hpp>   // for Browser::Controller
+#include <ebook.h>                  // for EBook
 
 #include "config.h"          // for Config, pConfig
 #include "i18n.h"            // for i18n
 #include "mainwindow.h"      // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE
 #include "settings.h"        // for Settings::bookmark_saved_settings_t, Settings::SavedBookmark, Settings
 #include "tab_bookmarks.h"
-#include "viewwindow.h"      // for ViewWindow
 
 class BookmarkItem : public QListWidgetItem
 {

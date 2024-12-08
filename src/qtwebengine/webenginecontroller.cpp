@@ -46,53 +46,57 @@ class QPrinter;
 #include "../mainwindow.h"          // for MainWindow, mainWindow
 #include "../viewwindowmgr.h"       // for ViewWindowMgr
 #include "webenginepage.h"          // for WebEnginePage
-#include "viewwindow.h"
+#include "webenginecontroller.h"
+#include "webenginewidget.h"
 
 
-#if defined PRINT_DEBUG_ALL || defined PRINT_DEBUG_WEBENGINE || defined PRINT_DEBUG_WEBENGINEVIEWWINDOW
-	#define PRINT_DEBUG 1
-#endif
-
-static const qreal ZOOM_FACTOR_CHANGE = 0.1;
-
-ViewWindow::ViewWindow( QWidget* parent )
-	: QWebEngineView ( parent )
+WebEngineController::WebEngineController( QWidget* parent )
+	: Browser::Controller(nullptr, parent)
 {
+	m_widget = new WebEngineWidget(parent);
 	invalidate();
 	m_storedScrollbarPosition = 0;
 
 	WebEnginePage* page = new WebEnginePage( this );
 	connect( page, SIGNAL( linkClicked ( const QUrl&, Browser::OpenMode ) ), this, SLOT( onLinkClicked( const QUrl&, Browser::OpenMode ) ) );
-	setPage( page );
+	m_widget->setPage( page );
 
-	connect( this, SIGNAL( loadFinished(bool)), this, SLOT( onLoadFinished(bool)) );
+	connect( m_widget, SIGNAL( loadFinished(bool)), this, SLOT( onLoadFinished(bool)) );
+	connect(m_widget, &WebEngineWidget::contextMenuRequested,
+	        [this](const QPoint & globalPos, const QUrl & link)
+	{
+		emit contextMenuRequested(globalPos, link);
+	});
+	connect(m_widget, &WebEngineWidget::urlChanged,
+	        [this](const QUrl & link)
+	{
+		emit urlChanged(link);
+	});
 
 	// Search results highlighter
-	QPalette pal = palette();
+	QPalette pal = m_widget->palette();
 	pal.setColor( QPalette::Inactive, QPalette::Highlight, pal.color(QPalette::Active, QPalette::Highlight) );
 	pal.setColor( QPalette::Inactive, QPalette::HighlightedText, pal.color(QPalette::Active, QPalette::HighlightedText) );
-	setPalette( pal );
+	m_widget->setPalette( pal );
 }
 
-ViewWindow::~ViewWindow()
+WebEngineController::~WebEngineController()
 {
 }
 
-void ViewWindow::invalidate( )
+void WebEngineController::invalidate( )
 {
 	m_storedScrollbarPosition = 0;
 	reload();
 }
 
-void ViewWindow::load ( const QUrl& url )
+void WebEngineController::load ( const QUrl& url )
 {
 	// Do not use setContent() here, it resets QWebHistory
-	QWebEngineView::load( url );
-
-	mainWindow->viewWindowMgr()->setTabName( this );
+	m_widget->load( url );
 }
 
-QString ViewWindow::title() const
+QString WebEngineController::title() const
 {
 	QString title = ::mainWindow->chmFile()->getTopicByUrl( url() );
 
@@ -103,56 +107,46 @@ QString ViewWindow::title() const
 	return title;
 }
 
-bool ViewWindow::canGoBack() const
+bool WebEngineController::canGoBack() const
 {
-	return history()->canGoBack();
+	return  m_widget->history()->canGoBack();
 }
 
-bool ViewWindow::canGoForward() const
+bool WebEngineController::canGoForward() const
 {
-	return history()->canGoForward();
+	return  m_widget->history()->canGoForward();
 }
 
-void ViewWindow::print( QPrinter* printer, std::function<void (bool success)> result )
+void WebEngineController::print( QPrinter* printer, std::function<void (bool success)> result )
 {
 #if QT_VERSION < QT_VERSION_CHECK(6, 2, 0)
-	page()->print( printer, [&result](bool success) {
+	m_widget->page()->print( printer, [&result](bool success) {
 		result( success );
 	});
 #else
-	connect(this, &QWebEngineView::printFinished, [result](bool success) {
+	connect( m_widget, &QWebEngineView::printFinished, [result](bool success) {
 		result( success );
 	});
-	QWebEngineView::print( printer );
+	m_widget->print( printer );
 #endif
 }
 
-void ViewWindow::setZoomFactor(qreal zoom)
+void WebEngineController::setZoomFactor(qreal zoom)
 {
-	QWebEngineView::setZoomFactor( zoom );
+	m_widget->setZoomFactor( zoom );
 }
 
-qreal ViewWindow::zoomFactor() const
+qreal WebEngineController::zoomFactor() const
 {
-	return QWebEngineView::zoomFactor();
+	return  m_widget->zoomFactor();
 }
 
-void ViewWindow::zoomIncrease()
-{
-	setZoomFactor( zoomFactor() + ZOOM_FACTOR_CHANGE );
-}
-
-void ViewWindow::zoomDecrease()
-{
-	setZoomFactor( zoomFactor() - ZOOM_FACTOR_CHANGE );
-}
-
-int ViewWindow::scrollTop()
+int WebEngineController::scrollTop()
 {
 	QAtomicInt value = -1;
 
-	page()->runJavaScript("document.body.scrollTop",
-	                      QWebEngineScript::UserWorld,
+	m_widget->page()->runJavaScript("document.body.scrollTop",
+	                                QWebEngineScript::UserWorld,
 	[&value](const QVariant & v) { value = v.toInt(); });
 
 	while ( value == -1 )
@@ -163,22 +157,22 @@ int ViewWindow::scrollTop()
 	return value;
 }
 
-void ViewWindow::setScrollTop(int pos)
+void WebEngineController::setScrollTop(int pos)
 {
-	page()->runJavaScript( QString( "document.body.scrollTop=%1" ).arg( pos )
-	                       , QWebEngineScript::UserWorld );
+	m_widget->page()->runJavaScript( QString( "document.body.scrollTop=%1" ).arg( pos )
+	                                 , QWebEngineScript::UserWorld );
 }
 
-void ViewWindow::setAutoScroll(int pos)
+void WebEngineController::setAutoScroll(int pos)
 {
 	m_storedScrollbarPosition = pos;
 }
 
-void ViewWindow::findText(const QString& text,
-                          bool backward,
-                          bool caseSensitively,
-                          bool highlightSearchResults,
-                          std::function<void (bool found, bool wrapped)> result)
+void WebEngineController::findText(const QString& text,
+                                   bool backward,
+                                   bool caseSensitively,
+                                   bool highlightSearchResults,
+                                   std::function<void (bool found, bool wrapped)> result)
 {
 	Q_UNUSED(highlightSearchResults);
 	QWebEnginePage::FindFlags webkitflags;
@@ -190,60 +184,49 @@ void ViewWindow::findText(const QString& text,
 		webkitflags |= QWebEnginePage::FindBackward;
 
 #if QT_VERSION <= QT_VERSION_CHECK(6, 2, 0)
-	QWebEngineView::findText( text, webkitflags,
-	                          [ = ](bool found)
+	m_widget->findText( text, webkitflags,
+	                    [ = ](bool found)
 	{
 		result(found, false);
 	});
 #else
-	QWebEngineView::findText( text, webkitflags,
-	                          [ = ](const QWebEngineFindTextResult & found)
+	m_widget->findText( text, webkitflags,
+	                    [ = ](const QWebEngineFindTextResult & found)
 	{
 		result(found.numberOfMatches() > 0, false);
 	});
 #endif
 }
 
-void ViewWindow::selectAll()
+void WebEngineController::selectAll()
 {
-	triggerPageAction( QWebEnginePage::SelectAll );
+	m_widget->triggerPageAction( QWebEnginePage::SelectAll );
 }
 
-void ViewWindow::selectedCopy()
+void WebEngineController::selectedCopy()
 {
-	triggerPageAction( QWebEnginePage::Copy );
+	m_widget->triggerPageAction( QWebEnginePage::Copy );
 }
 
-void ViewWindow::contextMenuEvent(QContextMenuEvent* e)
-{
-#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
-	QUrl link = lastContextMenuRequest()->linkUrl();
-#else
-	QUrl link = page()->contextMenuData().linkUrl();
-#endif
-
-	emit contextMenuRequested(e->globalPos(), link);
-}
-
-void ViewWindow::onLoadFinished ( bool )
+void WebEngineController::onLoadFinished ( bool success )
 {
 	if ( m_storedScrollbarPosition > 0 )
 	{
-		page()->runJavaScript( QString( "document.body.scrollTop=%1" ).arg( m_storedScrollbarPosition )
-		                       , QWebEngineScript::UserWorld );
+		m_widget->page()->runJavaScript( QString( "document.body.scrollTop=%1" ).arg( m_storedScrollbarPosition )
+		                                 , QWebEngineScript::UserWorld );
 		m_storedScrollbarPosition = 0;
 	}
 
 	emit urlChanged( url() );
-	emit dataLoaded( this );
+	emit loadFinished( success );
 }
 
-void ViewWindow::onLinkClicked(const QUrl& url, Browser::OpenMode mode)
+void WebEngineController::onLinkClicked(const QUrl& url, Browser::OpenMode mode)
 {
 	emit linkClicked( url, mode );
 }
 
-void ViewWindow::applySettings(Browser::Settings& settings)
+void WebEngineController::applySettings(Browser::Settings& settings)
 {
 	QWebEngineSettings* setup = QWebEngineProfile::defaultProfile()->settings();
 
@@ -251,4 +234,37 @@ void ViewWindow::applySettings(Browser::Settings& settings)
 	setup->setAttribute( QWebEngineSettings::JavascriptEnabled, settings.enableJS );
 	setup->setAttribute( QWebEngineSettings::PluginsEnabled, settings.enablePlugins );
 	setup->setAttribute( QWebEngineSettings::LocalStorageEnabled, settings.enableLocalStorage );
+}
+
+QWidget* WebEngineController::view()
+{
+	return m_widget;
+}
+
+bool WebEngineController::hasOption(Browser::Option option)
+{
+	switch (option) {
+	case Browser::OPTION_HIGH_LIGHT_SEARCH_RESULT:
+	case Browser::OPTION_IMAGES:
+	case Browser::OPTION_JAVA_SCRIPT:
+	case Browser::OPTION_JAVA:
+		return true;
+	default:
+		return false;
+	}
+}
+
+QUrl WebEngineController::url() const
+{
+	return m_widget->url();
+}
+
+void WebEngineController::back()
+{
+	m_widget->back();
+}
+
+void WebEngineController::forward()
+{
+	m_widget->forward();
 }

@@ -87,12 +87,12 @@ if (${USE_WEBENGINE})
     list(APPEND MOC_HEADERS qtwebengine/viewwindow.h  qtwebengine/webenginepage.h)
 else ()
     list(APPEND CPP_SOURCES
-        qtwebkit/viewwindow.cpp
-        qtwebkit/viewwindow.h
+        qtwebkit/webkitcontroller.cpp
+        qtwebkit/webkitcontroller.h
         qtwebkit/dataprovider.cpp
         qtwebkit/dataprovider.h
         )
-    list(APPEND MOC_HEADERS qtwebkit/viewwindow.h)
+    list(APPEND MOC_HEADERS qtwebkit/webkitcontroller.h)
 endif ()
 
 if (${USE_DBUS})

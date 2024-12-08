@@ -3,9 +3,11 @@
 
 // We support both engines
 #if defined (USE_WEBENGINE)
-	#include "qtwebengine/viewwindow.h" // IWYU pragma: export
+	#include "qtwebengine/webenginecontroller.h" // IWYU pragma: export
+	typedef WebEngineController WebController;
 #else
-	#include "qtwebkit/viewwindow.h"    // IWYU pragma: export
+	#include "qtwebkit/webkitcontroller.h"    // IWYU pragma: export
+	typedef WebKitController WebController;
 #endif
 
 #endif // VIEWWINDOW_H
