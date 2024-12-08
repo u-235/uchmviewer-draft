@@ -19,6 +19,8 @@
 #ifndef QTWEBENGINE_VIEWWINDOW_H
 #define QTWEBENGINE_VIEWWINDOW_H
 
+#include <functional>   // for function
+
 #include <QObject>          // for slots, Q_OBJECT, signals
 #include <QString>          // for QString
 #include <QUrl>             // for QUrl
@@ -27,6 +29,7 @@
 
 class QContextMenuEvent;
 class QMenu;
+class QPrinter;
 class QWidget;
 
 class BrowserSettings;
@@ -59,8 +62,8 @@ class ViewWindow : public QWebEngineView
 		//! Invalidate current view, doing all the cleanups etc.
 		void    invalidate();
 
-		//! Popups the print dialog, and prints the current page on the printer.
-		bool    printCurrentPage();
+		//! Prints the current page on the printer.
+		void print( QPrinter* printer, std::function<void (bool success)> result );
 
 		//! Return current ZoomFactor.
 		qreal   getZoomFactor() const;

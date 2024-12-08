@@ -22,8 +22,6 @@
 #include <QMenu>        // for QMenu
 #include <QMouseEvent>  // for QMouseEvent
 #include <QPalette>     // for QPalette, QPalette::Active, QPalette::Highlight, QPalette::HighlightedText, QPalette::Inactive
-#include <QPrintDialog> // for QPrintDialog
-#include <QPrinter>     // for QPrinter, QPrinter::HighResolution
 #include <QString>      // for QString
 #include <QUrl>         // for QUrl
 #include <QWebFrame>    // for QWebFrame, QWebHitTestResult
@@ -32,6 +30,8 @@
 #include <QWebSettings> // for QWebSettings, QWebSettings::AutoLoadImages, QWebSettings::JavaEnabled, QWebSettings::JavascriptEnabled, QWebSetti...
 #include <Qt>           // for Vertical, MidButton
 #include <QtGlobal>     // for qreal
+
+class QPrinter;
 
 #include <ebook.h>  // for EBook
 
@@ -168,21 +168,10 @@ void ViewWindow::setTabKeeper( const QUrl& link )
 	m_newTabLinkKeeper = link;
 }
 
-bool ViewWindow::printCurrentPage()
+void ViewWindow::print( QPrinter* printer, std::function<void (bool success)> result )
 {
-	QPrinter printer( QPrinter::HighResolution );
-	QPrintDialog dlg( &printer, this );
-
-	if ( dlg.exec() != QDialog::Accepted )
-	{
-		::mainWindow->showInStatusBar( i18n( "Printing aborted") );
-		return false;
-	}
-
-	print( &printer );
-	::mainWindow->showInStatusBar( i18n( "Printing finished") );
-
-	return true;
+	QWebView::print( printer );
+	result(true);
 }
 
 void ViewWindow::setZoomFactor(qreal zoom)
