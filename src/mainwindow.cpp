@@ -58,6 +58,7 @@
 #include <QUrl>
 #include <QVariant>
 #include <QWhatsThis>
+#include <QWidget>
 #include <Qt>
 #include <QtGlobal>
 
@@ -74,6 +75,7 @@
 class QCloseEvent;
 
 #include <ebook.h>
+#include <ubrowser/browser.hpp>
 #include <ubrowser/types.hpp>
 
 #include "config.h"
@@ -87,7 +89,6 @@ class QCloseEvent;
 #include "toolbarmanager.h"
 #include "ui_dialog_about.h"
 #include "version.h"
-#include "viewwindow.h"
 #include "viewwindowmgr.h"
 
 #include "mainwindow.h"
@@ -423,7 +424,7 @@ void MainWindow::refreshCurrentBrowser( )
 	m_navPanel->refresh();
 }
 
-void MainWindow::showBrowserContextMenu( ViewWindow* browser,
+void MainWindow::showBrowserContextMenu( UBrowser::Browser* browser,
                                          const QPoint& globalPos,
                                          const QUrl& link )
 {
@@ -464,7 +465,7 @@ bool MainWindow::openPage( const QUrl& url, UBrowser::OpenMode mode )
 	return onLinkClicked( currentBrowser(), url, mode );
 }
 
-bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::OpenMode mode )
+bool MainWindow::onLinkClicked( UBrowser::Browser* browser, const QUrl& url, UBrowser::OpenMode mode )
 {
 	QString otherlink;
 
@@ -498,8 +499,7 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 		return false; // do not change the current page.
 	}
 
-
-	if ( mode == UBrowser::OPEN_IN_NEW || mode == UBrowser::OPEN_IN_BACKGROUND )
+	if ( currentBrowser()->view() == nullptr || mode != UBrowser::OPEN_IN_CURRENT )
 	{
 		qreal zoom = currentBrowser()->zoomFactor();
 		browser = m_viewWindowMgr->addNewTab( mode != UBrowser::OPEN_IN_BACKGROUND );
@@ -513,7 +513,7 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 		// Open all the tree items to show current item (if needed)
 		m_navPanel->findUrlInContents( url );
 		// Focus on the view window so keyboard scroll works; do not do it for the background tabs
-		browser->setFocus( Qt::OtherFocusReason );
+		browser->view()->setFocus( Qt::OtherFocusReason );
 	}
 
 	return true;
@@ -759,7 +759,7 @@ bool MainWindow::parseCmdLineArgs( const QStringList& args, bool from_another_ap
 	return false;
 }
 
-ViewWindow* MainWindow::currentBrowser( ) const
+UBrowser::Browser* MainWindow::currentBrowser( ) const
 {
 	return m_viewWindowMgr->current();
 }
@@ -784,7 +784,7 @@ void MainWindow::onOpenPageInNewBackgroundTab( )
 	openPage( getNewTabLink(), UBrowser::OPEN_IN_BACKGROUND );
 }
 
-void MainWindow::browserChanged( ViewWindow* browser )
+void MainWindow::browserChanged( UBrowser::Browser* browser )
 {
 	m_navPanel->findUrlInContents( browser->url() );
 }

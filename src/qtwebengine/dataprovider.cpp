@@ -33,9 +33,6 @@
 #include <ebook_chm.h>
 #include <ebook_epub.h>
 
-#include "../mainwindow.h"
-#include "../mimehelper.h"
-
 #include "dataprovider.h"
 
 
@@ -48,21 +45,19 @@ static struct RegistrationHelper
 {
 	RegistrationHelper()
 	{
-		QWebEngineUrlScheme scheme( EBook_EPUB::URL_SCHEME_EPUB );
+		QWebEngineUrlScheme scheme( UBrowser::ContentProvider::URL_SCHEME );
 		scheme.setSyntax( QWebEngineUrlScheme::Syntax::HostAndPort );
 		scheme.setDefaultPort( 443 );
 		scheme.setFlags( QWebEngineUrlScheme::SecureScheme );
-		QWebEngineUrlScheme::registerScheme( scheme );
-
-		scheme.setName( EBook_CHM::URL_SCHEME_CHM );
 		QWebEngineUrlScheme::registerScheme( scheme );
 	}
 } helper;
 
 #endif // (QT_VERSION >= QT_VERSION_CHECK(5, 12, 0))
 
-DataProvider::DataProvider( QObject* parent )
-	: QWebEngineUrlSchemeHandler( parent )
+DataProvider::DataProvider( UBrowser::ContentProvider::Ptr contentProvider, QObject* parent )
+	: QWebEngineUrlSchemeHandler( parent ),
+	  m_contentProvider( contentProvider )
 {
 }
 
@@ -75,37 +70,37 @@ void DataProvider::requestStarted( QWebEngineUrlRequestJob* request )
 #endif
 
 	// Retreive the data from ebook file
-	QByteArray buf;
+	UBrowser::ContentData data;
 
-	if ( !::mainWindow->chmFile()->getFileContentAsBinary( buf, url ) )
+	if ( !m_contentProvider->content( data, url ) )
 	{
 		qWarning( "Could not resolve file %s\n", qPrintable( url.toString() ) );
 		request->fail( QWebEngineUrlRequestJob::UrlNotFound );
 		return;
 	}
 
-	QByteArray mimetype = MimeHelper::mimeType( url, buf );
-
 	// We must specify the proper MIME type for the page to display correctly.
 	// The HTML and XML files correspond to "text/html";
 	// for other types "application/octet-stream" is sufficient.
 	// In addition, for "text/html", a "meta" tag is added specifying the text encoding.
 	// This is the easiest and most stable way to set the encoding.
-	if ( mimetype == "text/html" )
-	{
-		buf.prepend( QString( "<META http-equiv='Content-Type' content='text/html; charset=%1'>" )
-		             .arg( ::mainWindow->chmFile()->currentEncoding() ).toLatin1() );
-	}
+	if ( data.mime == "text/html" )
+		data.asUtf8.prepend( QString( "<META http-equiv='Content-Type' content='text/html; charset=utf-8'>" ).toUtf8() );
 
 	// We will use the buffer because reply() requires the QIODevice.
 	// This buffer must be valid until the request is deleted.
 	QBuffer* outbuf = new QBuffer;
-	outbuf->setData( buf );
+
+	if ( data.mime.startsWith( "text" ) )
+		outbuf->setData( data.asUtf8 );
+	else
+		outbuf->setData( data.buffer );
+
 	outbuf->close();
 
 	// Only delete the buffer when the request is deleted too
 	connect( request, SIGNAL( destroyed() ), outbuf, SLOT( deleteLater() ) );
 
 	// We're good to go
-	request->reply( mimetype, outbuf );
+	request->reply( data.mime, outbuf );
 }

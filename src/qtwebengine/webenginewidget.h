@@ -1,7 +1,6 @@
 /*
  *  Kchmviewer - a CHM and EPUB file viewer with broad language support
  *  Copyright (C) 2004-2016 George Yunaev, gyunaev@ulduzsoft.com
- *  Copyright (C) 2021 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,26 +16,32 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QTWEBENGINE_DATAPROVIDER_H
-#define QTWEBENGINE_DATAPROVIDER_H
+#ifndef WEBENGINEWIDGET_H
+#define WEBENGINEWIDGET_H
 
-#include <QWebEngineUrlSchemeHandler>
+#include <QObject>
+#include <QWebEngineView>
 
-class QObject;
-class QWebEngineUrlRequestJob;
+class QContextMenuEvent;
+class QPoint;
+class QUrl;
+class QWidget;
 
-#include <ubrowser/content-provider.hpp>
 
-
-class DataProvider : public QWebEngineUrlSchemeHandler
+class WebEngineWidget : public QWebEngineView
 {
+		Q_OBJECT
+
 	public:
-		DataProvider( UBrowser::ContentProvider::Ptr contentProvider, QObject* parent );
+		WebEngineWidget( QWidget* parent );
+		virtual ~WebEngineWidget();
 
-		void requestStarted( QWebEngineUrlRequestJob* request );
+	signals:
+		void contextMenuRequested( const QPoint& globalPos, const QUrl& url );
 
-	private:
-		UBrowser::ContentProvider::Ptr m_contentProvider;
+	protected:
+		// Overloaded to provide custom context menu
+		void contextMenuEvent( QContextMenuEvent* event );
 };
 
-#endif // QTWEBENGINE_DATAPROVIDER_H
+#endif // WEBENGINEWIDGET_H

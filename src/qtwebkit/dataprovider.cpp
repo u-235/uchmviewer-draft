@@ -31,13 +31,14 @@
 #include <ebook.h>
 
 #include "../config.h"
-#include "../mainwindow.h"
-#include "../mimehelper.h"
 
 #include "dataprovider.h"
 
 
-KCHMNetworkReply::KCHMNetworkReply( const QNetworkRequest& request, const QUrl& url )
+KCHMNetworkReply::KCHMNetworkReply( UBrowser::ContentProvider::Ptr contentProvider,
+                                    const QNetworkRequest& request,
+                                    const QUrl& url ) :
+	m_contentProvider( contentProvider )
 {
 	setRequest( request );
 	setOpenMode( QIODevice::ReadOnly );
@@ -78,32 +79,25 @@ qint64 KCHMNetworkReply::readData( char* buffer, qint64 maxlen )
 
 QByteArray KCHMNetworkReply::loadResource( const QUrl& url )
 {
-	//qDebug("loadResource %s", qPrintable(url.toString()) );
-
 	// Retreive the data from ebook file
-	QByteArray buf;
+	UBrowser::ContentData data;
 
-	if ( !::mainWindow->chmFile()->getFileContentAsBinary( buf, url ) )
-	{
+	if ( !m_contentProvider->content( data, url ) )
 		qWarning( "Could not resolve file %s\n", qPrintable( url.toString() ) );
 
-	}
-
-	QString mime = MimeHelper::mimeType( url, buf );
-
-	if ( mime == "text/html" || mime == "text/xhtml" || mime == "text/xml" )
+	if ( data.mime.startsWith( "text" ) )
 	{
-		QString header = QString( "%1; charset=%2" )
-		                 .arg( mime )
-		                 .arg( ::mainWindow->chmFile()->currentEncoding() );
+		QString header = QString( "%1; charset=utf-8" ).arg( QString( data.mime ) );
 		setHeader( QNetworkRequest::ContentTypeHeader, header );
+		return data.asUtf8;
 	}
 
-	return buf;
+	return data.buffer;
 }
 
-KCHMNetworkAccessManager::KCHMNetworkAccessManager( QObject* parent )
-	: QNetworkAccessManager( parent )
+KCHMNetworkAccessManager::KCHMNetworkAccessManager( UBrowser::ContentProvider::Ptr contentProvider, QObject* parent )
+	: QNetworkAccessManager( parent ),
+	  m_contentProvider( contentProvider )
 {
 }
 
@@ -111,8 +105,8 @@ QNetworkReply* KCHMNetworkAccessManager::createRequest( Operation op, const QNet
 {
 	//qDebug("KCHMNetworkAccessManager::createRequest %s", qPrintable( request.url().toString()) );
 
-	if ( ::mainWindow->chmFile()->isSupportedUrl( request.url() ) )
-		return new KCHMNetworkReply( request, request.url() );
+	if ( m_contentProvider->isValidUrl( request.url() ) )
+		return new KCHMNetworkReply( m_contentProvider, request, request.url() );
 
 	if ( pConfig->m_browserEnableRemoteContent )
 		return QNetworkAccessManager::createRequest( op, request, outgoingData );

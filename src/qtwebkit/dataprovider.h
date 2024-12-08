@@ -29,6 +29,8 @@ class QNetworkRequest;
 class QObject;
 class QUrl;
 
+#include <ubrowser/content-provider.hpp>
+
 
 //
 // A network reply to emulate data transfer from CHM file
@@ -36,7 +38,9 @@ class QUrl;
 class KCHMNetworkReply : public QNetworkReply
 {
 	public:
-		KCHMNetworkReply( const QNetworkRequest& request, const QUrl& url );
+		KCHMNetworkReply( UBrowser::ContentProvider::Ptr contentProvider,
+		                  const QNetworkRequest& request,
+		                  const QUrl& url );
 		virtual qint64 bytesAvailable() const;
 		virtual void abort();
 
@@ -47,6 +51,7 @@ class KCHMNetworkReply : public QNetworkReply
 	private:
 		QByteArray  m_data;
 		qint64      m_length;
+		UBrowser::ContentProvider::Ptr m_contentProvider;
 };
 
 
@@ -56,10 +61,14 @@ class KCHMNetworkReply : public QNetworkReply
 class KCHMNetworkAccessManager : public QNetworkAccessManager
 {
 	public:
-		KCHMNetworkAccessManager( QObject* parent );
+		KCHMNetworkAccessManager( UBrowser::ContentProvider::Ptr contentProvider,
+		                          QObject* parent );
 
 	protected:
 		virtual QNetworkReply* createRequest( Operation op, const QNetworkRequest& request, QIODevice* outgoingData = 0 );
+
+	private:
+		UBrowser::ContentProvider::Ptr m_contentProvider;
 };
 
 #endif // QWEBVIEWNETWORK_H

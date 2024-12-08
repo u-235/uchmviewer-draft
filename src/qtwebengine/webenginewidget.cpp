@@ -1,7 +1,6 @@
 /*
  *  Kchmviewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2004-2016 George Yunaev, gyunaev@ulduzsoft.com
- *  Copyright (C) 2021 Nick Egorrov, nicegorov@yandex.ru
+ *  Copyright (C) 2004-2014 George Yunaev, gyunaev@ulduzsoft.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -17,26 +16,36 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef QTWEBENGINE_DATAPROVIDER_H
-#define QTWEBENGINE_DATAPROVIDER_H
-
-#include <QWebEngineUrlSchemeHandler>
-
-class QObject;
-class QWebEngineUrlRequestJob;
-
-#include <ubrowser/content-provider.hpp>
+#include <QContextMenuEvent>
+#include <QUrl>
+#include <QtGlobal>
 
 
-class DataProvider : public QWebEngineUrlSchemeHandler
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+	#include <QWebEngineContextMenuRequest>
+#else
+	#include <QWebEngineContextMenuData>
+#endif
+
+#include "webenginewidget.h"
+
+
+WebEngineWidget::WebEngineWidget( QWidget* parent )
+	: QWebEngineView( parent )
 {
-	public:
-		DataProvider( UBrowser::ContentProvider::Ptr contentProvider, QObject* parent );
+}
 
-		void requestStarted( QWebEngineUrlRequestJob* request );
+WebEngineWidget::~WebEngineWidget()
+{
+}
 
-	private:
-		UBrowser::ContentProvider::Ptr m_contentProvider;
-};
+void WebEngineWidget::contextMenuEvent( QContextMenuEvent* event )
+{
+#if QT_VERSION >= QT_VERSION_CHECK(6, 2, 0)
+	QUrl link = lastContextMenuRequest()->linkUrl();
+#else
+	QUrl link = page()->contextMenuData().linkUrl();
+#endif
 
-#endif // QTWEBENGINE_DATAPROVIDER_H
+	emit contextMenuRequested( event->globalPos(), link );
+}

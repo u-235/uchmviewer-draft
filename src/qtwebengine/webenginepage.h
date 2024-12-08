@@ -45,21 +45,9 @@ class WebEnginePage : public QWebEnginePage
 		void linkClicked( const QUrl& url, UBrowser::OpenMode mode );
 
 	public:
-		WebEnginePage( QObject* parent )
-			: QWebEnginePage( parent )
+		WebEnginePage( QWebEngineProfile* pf, QObject* parent )
+			: QWebEnginePage( pf, parent )
 		{
-			QWebEngineProfile* pf = profile();
-
-			if ( pf->urlSchemeHandler( EBook_CHM::URL_SCHEME_CHM ) == NULL )
-			{
-				pf->installUrlSchemeHandler( EBook_CHM::URL_SCHEME_CHM, new DataProvider( pf ) );
-			}
-
-			if ( pf->urlSchemeHandler( EBook_EPUB::URL_SCHEME_EPUB ) == NULL )
-			{
-				pf->installUrlSchemeHandler( EBook_EPUB::URL_SCHEME_EPUB, new DataProvider( pf ) );
-			}
-
 			connect( this, SIGNAL( linkHovered( const QString& ) ), this, SLOT( onLinkHovered( const QString& ) ) );
 		}
 

@@ -1,6 +1,6 @@
 /*
  *  Kchmviewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2004-2014 George Yunaev, gyunaev@ulduzsoft.com
+ *  Copyright (C) 2004-2016 George Yunaev, gyunaev@ulduzsoft.com
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -16,23 +16,21 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef VIEWWINDOW_WEBKIT_H
-#define VIEWWINDOW_WEBKIT_H
+#ifndef QTWEBENGINE_VIEWWINDOW_H
+#define QTWEBENGINE_VIEWWINDOW_H
 
 #include <functional>
 
 #include <QObject>
 #include <QString>
 #include <QUrl>
-#include <QWebView>
 #include <QtGlobal>
 
-class QContextMenuEvent;
-class QMouseEvent;
-class QPoint;
+class QMenu;
 class QPrinter;
 class QWidget;
 
+#include <ubrowser/browser.hpp>
 #include <ubrowser/types.hpp>
 
 namespace UBrowser
@@ -40,97 +38,109 @@ namespace UBrowser
 struct Settings;
 }
 
+class WebEngineWidget;
 
-class ViewWindow : public QWebView
+
+class WebEngineBrowser : public UBrowser::Browser
 {
 		Q_OBJECT
 
 	public:
-		ViewWindow( QWidget* parent );
-		virtual ~ViewWindow();
+		WebEngineBrowser( UBrowser::ContentProvider::Ptr contentProvider, QObject* parent );
+		virtual ~WebEngineBrowser();
+
+		QWidget* view() override;
+
+		bool hasOption( UBrowser::Option option ) override;
+
+		bool hasFeature( UBrowser::Feature feature ) const override;
 
 		//! Open a page from current chm archive
-		void    load( const QUrl& url );
+		void load( const QUrl& url ) override;
 
-		QUrl    url() const   { return QWebView::url(); }
+		QUrl url() const override;
 
-	signals:
-		void    dataLoaded( ViewWindow* window );
-		void    linkClicked( const QUrl& link, UBrowser::OpenMode mode );
-		void    contextMenuRequested( const QPoint& globalPos, const QUrl& url );
+		void reload() override;
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
-		static  void    applySettings( UBrowser::Settings& settings );
+		static  void applySettings( UBrowser::Settings& settings );
 
 		//! Invalidate current view, doing all the cleanups etc.
-		void    invalidate();
+		void invalidate() override;
 
 		//! Prints the current page on the printer.
-		void print( QPrinter* printer, std::function<void ( bool success )> result );
+		void print( QPrinter* printer, std::function<void ( bool success )> result ) override;
 
 		//! Return current ZoomFactor.
-		qreal   zoomFactor() const;
+		qreal zoomFactor() const override;
 
 		//! Sets ZoomFactor. The value returned by getZoomFactor(), given to this function, should give the same result.
-		void    setZoomFactor( qreal zoom );
+		void setZoomFactor( qreal zoom ) override;
+
+		void zoomIncrease() override;
+
+		void zoomDecrease() override;
 
 		/*!
 		* Return current scrollbar position in view window. Saved on program exit.
 		* There is no restriction on returned value, except that giving this value to
 		* setScrollbarPosition() should move the scrollbar in the same position.
 		*/
-		int     scrollTop();
+		int scrollTop() override;
 
 		//! Sets the scrollbar position.
-		void    setScrollTop( int pos );
-		void    setAutoScroll( int pos );
+		void setScrollTop( int pos ) override;
+
+		void setAutoScroll( int pos ) override;
 
 		void findText( const QString& text,
 		               bool backward,
 		               bool caseSensitively,
 		               bool highlightSearchResults,
-		               std::function<void ( bool found, bool wrapped )> result );
+		               std::function<void ( bool found, bool wrapped )> result ) override;
 
 		//! Select the content of the whole page
-		void    selectAll();
+		void selectAll() override;
 
 		//! Copies the selected content to the clipboard
-		void    selectedCopy();
+		void selectedCopy() override;
+
+		QString selectedText() const override;
 
 		//! Returns the window title
-		QString title() const;
+		QString title() const override;
 
-		bool    canGoBack() const;
+		bool canGoBack() const override;
 
-		bool    canGoForward() const;
+		bool canGoForward() const override;
 
-	public slots:
-		void    zoomIncrease();
-		void    zoomDecrease();
+		void back() override;
+
+		void forward() override;
+
+		void configure( const UBrowser::Settings& settings ) override;
+
+		UBrowser::History* history() const override;
 
 	protected:
-		bool            openPage( const QUrl& url );
-		void            handleStartPageAsImage( QUrl& link );
+		bool openPage( const QUrl& url );
+		void handleStartPageAsImage( QUrl& link );
 
 		// Overriden to change the source
-		void            setSource( const QUrl& name );
-		QUrl            anchorAt( const QPoint& pos );
-
-		// Overloaded to provide custom context menu
-		void            contextMenuEvent( QContextMenuEvent* e );
-		void            mouseReleaseEvent( QMouseEvent* event );
+		void setSource( const QUrl& name );
 
 	private slots:
-		void            onLinkClicked( const QUrl& link );
-		// Used to restore the scrollbar position and the navigation button status
-		void            onLoadFinished( bool ok );
+		void onLoadFinished( bool success );
+		void onUrlChanged( const QUrl& url );
+		void onLinkClicked( const QUrl& link, UBrowser::OpenMode mode );
+		void onContextMenuRequested( const QPoint& globalPos, const QUrl& link );
 
 	private:
-		QString                 m_lastSearchedWord;
+		WebEngineWidget* m_widget;
 
 		// Keeps the scrollbar position to move after the page is loaded
-		int                     m_storedScrollbarPosition;
+		int m_storedScrollbarPosition;
 };
 
-#endif
+#endif // QTWEBENGINE_VIEWWINDOW_H
