@@ -290,7 +290,7 @@ void ViewWindowMgr::saveSettings( Settings::viewindow_saved_settings_t& settings
 			const TabData& tab = findTabData( i );
 			settings.push_back( Settings::SavedViewWindow( tab.controller->url().toString(),
 			                                               tab.controller->getScrollbarPosition(),
-			                                               tab.controller->getZoomFactor()) );
+			                                               tab.controller->zoomFactor()) );
 		}
 	} catch ( const std::invalid_argument& ) {
 	}
