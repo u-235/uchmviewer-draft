@@ -45,6 +45,7 @@ set(CPP_SOURCES
     treeitem_toc.cpp
     treeitem_toc.h
     viewwindowmgr.cpp
+    webbrowser.h
     )
 
 set(MOC_HEADERS
@@ -79,20 +80,26 @@ set(UIS
 
 if (${USE_WEBENGINE})
     list(APPEND CPP_SOURCES
-        qtwebengine/viewwindow.cpp
-        qtwebengine/viewwindow.h
         qtwebengine/dataprovider.cpp
         qtwebengine/dataprovider.h
+        qtwebengine/webenginebrowser.cpp
+        qtwebengine/webenginebrowser.h
+        qtwebengine/webenginepage.h
+        qtwebengine/webenginewidget.cpp
+        qtwebengine/webenginewidget.h
         )
-    list(APPEND MOC_HEADERS qtwebengine/viewwindow.h  qtwebengine/webenginepage.h)
+    list(APPEND MOC_HEADERS qtwebengine/webenginebrowser.h qtwebengine/webenginepage.h qtwebengine/webenginewidget.h)
+    qt_add_resources(RSRCS qtwebengine/webengine.qrc)
 else ()
     list(APPEND CPP_SOURCES
-        qtwebkit/viewwindow.cpp
-        qtwebkit/viewwindow.h
         qtwebkit/dataprovider.cpp
         qtwebkit/dataprovider.h
+        qtwebkit/webkitbrowser.cpp
+        qtwebkit/webkitbrowser.h
+        qtwebkit/webkitwidget.cpp
+        qtwebkit/webkitwidget.h
         )
-    list(APPEND MOC_HEADERS qtwebkit/viewwindow.h)
+    list(APPEND MOC_HEADERS qtwebkit/webkitbrowser.h qtwebkit/webkitwidget.h)
 endif ()
 
 if (${USE_DBUS})

@@ -35,7 +35,6 @@ HEADERS += \
     tab_index.h \
     tab_search.h \
     version.h \
-    viewwindow.h \
     viewwindowmgr.h \
     navigationpanel.h \
     toolbarmanager.h \
@@ -45,7 +44,8 @@ HEADERS += \
     treeitem_index.h \
     mimehelper.h \
     showwaitcursor.h \
-    i18n.h
+    i18n.h \
+    webbrowser.h
 
 SOURCES += \
     config.cpp \
@@ -141,13 +141,23 @@ unix:!macx: {
 
     QT += webenginewidgets
     DEFINES += USE_WEBENGINE
-    SOURCES += qtwebengine/viewwindow.cpp qtwebengine/dataprovider.cpp
-    HEADERS += qtwebengine/dataprovider.h qtwebengine/viewwindow.h qtwebengine/webenginepage.h
+    SOURCES += qtwebengine/dataprovider.cpp \
+        qtwebengine/webenginebrowser.cpp \
+        qtwebengine/webenginewidget.cpp
+    HEADERS += qtwebengine/dataprovider.h \
+        qtwebengine/webenginebrowser.h \
+        qtwebengine/webenginepage.h \
+        qtwebengine/webenginewidget.h
+	    RESOURCES += qtwebengine/webengine.qrc
 } else {
     QT += webkit webkitwidgets
     DEFINES += USE_WEBKIT
-    SOURCES += qtwebkit/viewwindow.cpp qtwebkit/dataprovider.cpp
-    HEADERS += qtwebkit/dataprovider.h qtwebkit/viewwindow.h
+    SOURCES += qtwebkit/dataprovider.cpp \
+        qtwebkit/webkitbrowser.cpp \
+        qtwebkit/webkitwidget.cpp
+    HEADERS += qtwebkit/dataprovider.h \
+        qtwebkit/webkitbrowser.h \
+        qtwebkit/webkitwidget.h
 }
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat
