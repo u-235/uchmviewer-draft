@@ -24,6 +24,7 @@
 #include <QUrl>
 #include <QtGlobal>
 
+#include <ubrowser/browser.hpp>
 #include <ebook.h>
 
 #include "i18n.h"
@@ -34,10 +35,8 @@
 #include "tab_index.h"
 #include "tab_search.h"
 #include "treeitem_toc.h"
-#include "viewwindow.h"
 
 #include "navigationpanel.h"
-
 
 NavigationPanel::NavigationPanel( QWidget* parent )
 	: QDockWidget( parent ), Ui::NavigatorPanel()
