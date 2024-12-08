@@ -1,6 +1,7 @@
 /*
  *  Kchmviewer - a CHM and EPUB file viewer with broad language support
  *  Copyright (C) 2004-2014 George Yunaev, gyunaev@ulduzsoft.com
+ *  Copyright (C) 2025 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -29,6 +30,8 @@ class QNetworkRequest;
 class QObject;
 class QUrl;
 
+#include <ubrowser/contentprovider.hpp>
+
 
 //
 // A network reply to emulate data transfer from CHM file
@@ -36,7 +39,9 @@ class QUrl;
 class KCHMNetworkReply : public QNetworkReply
 {
 	public:
-		KCHMNetworkReply( const QNetworkRequest& request, const QUrl& url );
+		KCHMNetworkReply( UBrowser::ContentProvider::Ptr contentProvider,
+		                  const QNetworkRequest& request,
+		                  const QUrl& url );
 		virtual qint64 bytesAvailable() const;
 		virtual void abort();
 
@@ -47,6 +52,7 @@ class KCHMNetworkReply : public QNetworkReply
 	private:
 		QByteArray  m_data;
 		qint64      m_length;
+		UBrowser::ContentProvider::Ptr m_contentProvider;
 };
 
 
@@ -56,10 +62,14 @@ class KCHMNetworkReply : public QNetworkReply
 class KCHMNetworkAccessManager : public QNetworkAccessManager
 {
 	public:
-		KCHMNetworkAccessManager( QObject* parent );
+		KCHMNetworkAccessManager( UBrowser::ContentProvider::Ptr contentProvider,
+		                          QObject* parent );
 
 	protected:
 		virtual QNetworkReply* createRequest( Operation op, const QNetworkRequest& request, QIODevice* outgoingData = 0 );
+
+	private:
+		UBrowser::ContentProvider::Ptr m_contentProvider;
 };
 
 #endif // QWEBVIEWNETWORK_H

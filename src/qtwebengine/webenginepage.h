@@ -1,6 +1,6 @@
 /*
  *  Kchmviewer - a CHM and EPUB file viewer with broad language support
- *  Copyright (C) 2021 Nick Egorrov, nicegorov@yandex.ru
+ *  Copyright (C) 2021-2025 Nick Egorrov, nicegorov@yandex.ru
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -45,21 +45,9 @@ class WebEnginePage : public QWebEnginePage
 		void linkClicked( const QUrl& url, UBrowser::OpenMode mode );
 
 	public:
-		WebEnginePage( QObject* parent )
-			: QWebEnginePage( parent )
+		WebEnginePage( QWebEngineProfile* pf, QObject* parent )
+			: QWebEnginePage( pf, parent )
 		{
-			QWebEngineProfile* pf = profile();
-
-			if ( pf->urlSchemeHandler( EBook_CHM::URL_SCHEME_CHM ) == NULL )
-			{
-				pf->installUrlSchemeHandler( EBook_CHM::URL_SCHEME_CHM, new DataProvider( pf ) );
-			}
-
-			if ( pf->urlSchemeHandler( EBook_EPUB::URL_SCHEME_EPUB ) == NULL )
-			{
-				pf->installUrlSchemeHandler( EBook_EPUB::URL_SCHEME_EPUB, new DataProvider( pf ) );
-			}
-
 			connect( this, SIGNAL( linkHovered( const QString& ) ), this, SLOT( onLinkHovered( const QString& ) ) );
 		}
 
