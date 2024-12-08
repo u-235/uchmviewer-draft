@@ -142,20 +142,20 @@ ViewWindow* ViewWindowMgr::current()
 	if ( !tab )
 		abort();
 
-	return tab->window;
+	return tab->controller;
 }
 
 ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 {
-	ViewWindow* viewvnd = new ViewWindow( m_tabWidget );
+	ViewWindow* controller = new ViewWindow( m_tabWidget );
 
 	editFind->installEventFilter( this );
 
 	// Create the tab data structure
 	TabData tabdata;
-	tabdata.window = viewvnd;
+	tabdata.controller = controller;
 	tabdata.action = new QAction( "window", this ); // temporary name; real name is set in setTabName
-	tabdata.widget = viewvnd;
+	tabdata.widget = controller;
 
 	connect( tabdata.action,
 	         SIGNAL( triggered() ),
@@ -171,17 +171,17 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 		m_tabWidget->setCurrentWidget( tabdata.widget );
 
 	// Handle clicking on link in browser window
-	connect( viewvnd,
+	connect( controller,
 	         SIGNAL( linkClicked ( const QUrl& ) ),
 	         ::mainWindow,
 	         SLOT( activateUrl( const QUrl& ) ) );
 
-	connect( viewvnd,
+	connect( controller,
 	         SIGNAL( urlChanged( const QUrl& ) ),
 	         this,
 	         SLOT( onUrlChanged( const QUrl& ) ) );
 
-	connect( viewvnd, SIGNAL(dataLoaded(ViewWindow*)), this, SLOT(onWindowContentChanged(ViewWindow*)));
+	connect( controller, SIGNAL(dataLoaded(ViewWindow*)), this, SLOT(onWindowContentChanged(ViewWindow*)));
 
 	// Set up the accelerator if we have room
 	if ( m_Windows.size() < 10 )
@@ -190,7 +190,7 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 	// Add it to the "Windows" menu
 	m_menuWindow->addAction( tabdata.action );
 
-	return viewvnd;
+	return controller;
 }
 
 void ViewWindowMgr::closeAllWindows( )
@@ -199,19 +199,19 @@ void ViewWindowMgr::closeAllWindows( )
 		closeWindow( m_Windows.first().widget );
 }
 
-void ViewWindowMgr::setTabName( ViewWindow* window )
+void ViewWindowMgr::setTabName(ViewWindow* controller )
 {
-	TabData* tab = findTab( window );
+	TabData* tab = findTab( controller );
 
 	if ( tab )
 	{
-		QString title = window->title().trimmed();
+		QString title = controller->title().trimmed();
 
 		// Trim too long string
 		if ( title.length() > 25 )
 			title = title.left( 22 ) + "...";
 
-		m_tabWidget->setTabText( m_tabWidget->indexOf( window ), title );
+		m_tabWidget->setTabText( m_tabWidget->indexOf( controller ), title );
 		tab->action->setText( title );
 
 		updateCloseButtons();
@@ -254,7 +254,7 @@ void ViewWindowMgr::closeWindow( QWidget* widget )
 	m_menuWindow->removeAction( it->action );
 
 	m_tabWidget->removeTab( m_tabWidget->indexOf( it->widget ) );
-	delete it->window;
+	delete it->controller;
 	delete it->action;
 
 	m_Windows.erase( it );
@@ -273,10 +273,10 @@ void ViewWindowMgr::restoreSettings( const Settings::viewindow_saved_settings_t&
 
 	for ( int i = 0; i < settings.size(); i++ )
 	{
-		ViewWindow* window = addNewTab( false );
-		window->openUrl( settings[i].url ); // will call setTabName()
-		window->setScrollbarPosition( settings[i].scroll_y );
-		window->setZoomFactor( settings[i].zoom );
+		ViewWindow* controller = addNewTab( false );
+		controller->openUrl( settings[i].url ); // will call setTabName()
+		controller->setScrollbarPosition( settings[i].scroll_y );
+		controller->setZoomFactor( settings[i].zoom );
 	}
 }
 
@@ -292,9 +292,9 @@ void ViewWindowMgr::saveSettings( Settings::viewindow_saved_settings_t& settings
 		if ( !tab )
 			abort();
 
-		settings.push_back( Settings::SavedViewWindow( tab->window->getOpenedPage().toString(),
-		                                               tab->window->getScrollbarPosition(),
-		                                               tab->window->getZoomFactor()) );
+		settings.push_back( Settings::SavedViewWindow( tab->controller->getOpenedPage().toString(),
+		                                               tab->controller->getScrollbarPosition(),
+		                                               tab->controller->getZoomFactor()) );
 	}
 }
 
@@ -316,7 +316,7 @@ void ViewWindowMgr::onTabChanged( int newtabIndex )
 	if ( tab )
 	{
 		emit historyChanged();
-		mainWindow->browserChanged( tab->window );
+		mainWindow->browserChanged( tab->controller );
 		tab->widget->setFocus();
 	}
 }
@@ -421,9 +421,9 @@ void ViewWindowMgr::onFindPrevious()
 	find( true );
 }
 
-void ViewWindowMgr::onWindowContentChanged(ViewWindow* window)
+void ViewWindowMgr::onWindowContentChanged(ViewWindow* controller)
 {
-	setTabName( (ViewWindow*) window );
+	setTabName( controller );
 }
 
 void ViewWindowMgr::copyUrlToClipboard()

@@ -456,16 +456,16 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 		return false; // do not change the current page.
 	}
 
-	ViewWindow* vwnd = currentBrowser();
+	ViewWindow* controller = currentBrowser();
 
 	if ( flags & OPF_NEW_TAB )
 	{
 		qreal zoom = currentBrowser()->zoomFactor();
-		vwnd = m_viewWindowMgr->addNewTab( !(flags & OPF_BACKGROUND) );
-		vwnd->setZoomFactor( zoom );
+		controller = m_viewWindowMgr->addNewTab( !(flags & OPF_BACKGROUND) );
+		controller->setZoomFactor( zoom );
 	}
 
-	if ( vwnd->openUrl (url) )
+	if ( controller->openUrl (url) )
 	{
 		// Open all the tree items to show current item (if needed)
 		if ( (flags & OPF_CONTENT_TREE) != 0 )
@@ -474,7 +474,7 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 
 	// Focus on the view window so keyboard scroll works; do not do it for the background tabs
 	if ( (flags & OPF_BACKGROUND) == 0 )
-		vwnd->setFocus( Qt::OtherFocusReason );
+		controller->setFocus( Qt::OtherFocusReason );
 
 	return true;
 }
@@ -726,9 +726,9 @@ void MainWindow::onOpenPageInNewBackgroundTab( )
 	openPage( getNewTabLink(), OPF_NEW_TAB | OPF_BACKGROUND );
 }
 
-void MainWindow::browserChanged(ViewWindow* newbrowser )
+void MainWindow::browserChanged(ViewWindow* controller)
 {
-	m_navPanel->findUrlInContents( newbrowser->getOpenedPage() );
+	m_navPanel->findUrlInContents( controller->getOpenedPage() );
 }
 
 bool MainWindow::event( QEvent* e )
