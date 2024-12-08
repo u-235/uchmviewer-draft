@@ -465,12 +465,11 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 		vwnd->setZoomFactor( zoom );
 	}
 
-	if ( vwnd->load (url) )
-	{
-		// Open all the tree items to show current item (if needed)
-		if ( (flags & OPF_CONTENT_TREE) != 0 )
-			m_navPanel->findUrlInContents( url );
-	}
+	vwnd->load (url);
+
+	// Open all the tree items to show current item (if needed)
+	if ( (flags & OPF_CONTENT_TREE) != 0 )
+		m_navPanel->findUrlInContents( url );
 
 	// Focus on the view window so keyboard scroll works; do not do it for the background tabs
 	if ( (flags & OPF_BACKGROUND) == 0 )

@@ -79,7 +79,7 @@ void ViewWindow::invalidate( )
 	reload();
 }
 
-bool ViewWindow::load ( const QUrl& url )
+void ViewWindow::load( const QUrl& url )
 {
 	//qDebug("ViewWindow::openUrl %s", qPrintable(url.toString()));
 
@@ -88,8 +88,6 @@ bool ViewWindow::load ( const QUrl& url )
 
 	m_newTabLinkKeeper.clear();
 	mainWindow->viewWindowMgr()->setTabName( this );
-
-	return true;
 }
 
 void ViewWindow::applySettings(BrowserSettings& settings)
