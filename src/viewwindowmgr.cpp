@@ -45,6 +45,9 @@
 
 class QMouseEvent;
 
+#include <browser-settings.hpp> // for BrowserSettings
+#include <browser-types.hpp>    // for OPEN_IN_NEW, OpenMode
+
 #include "config.h"         // for Config, pConfig
 #include "i18n.h"           // for i18n
 #include "mainwindow.h"     // for MainWindow, mainWindow, MainWindow::OPF_CONTENT_TREE, MainWindow::OPF_NEW_TAB
@@ -171,10 +174,11 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 		m_tabWidget->setCurrentWidget( tabdata.widget );
 
 	// Handle clicking on link in browser window
-	connect( controller,
-	         SIGNAL( linkClicked ( const QUrl& ) ),
-	         ::mainWindow,
-	         SLOT( activateUrl( const QUrl& ) ) );
+	connect( controller, &ViewWindow::linkClicked,
+	         [this](const QUrl & link, Browser::OpenMode mode)
+	{
+		emit linkClicked(link, mode);
+	});
 
 	connect( controller,
 	         SIGNAL( urlChanged( const QUrl& ) ),
@@ -325,7 +329,7 @@ void ViewWindowMgr::onUrlChanged(const QUrl&)
 
 void ViewWindowMgr::openNewTab()
 {
-	::mainWindow->openPage( current()->url(), MainWindow::OPF_NEW_TAB | MainWindow::OPF_CONTENT_TREE );
+	::mainWindow->openPage( current()->url(), Browser::OPEN_IN_NEW );
 }
 
 void ViewWindowMgr::activateWindow()

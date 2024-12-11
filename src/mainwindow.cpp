@@ -71,6 +71,7 @@
 
 class QCloseEvent;
 
+#include <browser-types.hpp>      // for OPEN_IN_BACKGROUND, OPEN_IN_NEW, OpenMode
 #include <ebook.h>                // for EBook, EBook::FEATURE_ENCODING, EBook::FEATURE_TOC, EBook::FEATURE_INDEX, EBookTocEntry, EBookTocEntry::Icon
 
 #include "config.h"               // for Config, pConfig, Config::ACTION_ALWAYS_OPEN, Config::ACTION_ASK_USER, Config::ACTION_DONT_OPEN, Config::STARTUP_LOA...
@@ -129,6 +130,8 @@ MainWindow::MainWindow( const QStringList& arguments )
 	        SLOT(onHistoryChanged()));
 	connect(m_viewWindowMgr, &ViewWindowMgr::browserChanged,
 	        this, &MainWindow::browserChanged);
+	connect(m_viewWindowMgr, &ViewWindowMgr::linkClicked,
+	        this, &MainWindow::openPage);
 
 	// Create a navigation panel
 	m_navPanel = new NavigationPanel( this );
@@ -411,23 +414,11 @@ void MainWindow::refreshCurrentBrowser( )
 	m_navPanel->refresh();
 }
 
-void MainWindow::activateUrl( const QUrl& link )
+bool MainWindow::openPage(const QUrl& url, Browser::OpenMode mode )
 {
-	if ( link.isEmpty() )
-		return;
+	if ( url.isEmpty() )
+		return false;
 
-	Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-
-	if ( mods & Qt::ShiftModifier )
-		openPage( link, OPF_NEW_TAB | OPF_CONTENT_TREE );
-	else if ( mods & Qt::ControlModifier )
-		openPage( link, OPF_NEW_TAB | OPF_BACKGROUND );
-	else
-		openPage( link, OPF_CONTENT_TREE );
-}
-
-bool MainWindow::openPage( const QUrl& url, unsigned int flags )
-{
 	QString otherlink;
 
 	// Feed to the browser all non-internal URLs
@@ -462,22 +453,22 @@ bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 
 	ViewWindow* controller = currentBrowser();
 
-	if ( flags & OPF_NEW_TAB )
+	if ( mode == Browser::OPEN_IN_NEW || mode == Browser::OPEN_IN_BACKGROUND )
 	{
 		qreal zoom = currentBrowser()->zoomFactor();
-		controller = m_viewWindowMgr->addNewTab( !(flags & OPF_BACKGROUND) );
+		controller = m_viewWindowMgr->addNewTab( mode != Browser::OPEN_IN_BACKGROUND );
 		controller->setZoomFactor( zoom );
 	}
 
 	controller->load (url);
 
-	// Open all the tree items to show current item (if needed)
-	if ( (flags & OPF_CONTENT_TREE) != 0 )
+	if ( mode != Browser::OPEN_IN_BACKGROUND )
+	{
+		// Open all the tree items to show current item (if needed)
 		m_navPanel->findUrlInContents( url );
-
-	// Focus on the view window so keyboard scroll works; do not do it for the background tabs
-	if ( (flags & OPF_BACKGROUND) == 0 )
+		// Focus on the view window so keyboard scroll works; do not do it for the background tabs
 		controller->setFocus( Qt::OtherFocusReason );
+	}
 
 	return true;
 }
@@ -721,12 +712,12 @@ QUrl MainWindow::getNewTabLink() const
 
 void MainWindow::onOpenPageInNewTab( )
 {
-	openPage( getNewTabLink(), OPF_NEW_TAB | OPF_CONTENT_TREE );
+	openPage( getNewTabLink(), Browser::OPEN_IN_NEW );
 }
 
 void MainWindow::onOpenPageInNewBackgroundTab( )
 {
-	openPage( getNewTabLink(), OPF_NEW_TAB | OPF_BACKGROUND );
+	openPage( getNewTabLink(), Browser::OPEN_IN_BACKGROUND );
 }
 
 void MainWindow::browserChanged(ViewWindow* controller)

@@ -26,8 +26,9 @@
 #include <QWebEnginePage>
 #include <QWebEngineProfile>
 
-#include <ebook_chm.h>    // EBook_CHM::URL_SCHEME_CHM
-#include <ebook_epub.h>   // EBook_EPUB::URL_SCHEME_EPUB
+#include <browser-types.hpp>    //
+#include <ebook_chm.h>          // EBook_CHM::URL_SCHEME_CHM
+#include <ebook_epub.h>         // EBook_EPUB::URL_SCHEME_EPUB
 
 #include "dataprovider.h" // DataProvider
 
@@ -41,7 +42,7 @@ class WebEnginePage : public QWebEnginePage
 
 	signals:
 		// This signal is emitted whenever the user clicks on a link.
-		void linkClicked( const QUrl& url );
+		void linkClicked( const QUrl& url, Browser::OpenMode mode );
 
 	public:
 		WebEnginePage(QObject* parent)
@@ -77,7 +78,7 @@ class WebEnginePage : public QWebEnginePage
 
 			if ( type == QWebEnginePage::NavigationTypeLinkClicked )
 			{
-				emit linkClicked( url );
+				emit linkClicked( url, Browser::OPEN_IN_CURRENT );
 				return false;
 			}
 
@@ -103,9 +104,10 @@ class WebEnginePage : public QWebEnginePage
 
 			if ( !m_url.isEmpty() )
 			{
-				Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-				if ( !( mods & (Qt::ShiftModifier | Qt::ControlModifier ) ) )
-					linkClicked( ( m_url ) );
+				if ( type == QWebEnginePage::WebBrowserBackgroundTab )
+					emit linkClicked(  m_url, Browser::OPEN_IN_BACKGROUND );
+				else
+					emit linkClicked( m_url, Browser::OPEN_IN_NEW );
 			}
 
 			return 0;

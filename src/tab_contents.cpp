@@ -206,7 +206,7 @@ void TabContents::onClicked(QTreeWidgetItem* item, int)
 		return;
 
 	TreeItem_TOC* treeitem = (TreeItem_TOC*) item;
-	::mainWindow->activateUrl( treeitem->getUrl() );
+	::mainWindow->openPage( treeitem->getUrl() );
 }
 
 void TabContents::onContextMenuRequested(const QPoint& point)
@@ -228,7 +228,7 @@ void TabContents::search( const QString& text )
 		return;
 
 	TreeItem_TOC* treeitem = (TreeItem_TOC*) items.first();
-	::mainWindow->activateUrl( treeitem->getUrl() );
+	::mainWindow->openPage( treeitem->getUrl() );
 }
 
 void TabContents::focus()

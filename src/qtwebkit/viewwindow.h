@@ -34,6 +34,8 @@ class QPoint;
 class QPrinter;
 class QWidget;
 
+#include <browser-types.hpp>    // for OpenMode
+
 class BrowserSettings;
 
 
@@ -53,6 +55,7 @@ class ViewWindow : public QWebView
 
 	signals:
 		void    dataLoaded( ViewWindow* window );
+		void    linkClicked( const QUrl& link, Browser::OpenMode mode );
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer

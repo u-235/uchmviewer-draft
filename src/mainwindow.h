@@ -36,7 +36,8 @@ class QMenu;
 class QSharedMemory;
 class QTemporaryFile;
 
-#include <ebook.h>  // for EBookTocEntry, EBookTocEntry::Icon, EBookTocEntry::MAX_BUILTIN_ICONS
+#include <browser-types.hpp>    // for OPEN_IN_CURRENT, OpenMode
+#include <ebook.h>              // for EBookTocEntry, EBookTocEntry::Icon, EBookTocEntry::MAX_BUILTIN_ICONS
 
 #include "ui_mainwindow.h"
 
@@ -67,20 +68,13 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		Q_OBJECT
 
 	public:
-		// "Open page" parameter flags
-		enum
-		{
-			OPF_CONTENT_TREE = 1 << 0,  //! Locate this page in the content tree
-			OPF_NEW_TAB = 1 << 2,       //! Open the page in a new tab
-			OPF_BACKGROUND  = 1 << 3    //! Open the page in a new tab in background
-		};
-
-	public:
 		MainWindow( const QStringList& arguments );
 		~MainWindow();
 
-		bool        openPage (const QUrl& url, unsigned int flags = OPF_CONTENT_TREE );
+	public slots:
+		bool        openPage (const QUrl& url, Browser::OpenMode mode = Browser::OPEN_IN_CURRENT );
 
+	public:
 		EBook*      chmFile() const { return m_ebookFile; }
 		const QString&  getOpenedFileName () { return m_ebookFilename; }
 		const QString&  getOpenedFileBaseName () { return m_ebookFileBasename; }
@@ -157,9 +151,6 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 		void        actionOpenRecentFile( const QString& file );
 		void        actionEncodingChanged( QAction* action );
-
-		// Link activation
-		void        activateUrl( const QUrl& link );
 
 		void        updateToolbars();
 		void        updateActions();

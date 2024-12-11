@@ -32,6 +32,8 @@ class QMenu;
 class QPrinter;
 class QWidget;
 
+#include <browser-types.hpp>    // for OPEN_IN_CURRENT, OpenMode
+
 class BrowserSettings;
 
 
@@ -53,7 +55,7 @@ class ViewWindow : public QWebEngineView
 		void    dataLoaded( ViewWindow* window );
 
 		// This signal is emitted whenever the user clicks on a link.
-		void linkClicked(const QUrl& url);
+		void    linkClicked(const QUrl& url, Browser::OpenMode mode);
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
@@ -125,7 +127,7 @@ class ViewWindow : public QWebEngineView
 	private slots:
 		// Used to restore the scrollbar position and the navigation button status
 		void            onLoadFinished ( bool ok );
-		void            onLinkClicked(const QUrl& url);
+		void            onLinkClicked(const QUrl& url, Browser::OpenMode mode = Browser::OPEN_IN_CURRENT);
 
 	private:
 		QMenu*                  m_contextMenu;

@@ -42,7 +42,8 @@
 
 class QPrinter;
 
-#include <ebook.h>  // for EBook
+#include <browser-types.hpp>    // for OpenMode
+#include <ebook.h>              // for EBook
 
 #include "../browser-settings.hpp"  // for BrowserSettings
 #include "../i18n.h"                // for i18n
@@ -67,7 +68,7 @@ ViewWindow::ViewWindow( QWidget* parent )
 	m_storedScrollbarPosition = 0;
 
 	WebEnginePage* page = new WebEnginePage( this );
-	connect( page, SIGNAL( linkClicked ( const QUrl& ) ), this, SLOT( onLinkClicked( const QUrl& ) ) );
+	connect( page, SIGNAL( linkClicked ( const QUrl&, Browser::OpenMode ) ), this, SLOT( onLinkClicked( const QUrl&, Browser::OpenMode ) ) );
 	setPage( page );
 
 	connect( this, SIGNAL( loadFinished(bool)), this, SLOT( onLoadFinished(bool)) );
@@ -299,9 +300,9 @@ void ViewWindow::onLoadFinished ( bool )
 	emit dataLoaded( this );
 }
 
-void ViewWindow::onLinkClicked(const QUrl& url)
+void ViewWindow::onLinkClicked(const QUrl& url, Browser::OpenMode mode)
 {
-	emit linkClicked( url );
+	emit linkClicked( url, mode );
 }
 
 void ViewWindow::applySettings(BrowserSettings& settings)

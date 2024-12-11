@@ -16,24 +16,25 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QDialog>      // for QDialog, QDialog::Accepted
-#include <QEvent>       // for QContextMenuEvent
-#include <QKeySequence> // for QKeySequence
-#include <QMenu>        // for QMenu
-#include <QMouseEvent>  // for QMouseEvent
-#include <QPalette>     // for QPalette, QPalette::Active, QPalette::Highlight, QPalette::HighlightedText, QPalette::Inactive
-#include <QString>      // for QString
-#include <QUrl>         // for QUrl
-#include <QWebFrame>    // for QWebFrame, QWebHitTestResult
-#include <QWebHistory>  // for QWebHistory
-#include <QWebPage>     // for QWebPage, QWebPage::Copy, QWebPage::DelegateAllLinks, QWebPage::SelectAll
-#include <QWebSettings> // for QWebSettings, QWebSettings::AutoLoadImages, QWebSettings::JavaEnabled, QWebSettings::JavascriptEnabled, QWebSetti...
-#include <Qt>           // for Vertical, MidButton
-#include <QtGlobal>     // for qreal
+#include <QApplication>         // for QApplication
+#include <QContextMenuEvent>    // for QContextMenuEvent
+#include <QKeySequence>         // for QKeySequence
+#include <QMenu>                // for QMenu
+#include <QMouseEvent>          // for QMouseEvent
+#include <QPalette>             // for QPalette, QPalette::Active, QPalette::Highlight, QPalette::HighlightedText, QPalette::Inactive
+#include <QString>              // for QString
+#include <QUrl>                 // for QUrl
+#include <QWebFrame>            // for QWebFrame, QWebHitTestResult
+#include <QWebHistory>          // for QWebHistory
+#include <QWebPage>             // for QWebPage, QWebPage::Copy, QWebPage::DelegateAllLinks, QWebPage::SelectAll
+#include <QWebSettings>         // for QWebSettings, QWebSettings::AutoLoadImages, QWebSettings::JavaEnabled, QWebSettings::JavascriptEnabled, QWebSetti...
+#include <Qt>                   // for Vertical, MidButton
+#include <QtGlobal>             // for qreal
 
 class QPrinter;
 
-#include <ebook.h>  // for EBook
+#include <browser-types.hpp>    // for OPEN_IN_BACKGROUND, OPEN_IN_CURRENT, OPEN_IN_NEW
+#include <ebook.h>              // for EBook
 
 #include "../browser-settings.hpp"  // for BrowserSettings
 #include "../i18n.h"                // for i18n
@@ -60,6 +61,16 @@ ViewWindow::ViewWindow( QWidget* parent )
 	page()->setLinkDelegationPolicy( QWebPage::DelegateAllLinks );
 
 	connect( this, SIGNAL( loadFinished(bool)), this, SLOT( onLoadFinished(bool)) );
+	connect(this, &QWebView::linkClicked,
+	        [this](const QUrl & link)
+	{
+		if ( (QApplication::keyboardModifiers() & Qt::ShiftModifier) != 0 )
+			emit linkClicked( link, Browser::OPEN_IN_NEW );
+		else if ( (QApplication::keyboardModifiers() & Qt::ControlModifier) != 0 )
+			emit linkClicked( link, Browser::OPEN_IN_BACKGROUND );
+		else
+			emit linkClicked( link, Browser::OPEN_IN_CURRENT );
+	});
 
 	// Search results highlighter
 	QPalette pal = palette();
@@ -286,8 +297,7 @@ void ViewWindow::mouseReleaseEvent ( QMouseEvent* event )
 
 		if ( !link.isEmpty() )
 		{
-			setTabKeeper( link );
-			::mainWindow->onOpenPageInNewBackgroundTab();
+			emit linkClicked( link, Browser::OPEN_IN_BACKGROUND );
 			return;
 		}
 	}

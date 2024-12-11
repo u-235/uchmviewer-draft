@@ -28,6 +28,8 @@ class QAction;
 class QMenu;
 class QUrl;
 
+#include <browser-types.hpp>    // for OpenMode
+
 #include "settings.h"           // for Settings, Settings::viewindow_saved_settings_t
 #include "ui_window_browser.h"  // for TabbedBrowser
 
@@ -80,6 +82,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		 * see onUrlChanged(), onTabChanged()
 		 */
 		void    historyChanged();
+		void    linkClicked(const QUrl& url, Browser::OpenMode mode);
 
 	public slots:
 		void    onCloseCurrentWindow();
