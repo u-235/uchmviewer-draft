@@ -51,11 +51,11 @@ class ViewWindow : public QWebView
 		void    load (const QUrl& url );
 
 		QUrl    url() const   { return QWebView::url(); }
-		QUrl    getNewTabLink() const   { return m_newTabLinkKeeper; }
 
 	signals:
 		void    dataLoaded( ViewWindow* window );
 		void    linkClicked( const QUrl& link, Browser::OpenMode mode );
+		void    contextMenuRequested(const QPoint& globalPos, const QUrl& url);
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer
@@ -103,9 +103,6 @@ class ViewWindow : public QWebView
 
 		bool    canGoForward() const;
 
-		//! Keeps the tab URL between link following
-		void    setTabKeeper ( const QUrl& link );
-
 	public slots:
 		void    zoomIncrease();
 		void    zoomDecrease();
@@ -113,9 +110,6 @@ class ViewWindow : public QWebView
 	protected:
 		bool            openPage ( const QUrl& url );
 		void            handleStartPageAsImage( QUrl& link );
-
-		QMenu*      getContextMenu( const QUrl& link, QWidget* parent );
-		QMenu*      createStandardContextMenu( QWidget* parent );
 
 		// Overriden to change the source
 		void            setSource ( const QUrl& name );
@@ -131,12 +125,6 @@ class ViewWindow : public QWebView
 
 	private:
 		QString                 m_lastSearchedWord;
-		QMenu*                  m_contextMenu;
-		QMenu*                  m_contextMenuLink;
-
-		// This member keeps a "open new tab" link between getContextMenu()
-		// call and appropriate slot call
-		QUrl                    m_newTabLinkKeeper;
 
 		// Keeps the scrollbar position to move after the page is loaded
 		int                     m_storedScrollbarPosition;

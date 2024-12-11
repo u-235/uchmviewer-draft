@@ -44,6 +44,9 @@
 #include <QtGlobal>         // for QT_VERSION, QT_VERSION_CHECK, Q_ASSERT, qFatal
 
 class QMouseEvent;
+class QPoint;
+
+#include <browser-settings.hpp>  // for BrowserSettings
 
 #include <browser-settings.hpp> // for BrowserSettings
 #include <browser-types.hpp>    // for OPEN_IN_NEW, OpenMode
@@ -178,6 +181,12 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 	         [this](const QUrl & link, Browser::OpenMode mode)
 	{
 		emit linkClicked(link, mode);
+	});
+
+	connect(controller, &ViewWindow::contextMenuRequested,
+	        [controller, this](const QPoint & pos, const QUrl & link)
+	{
+		emit contextMenuRequested(controller, pos, link);
 	});
 
 	connect( controller,

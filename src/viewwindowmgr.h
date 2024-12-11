@@ -26,6 +26,7 @@
 
 class QAction;
 class QMenu;
+class QPoint;
 class QUrl;
 
 #include <browser-types.hpp>    // for OpenMode
@@ -83,6 +84,9 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		 */
 		void    historyChanged();
 		void    linkClicked(const QUrl& url, Browser::OpenMode mode);
+		void    contextMenuRequested(ViewWindow* controller,
+		                             const QPoint& globalPos,
+		                             const QUrl& url);
 
 	public slots:
 		void    onCloseCurrentWindow();

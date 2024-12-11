@@ -132,6 +132,8 @@ MainWindow::MainWindow( const QStringList& arguments )
 	        this, &MainWindow::browserChanged);
 	connect(m_viewWindowMgr, &ViewWindowMgr::linkClicked,
 	        this, &MainWindow::openPage);
+	connect(m_viewWindowMgr, &ViewWindowMgr::contextMenuRequested,
+	        this, &MainWindow::showBrowserContextMenu);
 
 	// Create a navigation panel
 	m_navPanel = new NavigationPanel( this );
@@ -412,6 +414,26 @@ void MainWindow::refreshCurrentBrowser( )
 	currentBrowser()->invalidate();
 
 	m_navPanel->refresh();
+}
+
+void MainWindow::showBrowserContextMenu(ViewWindow* controller,
+                                        const QPoint& globalPos,
+                                        const QUrl& link)
+{
+	Q_UNUSED(controller)
+	QMenu* m = new QMenu(this);
+
+	if ( !link.isEmpty() )
+	{
+		m->addAction( i18n("Open Link in a new tab\tShift+LMB"), this, SLOT( onOpenPageInNewTab() ) );
+		m->addAction( i18n("Open Link in a new background tab\tCtrl+LMB"), this, SLOT( onOpenPageInNewBackgroundTab() ) );
+		m->addSeparator();
+		setNewTabLink( link );
+	}
+
+	setupPopupMenu( m );
+	m->exec( globalPos );
+	m->deleteLater();
 }
 
 bool MainWindow::openPage(const QUrl& url, Browser::OpenMode mode )

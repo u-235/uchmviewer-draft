@@ -33,6 +33,7 @@ class QAction;
 class QActionGroup;
 class QCloseEvent;
 class QMenu;
+class QPoint;
 class QSharedMemory;
 class QTemporaryFile;
 
@@ -151,6 +152,10 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 		void        actionOpenRecentFile( const QString& file );
 		void        actionEncodingChanged( QAction* action );
+
+		void        showBrowserContextMenu(ViewWindow* controller,
+		                                   const QPoint& globalPos,
+		                                   const QUrl& link);
 
 		void        updateToolbars();
 		void        updateActions();
