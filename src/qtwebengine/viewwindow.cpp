@@ -67,7 +67,7 @@ ViewWindow::ViewWindow( QWidget* parent )
 	m_storedScrollbarPosition = 0;
 
 	WebEnginePage* page = new WebEnginePage( this );
-	connect( page, SIGNAL( linkClicked ( const QUrl& ) ), this, SLOT( onLinkClicked( const QUrl& ) ) );
+	connect( page, SIGNAL( linkClicked ( const QUrl&, bool ) ), this, SLOT( onLinkClicked( const QUrl&, bool ) ) );
 	setPage( page );
 
 	connect( this, SIGNAL( loadFinished(bool)), this, SLOT( onLoadFinished(bool)) );
@@ -299,9 +299,9 @@ void ViewWindow::onLoadFinished ( bool )
 	emit dataLoaded( this );
 }
 
-void ViewWindow::onLinkClicked(const QUrl& url)
+void ViewWindow::onLinkClicked(const QUrl& url, bool middleButton)
 {
-	emit linkClicked( url );
+	emit linkClicked( url, middleButton );
 }
 
 void ViewWindow::applySettings(BrowserSettings& settings)

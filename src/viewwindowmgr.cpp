@@ -171,9 +171,9 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 
 	// Handle clicking on link in browser window
 	connect( viewvnd,
-	         SIGNAL( linkClicked ( const QUrl& ) ),
+	         SIGNAL( linkClicked ( const QUrl&, bool ) ),
 	         ::mainWindow,
-	         SLOT( activateUrl( const QUrl& ) ) );
+	         SLOT( activateUrl( const QUrl&, bool ) ) );
 
 	connect( viewvnd,
 	         SIGNAL( urlChanged( const QUrl& ) ),

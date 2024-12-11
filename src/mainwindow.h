@@ -159,7 +159,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		void        actionEncodingChanged( QAction* action );
 
 		// Link activation
-		void        activateUrl( const QUrl& link );
+		void        activateUrl(const QUrl& link, bool middleButton = false);
 
 		void        updateToolbars();
 		void        updateActions();

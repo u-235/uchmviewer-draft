@@ -53,6 +53,7 @@ class ViewWindow : public QWebView
 
 	signals:
 		void    dataLoaded( ViewWindow* window );
+		void    linkClicked( const QUrl& link, bool middleButton );
 
 	public:
 		// Apply the configuration settings (JS enabled etc) to the web renderer

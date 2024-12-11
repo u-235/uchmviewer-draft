@@ -409,7 +409,7 @@ void MainWindow::refreshCurrentBrowser( )
 	m_navPanel->refresh();
 }
 
-void MainWindow::activateUrl( const QUrl& link )
+void MainWindow::activateUrl( const QUrl& link, bool middleButton )
 {
 	if ( link.isEmpty() )
 		return;
@@ -418,7 +418,7 @@ void MainWindow::activateUrl( const QUrl& link )
 
 	if ( mods & Qt::ShiftModifier )
 		openPage( link, OPF_NEW_TAB | OPF_CONTENT_TREE );
-	else if ( mods & Qt::ControlModifier )
+	else if ( mods & Qt::ControlModifier || middleButton )
 		openPage( link, OPF_NEW_TAB | OPF_BACKGROUND );
 	else
 		openPage( link, OPF_CONTENT_TREE );

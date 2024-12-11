@@ -41,7 +41,7 @@ class WebEnginePage : public QWebEnginePage
 
 	signals:
 		// This signal is emitted whenever the user clicks on a link.
-		void linkClicked( const QUrl& url );
+		void linkClicked( const QUrl& url, bool middleButton );
 
 	public:
 		WebEnginePage(QObject* parent)
@@ -77,7 +77,7 @@ class WebEnginePage : public QWebEnginePage
 
 			if ( type == QWebEnginePage::NavigationTypeLinkClicked )
 			{
-				emit linkClicked( url );
+				emit linkClicked( url, false );
 				return false;
 			}
 
@@ -103,9 +103,10 @@ class WebEnginePage : public QWebEnginePage
 
 			if ( !m_url.isEmpty() )
 			{
-				Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
-				if ( !( mods & (Qt::ShiftModifier | Qt::ControlModifier ) ) )
-					linkClicked( ( m_url ) );
+				if (  QApplication::keyboardModifiers() & (Qt::ShiftModifier | Qt::ControlModifier ) )
+					emit linkClicked( m_url, false );
+				else if (type == QWebEnginePage::WebBrowserBackgroundTab)
+					emit linkClicked(  m_url, true );
 			}
 
 			return 0;

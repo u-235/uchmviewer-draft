@@ -286,8 +286,7 @@ void ViewWindow::mouseReleaseEvent ( QMouseEvent* event )
 
 		if ( !link.isEmpty() )
 		{
-			setTabKeeper( link );
-			::mainWindow->onOpenPageInNewBackgroundTab();
+			emit linkClicked( link, true );
 			return;
 		}
 	}
