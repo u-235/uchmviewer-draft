@@ -424,6 +424,26 @@ void MainWindow::activateUrl( const QUrl& link, bool middleButton )
 		openPage( link, OPF_CONTENT_TREE );
 }
 
+void MainWindow::showBrowserContextMenu(ViewWindow* controller,
+                                        const QPoint& globalPos,
+                                        const QUrl& link)
+{
+	Q_UNUSED(controller)
+	QMenu* m = new QMenu(this);
+
+	if ( !link.isEmpty() )
+	{
+		m->addAction( i18n("Open Link in a new tab\tShift+LMB"), this, SLOT( onOpenPageInNewTab() ) );
+		m->addAction( i18n("Open Link in a new background tab\tCtrl+LMB"), this, SLOT( onOpenPageInNewBackgroundTab() ) );
+		m->addSeparator();
+		setNewTabLink( link );
+	}
+
+	setupPopupMenu( m );
+	m->exec( globalPos );
+	m->deleteLater();
+}
+
 bool MainWindow::openPage( const QUrl& url, unsigned int flags )
 {
 	QString otherlink;

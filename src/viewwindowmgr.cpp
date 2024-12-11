@@ -16,7 +16,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <cstdlib>  // for abort
+#include <cstdlib>      // for abort
+#include <stdexcept>    // for invalid_argument
 
 #include <QAction>          // for QAction
 #include <QApplication>     // for QApplication
@@ -43,6 +44,8 @@
 #include <QtGlobal>         // for QT_VERSION, QT_VERSION_CHECK, Q_ASSERT, qFatal
 
 class QMouseEvent;
+
+#include <browser-settings.hpp>  // for BrowserSettings
 
 #include "config.h"         // for Config, pConfig
 #include "i18n.h"           // for i18n
@@ -174,6 +177,11 @@ ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 	         SIGNAL( linkClicked ( const QUrl&, bool ) ),
 	         ::mainWindow,
 	         SLOT( activateUrl( const QUrl&, bool ) ) );
+
+	connect( viewvnd,
+	         SIGNAL( contextMenuRequest(ViewWindow*, const QPoint&, const QUrl&) ),
+	         ::mainWindow,
+	         SLOT( showBrowserContextMenu(ViewWindow*, const QPoint&, const QUrl&) ) );
 
 	connect( viewvnd,
 	         SIGNAL( urlChanged( const QUrl& ) ),
