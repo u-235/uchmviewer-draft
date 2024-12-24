@@ -72,6 +72,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    applyBrowserSettings();
 
 	signals:
+		void    browserChanged(ViewWindow* controller);
 		/**
 		 * This signal is emitted when tabs are switched or when the url of
 		 * the ViewWindow changes.
