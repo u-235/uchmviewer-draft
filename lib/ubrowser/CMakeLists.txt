@@ -21,11 +21,13 @@ target_sources(ubrowser PRIVATE
     include/ubrowser/contentprovider.hpp
     include/ubrowser/export.hpp
     include/ubrowser/history.hpp
+    include/ubrowser/history-impl.hpp
     include/ubrowser/settings.hpp
 )
  
 target_sources(ubrowser PRIVATE
     src/browser.cpp
+    src/history-impl.cpp
 )
 
 

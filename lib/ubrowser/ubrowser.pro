@@ -22,10 +22,12 @@ HEADERS += \
     include/ubrowser/contentprovider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/history.hpp \
+    include/ubrowser/history-impl.hpp \
     include/ubrowser/settings.hpp
 
 SOURCES += \
-    src/browser.cpp
+    src/browser.cpp \
+    src/history-impl.cpp
 
 isEmpty(USE_STATIC_UBROWSER) {
     target.path = $${PREFIX}/$${APP_LIB_DIR}
