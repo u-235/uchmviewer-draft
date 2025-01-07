@@ -10,6 +10,7 @@ INCLUDEPATH *= include
 DEFINES *= UBROWSER_API_EXPORT
 
 HEADERS += \
+    include/ubrowser/contentprovider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/settings.hpp \
     include/ubrowser/types.hpp
