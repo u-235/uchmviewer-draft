@@ -110,6 +110,11 @@ void EBook_EPUB::close()
 
 }
 
+const QString EBook_EPUB::urlScheme()
+{
+	return ( URL_SCHEME_EPUB );
+}
+
 bool EBook_EPUB::getFileContentAsString( QString& str, const QUrl& url ) const
 {
 	return getFileAsString( str, urlToPath( url ) );
