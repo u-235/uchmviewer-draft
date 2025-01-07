@@ -11,6 +11,8 @@ set(CPP_SOURCES
     dialog_chooseurlfromlist.h
     dialog_setup.cpp
     dialog_setup.h
+    ebookcontentprovider.cpp
+    ebookcontentprovider.h
     i18n.cpp
     i18n.h
     main.cpp

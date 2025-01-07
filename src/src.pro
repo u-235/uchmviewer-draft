@@ -26,6 +26,7 @@ HEADERS += \
     config.h \
     dialog_chooseurlfromlist.h \
     dialog_setup.h \
+    ebookcontentprovider.h \
     mainwindow.h \
     recentfiles.h \
     settings.h \
@@ -50,6 +51,7 @@ SOURCES += \
     config.cpp \
     dialog_chooseurlfromlist.cpp \
     dialog_setup.cpp \
+    ebookcontentprovider.cpp \
     main.cpp \
     mainwindow.cpp \
     recentfiles.cpp \
