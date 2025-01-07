@@ -16,12 +16,14 @@ HEADERS += \
     include/ubrowser/content-provider.hpp \
     include/ubrowser/export.hpp \
     include/ubrowser/history.hpp \
+    include/ubrowser/history-impl.hpp \
     include/ubrowser/settings.hpp \
     include/ubrowser/types.hpp
 
 SOURCES += \
     src/browser.cpp \
-    src/content-provider.cpp
+    src/content-provider.cpp \
+    src/history-impl.cpp
 
 target.path = $${PREFIX}/$${APP_LIB_DIR}
 INSTALLS += target

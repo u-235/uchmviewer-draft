@@ -16,6 +16,7 @@ target_sources(ubrowser PRIVATE
     include/ubrowser/content-provider.hpp
     include/ubrowser/export.hpp
     include/ubrowser/history.hpp
+    include/ubrowser/history-impl.hpp
     include/ubrowser/settings.hpp
     include/ubrowser/types.hpp
 )
@@ -23,6 +24,7 @@ target_sources(ubrowser PRIVATE
 target_sources(ubrowser PRIVATE
     src/browser.cpp
     src/content-provider.cpp
+    src/history-impl.cpp
 )
 
 
