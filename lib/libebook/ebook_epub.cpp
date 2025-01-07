@@ -185,7 +185,7 @@ bool EBook_EPUB::setCurrentEncoding( const char* )
 	return false;
 }
 
-bool EBook_EPUB::isSupportedUrl( const QUrl& url )
+bool EBook_EPUB::isSupportedUrl( const QUrl& url ) const
 {
 	return url.scheme() == URL_SCHEME_EPUB;
 }

@@ -169,7 +169,7 @@ class EBook_EPUB : public EBook
 		 * \brief Checks if this kind of URL is supported by the ebook format (i.e. could be passed to ebook functions)
 		 * \param url The url to check
 		 */
-		bool isSupportedUrl( const QUrl& url ) override;
+		bool isSupportedUrl( const QUrl& url ) const override;
 
 		// Converts the string to the ebook-specific URL format
 		QUrl pathToUrl( const QString& link ) const override;

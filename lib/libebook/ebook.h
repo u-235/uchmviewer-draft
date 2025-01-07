@@ -19,6 +19,8 @@
 #ifndef INCLUDE_EBOOK_H
 #define INCLUDE_EBOOK_H
 
+#include <memory>
+
 #include <QList>
 #include <QString>
 #include <QtGlobal>
@@ -83,6 +85,11 @@ class EBookIndexEntry
 class EBook
 {
 	public:
+		/**
+		* @brief The EBook::Ptr is a shared pointer to EBook.
+		*/
+		typedef std::shared_ptr<EBook> Ptr;
+
 		enum Feature
 		{
 			FEATURE_TOC,        // has table of contents
@@ -229,7 +236,7 @@ class EBook
 		 * \brief Checks if this kind of URL is supported by the ebook format (i.e. could be passed to ebook functions)
 		 * \param url The url to check
 		 */
-		virtual bool isSupportedUrl( const QUrl& url ) = 0;
+		virtual bool isSupportedUrl( const QUrl& url ) const = 0;
 
 		// Converts the string to the ebook-specific URL format
 		virtual QUrl pathToUrl( const QString& link ) const = 0;

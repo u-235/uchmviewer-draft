@@ -863,7 +863,7 @@ bool EBook_CHM::setCurrentEncoding( const char* encoding )
 	return changeFileEncoding( encoding );
 }
 
-bool EBook_CHM::isSupportedUrl( const QUrl& url )
+bool EBook_CHM::isSupportedUrl( const QUrl& url ) const
 {
 	return url.scheme() == URL_SCHEME_CHM;
 }
