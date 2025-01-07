@@ -65,6 +65,8 @@ class EBook_CHM : public EBook
 		 */
 		void close() override;
 
+		const QString urlScheme() const override;
+
 		/*!
 		 * \brief Gets the title name of the opened ebook.
 		 * \return The name of the opened document, or an empty string if no ebook has been loaded.
@@ -187,7 +189,7 @@ class EBook_CHM : public EBook
 		 * \brief Checks if this kind of URL is supported by the ebook format (i.e. could be passed to ebook functions)
 		 * \param url The url to check
 		 */
-		bool isSupportedUrl( const QUrl& url ) override;
+		bool isSupportedUrl( const QUrl& url ) const override;
 
 		// Converts the string to the ebook-specific URL format
 		QUrl pathToUrl( const QString& link ) const override;

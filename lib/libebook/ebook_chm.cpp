@@ -90,6 +90,11 @@ void EBook_CHM::close()
 	m_lookupTablesValid = false;
 }
 
+const QString EBook_CHM::urlScheme() const
+{
+	return ( URL_SCHEME_CHM );
+}
+
 QString EBook_CHM::title() const
 {
 	return encodeInternalWithCurrentCodec( m_title );
@@ -863,7 +868,7 @@ bool EBook_CHM::setCurrentEncoding( const char* encoding )
 	return changeFileEncoding( encoding );
 }
 
-bool EBook_CHM::isSupportedUrl( const QUrl& url )
+bool EBook_CHM::isSupportedUrl( const QUrl& url ) const
 {
 	return url.scheme() == URL_SCHEME_CHM;
 }
