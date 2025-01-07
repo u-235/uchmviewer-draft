@@ -17,6 +17,7 @@ target_include_directories(ubrowser PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 target_sources(ubrowser PRIVATE
     include/ubrowser/browser.hpp
+    include/ubrowser/contentprovider.hpp
     include/ubrowser/export.hpp
     include/ubrowser/settings.hpp
 )
