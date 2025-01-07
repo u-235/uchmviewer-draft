@@ -15,8 +15,6 @@ set(CPP_SOURCES
     main.cpp
     mainwindow.cpp
     mainwindow.h
-    mimehelper.cpp
-    mimehelper.h
     navigationpanel.cpp
     navigationpanel.h
     recentfiles.cpp

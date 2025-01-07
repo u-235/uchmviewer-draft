@@ -19,6 +19,8 @@
 #ifndef INCLUDE_EBOOK_H
 #define INCLUDE_EBOOK_H
 
+#include <memory>
+
 #include <QList>
 #include <QString>
 #include <QtGlobal>
@@ -31,6 +33,9 @@
 #endif
 
 class QByteArray;
+class QTextCodec;
+
+#include <ubrowser/contentprovider.hpp>
 
 
 //! Stores a single table of content entry
@@ -80,9 +85,14 @@ class EBookIndexEntry
 
 
 //! Universal ebook files processor supporting both CHM and EPUB. Abstract.
-class EBook
+class EBook : public  UBrowser::ContentProvider
 {
 	public:
+		/**
+		* @brief The EBook::Ptr is a shared pointer to EBook.
+		*/
+		typedef std::shared_ptr<EBook> Ptr;
+
 		enum Feature
 		{
 			FEATURE_TOC,        // has table of contents
@@ -92,7 +102,9 @@ class EBook
 
 		//! Default constructor and destructor.
 		EBook();
-		virtual ~EBook();
+		~EBook() override;
+
+		bool content( UBrowser::ContentData& data, const QUrl& url ) override;
 
 		/*!
 		 * \brief Attempts to load chm or epub file.
@@ -200,15 +212,6 @@ class EBook
 		virtual bool enumerateFiles( QList<QUrl>& files ) = 0;
 
 		/*!
-		 * \brief Gets the Title of the page referenced by url.
-		 * \param url An URL in ebook file to get title from. Must be absolute.
-		 * \return The title, or QString::null if the URL cannot be found or not a HTML page.
-		 *
-		 * \ingroup dataretrieve
-		 */
-		virtual QString     getTopicByUrl( const QUrl& url ) = 0;
-
-		/*!
 		 * \brief Gets the current ebook encoding (set or autodetected) as qtcodec name. Must be implemented,
 		 * even if the book doesn't support change of encoding (then it should return a default encoding)
 		 * \return The current encoding.
@@ -224,12 +227,6 @@ class EBook
 		 * \ingroup encoding
 		 */
 		virtual bool setCurrentEncoding( const char* encoding ) = 0;
-
-		/*!
-		 * \brief Checks if this kind of URL is supported by the ebook format (i.e. could be passed to ebook functions)
-		 * \param url The url to check
-		 */
-		virtual bool isSupportedUrl( const QUrl& url ) = 0;
 
 		// Converts the string to the ebook-specific URL format
 		virtual QUrl pathToUrl( const QString& link ) const = 0;
@@ -258,11 +255,16 @@ class EBook
 		virtual bool    load( const QString& archiveName ) = 0;
 		virtual void loadNavigation( Navigator& nav );
 
+		void setContentCodec( QTextCodec* codec );
+		QString encodeContent( const QByteArray& str ) const;
+		QString encodeContent( const char* str ) const;
+
 	private:
 		void checkNavigation();
 
 		bool m_navigatorLoaded;
 		Navigator m_navigator;
+		QTextCodec* m_contentCodec;
 };
 
 

@@ -65,6 +65,10 @@ class EBook_CHM : public EBook
 		 */
 		void close() override;
 
+		QString kind() const override;
+
+		QString urlScheme() const override;
+
 		/*!
 		 * \brief Gets the title name of the opened ebook.
 		 * \return The name of the opened document, or an empty string if no ebook has been loaded.
@@ -187,7 +191,7 @@ class EBook_CHM : public EBook
 		 * \brief Checks if this kind of URL is supported by the ebook format (i.e. could be passed to ebook functions)
 		 * \param url The url to check
 		 */
-		bool isSupportedUrl( const QUrl& url ) override;
+		bool isSupportedUrl( const QUrl& url ) const override;
 
 		// Converts the string to the ebook-specific URL format
 		QUrl pathToUrl( const QString& link ) const override;
@@ -230,18 +234,6 @@ class EBook_CHM : public EBook
 
 		//!  Retrieves an uncompressed chunk of a file in the .chm.
 		size_t RetrieveObject( const chmUnitInfo* ui, unsigned char* buffer, LONGUINT64 fileOffset, LONGINT64 bufferSize ) const;
-
-		//! Encode the string with the currently selected text codec, if possible. Or return as-is, if not.
-		inline QString encodeWithCurrentCodec( const QByteArray& str ) const
-		{
-			return ( m_textCodec ? m_textCodec->toUnicode( str.constData() ) : str );
-		}
-
-		//! Encode the string with the currently selected text codec, if possible. Or return as-is, if not.
-		inline QString encodeWithCurrentCodec( const char* str ) const
-		{
-			return ( m_textCodec ? m_textCodec->toUnicode( str ) : ( QString ) str );
-		}
 
 		//! Encode the string from internal files with the currently selected text codec, if possible.
 		//! Or return as-is, if not.
@@ -326,7 +318,6 @@ class EBook_CHM : public EBook
 		QString     m_font;
 
 		//! Chosen text codec
-		QTextCodec* m_textCodec;
 		QTextCodec* m_textCodecForInternalFiles;
 
 		//! Current encoding

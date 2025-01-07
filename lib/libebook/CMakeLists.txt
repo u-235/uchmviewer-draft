@@ -24,6 +24,8 @@ set(CPP_SOURCES
     helperxmlhandler_epubcontent.h
     helperxmlhandler_epubtoc.cpp
     helperxmlhandler_epubtoc.h
+    mimehelper.cpp
+    mimehelper.h
     )
 
 set(MOC_HEADERS
@@ -33,7 +35,7 @@ set(MOC_HEADERS
 
 qt_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
 add_library(ebook STATIC ${CPP_SOURCES} ${MOC_SOURCES})
-target_link_libraries(ebook PRIVATE chmlib libzip::zip Qt::Xml Qt::Core Qt::Widgets)
+target_link_libraries(ebook PRIVATE chmlib libzip::zip UBrowser::API Qt::Xml Qt::Core Qt::Widgets)
 target_include_directories(ebook PUBLIC  "./")
 
 if (TARGET ${QT}::Core5Compat)
