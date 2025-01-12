@@ -40,6 +40,8 @@ class QTemporaryFile;
 #include <ebook.h>
 #include <ubrowser/types.hpp>
 
+#include "ebookcontentprovider.h"
+
 class NavigationPanel;
 class RecentFiles;
 class Settings;
@@ -84,6 +86,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		NavigationPanel* navigator() const { return m_navPanel; }
 
 		void        showInStatusBar( const QString& text );
+		void        setContentProviderEncoding( const QString& encoding );
 		void        setTextEncoding( const QString& enc );
 		QMenu*      tabItemsContextMenu();
 		void        launch();
@@ -192,6 +195,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 		Settings*               m_currentSettings;
 		EBook::Ptr              m_ebookFile;
+		std::shared_ptr<EbookContentProvider> m_contentProvider;
 
 		QList<QTemporaryFile*>  m_tempFileKeeper;
 
