@@ -304,7 +304,7 @@ void ViewWindowMgr::closeTab( const TabData& data )
 		( *it ).action->setShortcut( QKeySequence( i18n( "Alt+%1" ).arg( count ) ) );
 }
 
-void ViewWindowMgr::restoreSettings( EBook* ebook, const Settings::viewindow_saved_settings_t& settings )
+void ViewWindowMgr::restoreSettings( EBook::Ptr ebook, const Settings::viewindow_saved_settings_t& settings )
 {
 	for ( int i = 0; i < settings.size(); i++ )
 	{

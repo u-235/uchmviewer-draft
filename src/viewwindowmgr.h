@@ -29,11 +29,11 @@ class QMenu;
 class QPoint;
 class QUrl;
 
+#include <ebook.h>
 #include <ubrowser/types.hpp>
 
 #include "settings.h"
 
-class EBook;
 class ViewWindow;
 class ViewWindowTabWidget;
 
@@ -66,7 +66,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    createMenu( QMenu* menuWindow, QAction* actionCloseWindow );
 
 		// Saves and restores current settings between sessions
-		void    restoreSettings( EBook* ebook, const Settings::viewindow_saved_settings_t& settings );
+		void    restoreSettings( EBook::Ptr ebook, const Settings::viewindow_saved_settings_t& settings );
 		void    saveSettings( Settings::viewindow_saved_settings_t& settings );
 
 		void    setCurrentPage( int index );
