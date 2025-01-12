@@ -301,12 +301,9 @@ bool MainWindow::loadFile( const QString& loadFileName, bool call_open_page )
 	{
 		// The new file is opened, so we can close the old one
 		if ( m_ebookFile )
-		{
 			closeFile( );
-			delete m_ebookFile;
-		}
 
-		m_ebookFile = new_ebook;
+		m_ebookFile.reset( new_ebook );
 		updateActions();
 
 		// Show current encoding in status bar
@@ -326,7 +323,7 @@ bool MainWindow::loadFile( const QString& loadFileName, bool call_open_page )
 		m_ebookFileBasename = qf.fileName();
 
 		// Apply settings to the navigation dock
-		m_navPanel->updateTabs( m_ebookFile );
+		m_navPanel->updateTabs( m_ebookFile.get() );
 
 		// and to navigation buttons
 		nav_actionPreviousPage->setEnabled( hasTableOfContents() );
@@ -335,6 +332,7 @@ bool MainWindow::loadFile( const QString& loadFileName, bool call_open_page )
 		navSetBackEnabled( false );
 		navSetForwardEnabled( false );
 
+		m_viewWindowMgr->setContentProvider( m_ebookFile );
 		m_viewWindowMgr->invalidate();
 
 		// If the e-book supports encodings, below will be a call to setTextEncoding,
@@ -609,8 +607,7 @@ void MainWindow::closeEvent( QCloseEvent* e )
 	if ( m_ebookFile )
 	{
 		closeFile( );
-		delete m_ebookFile;
-		m_ebookFile = 0;
+		m_ebookFile.reset();
 	}
 
 	// Save toolbars

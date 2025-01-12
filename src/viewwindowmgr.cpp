@@ -49,6 +49,7 @@ class QMouseEvent;
 class QPoint;
 
 #include <ebook.h>
+#include <ubrowser/contentprovider.hpp>
 #include <ubrowser/settings.hpp>
 #include <ubrowser/types.hpp>
 
@@ -162,7 +163,8 @@ ViewWindow* ViewWindowMgr::current()
 	}
 }
 
-ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
+ViewWindow* ViewWindowMgr::addNewTab( UBrowser::ContentProvider::Ptr contentProvider,
+                                      bool set_active )
 {
 	ViewWindow* browser = new ViewWindow( m_tabWidget );
 
@@ -305,11 +307,12 @@ void ViewWindowMgr::closeTab( const TabData& data )
 		( *it ).action->setShortcut( QKeySequence( i18n( "Alt+%1" ).arg( count ) ) );
 }
 
-void ViewWindowMgr::restoreSettings( EBook* ebook, const Settings::viewindow_saved_settings_t& settings )
+void ViewWindowMgr::restoreSettings( UBrowser::ContentProvider::Ptr contentProvider,
+                                     const Settings::viewindow_saved_settings_t& settings )
 {
 	for ( int i = 0; i < settings.size(); i++ )
 	{
-		ViewWindow* browser = addNewTab( false );
+		ViewWindow* browser = addNewTab( contentProvider, false );
 
 		if ( browser == nullptr )
 			break;
@@ -324,13 +327,14 @@ void ViewWindowMgr::restoreSettings( EBook* ebook, const Settings::viewindow_sav
 		if ( url.hasFragment() )
 			path.append( "#" ).append( url.fragment() );
 
-		browser->load( ebook->pathToUrl( path ) ); // will call setTabName()
+		browser->load( contentProvider->pathToUrl( path ) ); // will call setTabName()
 		browser->setAutoScroll( settings[i].scroll_y );
 		browser->setZoomFactor( settings[i].zoom );
 	}
 }
 
-void ViewWindowMgr::saveSettings( Settings::viewindow_saved_settings_t& settings )
+void ViewWindowMgr::saveSettings( UBrowser::ContentProvider::Ptr,
+                                  Settings::viewindow_saved_settings_t& settings )
 {
 	settings.clear();
 

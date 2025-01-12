@@ -55,7 +55,8 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 
 		// Adds a new tab, creating a new browser window.
 		// If the new browser could not be created, returns nullptr.
-		ViewWindow*     addNewTab( bool set_active );
+		ViewWindow*     addNewTab( UBrowser::ContentProvider::Ptr contentProvider,
+		                           bool set_active );
 
 		// Sets the tab name and updates Windows menu
 		void    setTabName( ViewWindow* browser );
@@ -66,8 +67,10 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		void    createMenu( QMenu* menuWindow, QAction* actionCloseWindow );
 
 		// Saves and restores current settings between sessions
-		void    restoreSettings( EBook* ebook, const Settings::viewindow_saved_settings_t& settings );
-		void    saveSettings( Settings::viewindow_saved_settings_t& settings );
+		void    restoreSettings( UBrowser::ContentProvider::Ptr contentProvider,
+		                         const Settings::viewindow_saved_settings_t& settings );
+		void    saveSettings( UBrowser::ContentProvider::Ptr contentProvider,
+		                      Settings::viewindow_saved_settings_t& settings );
 
 		void    setCurrentPage( int index );
 		int     currentPageIndex() const;
