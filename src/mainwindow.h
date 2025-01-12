@@ -74,7 +74,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 		bool        openPage( const QUrl& url, UBrowser::OpenMode mode = UBrowser::OPEN_IN_CURRENT );
 
-		EBook*      chmFile() const { return m_ebookFile; }
+		EBook*      chmFile() const { return m_ebookFile.get(); }
 		const QString&  getOpenedFileName() { return m_ebookFilename; }
 		const QString&  getOpenedFileBaseName() { return m_ebookFileBasename; }
 
@@ -191,7 +191,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		QString                 m_ebookFileBasename;
 
 		Settings*               m_currentSettings;
-		EBook*                  m_ebookFile;
+		EBook::Ptr              m_ebookFile;
 
 		QList<QTemporaryFile*>  m_tempFileKeeper;
 
