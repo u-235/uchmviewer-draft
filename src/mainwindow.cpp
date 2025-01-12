@@ -50,6 +50,7 @@
 #include <QStatusBar>
 #include <QString>
 #include <QStringList>
+#include <QTextCodec>
 #include <QTemporaryFile>
 #include <QTextEdit>
 #include <QTimer>
@@ -76,6 +77,7 @@ class QCloseEvent;
 #include <ubrowser/types.hpp>
 
 #include "config.h"
+#include "content-provider-impl.h"
 #include "dialog_setup.h"
 #include "i18n.h"
 #include "navigationpanel.h"
@@ -332,6 +334,8 @@ bool MainWindow::loadFile( const QString& loadFileName, bool call_open_page )
 		navSetBackEnabled( false );
 		navSetForwardEnabled( false );
 
+		m_contentProvider.reset( new ContentProviderImpl{m_ebookFile} );
+		m_viewWindowMgr->setContentProvider( m_contentProvider );
 		m_viewWindowMgr->invalidate();
 
 		// If the e-book supports encodings, below will be a call to setTextEncoding,
@@ -530,9 +534,26 @@ void MainWindow::firstShow()
 	}
 }
 
+void MainWindow::setContentProviderEncoding( const QString& encoding )
+{
+	// Encoding could be either simple Qt codepage, or set like CP1251/KOI8, which allows to
+	// set up encodings separately for text (first) and internal files (second)
+	QString global = encoding.left( encoding.indexOf( '/' ) );
+	QTextCodec* textCodec = QTextCodec::codecForName( global.toUtf8() );
+
+	if ( !textCodec )
+		qWarning( "MainWindow: setContentProviderEncoding: Could not set up Text Codec for encoding '%s'", qPrintable( global ) );
+
+	if ( m_contentProvider )
+		m_contentProvider->setTextCodec( textCodec );
+	else
+		qWarning( "MainWindow: setContentProviderEncoding: m_contentProvider is nullptr" );
+}
+
 void MainWindow::setTextEncoding( const QString& encoding )
 {
 	m_ebookFile->setCurrentEncoding( qPrintable( encoding ) );
+	setContentProviderEncoding( encoding );
 
 	// Find the appropriate encoding item in "Set encodings" menu
 	const QList<QAction*> encodings = m_encodingActions->actions();
