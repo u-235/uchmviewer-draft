@@ -29,6 +29,7 @@ class QMenu;
 class QPoint;
 class QUrl;
 
+#include <ubrowser/content-provider.hpp>
 #include <ubrowser/types.hpp>
 
 #include "settings.h"
@@ -74,6 +75,9 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 
 		// Set up the configuration settings
 		void    applyBrowserSettings();
+
+		UBrowser::ContentProvider::Ptr contentProvider() const;
+		void setContentProvider( UBrowser::ContentProvider::Ptr contentProvider );
 
 	signals:
 		void    browserChanged( ViewWindow* browser );
@@ -150,6 +154,7 @@ class ViewWindowMgr : public QWidget, public Ui::TabbedBrowser
 		QString                 m_lastSearchedWord;
 
 		ViewWindowTabWidget*        m_tabWidget;
+		UBrowser::ContentProvider::Ptr m_contentProvider;
 };
 
 #endif /* INCLUDE_KCHMVIEWWINDOWMGR_H */

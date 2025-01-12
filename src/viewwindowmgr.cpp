@@ -492,3 +492,13 @@ void ViewWindowMgr::applyBrowserSettings()
 {
 	ViewWindow::applySettings( pConfig->browser );
 }
+
+UBrowser::ContentProvider::Ptr ViewWindowMgr::contentProvider() const
+{
+	return m_contentProvider;
+}
+
+void ViewWindowMgr::setContentProvider( UBrowser::ContentProvider::Ptr contentProvider )
+{
+	m_contentProvider = contentProvider;
+}
