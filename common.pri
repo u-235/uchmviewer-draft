@@ -1,6 +1,13 @@
 
 PROJECT_ROOT_DIR = $${PWD}
 
+CONFIG(debug, debug|release) {
+    CONFIG *= warn_on
+} else {
+    # Suppress debug message
+    DEFINES *= QT_NO_DEBUG_OUTPUT QT_NO_INFO_OUTPUT
+}
+
 # If the msgfmt command is not found, reset the USE_GETTEX variable.
 MSGFMT_MSG=$$system("msgfmt -V")
 !contains(MSGFMT_MSG, "msgfmt"): unset(USE_GETTEXT)
