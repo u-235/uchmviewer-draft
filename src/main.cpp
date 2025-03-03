@@ -19,6 +19,7 @@
 #include <QCoreApplication>
 #include <QObject>
 #include <QStringList>
+#include <Qt>
 #include <QtGlobal>
 
 #if defined USE_KDE
@@ -47,9 +48,9 @@ MainWindow* mainWindow;
 
 int main( int argc, char** argv )
 {
-#if QT_VERSION >= 0x050600
+#if QT_VERSION >= 0x050600 && QT_VERSION < 0x060000
 	/* Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created. */
-	QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+	QCoreApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 #endif
 
 #if defined (USE_KDE)
