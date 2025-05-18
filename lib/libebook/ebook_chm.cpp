@@ -409,7 +409,8 @@ bool EBook_CHM::parseFileAndFillArray( const QString& file, QList< ParsedEntry >
 	bool in_object = false, root_indent_offset_set = false;
 
 	ParsedEntry entry;
-	entry.iconid = defaultimagenum;
+	QList<QString> indexNames;
+	QMap<QString, ParsedEntry> indexNameEntryMap;
 
 	// Split the HHC file by HTML tags
 	int stringlen = src.length();
@@ -474,19 +475,34 @@ bool EBook_CHM::parseFileAndFillArray( const QString& file, QList< ParsedEntry >
 						qWarning( "CHM has improper index; root indent offset is %d", root_indent_offset );
 				}
 
-				// Trim the entry name
-				entry.name = entry.name.trimmed();
+				Q_FOREACH ( const QString& s, indexNames )
+				{
+					// Trim the entry name
+					entry.name = s.trimmed();
+					int real_indent = indent - root_indent_offset;
+					entry.indent = real_indent;
 
-				int real_indent = indent - root_indent_offset;
-
-				entry.indent = real_indent;
-				data.push_back( entry );
+					if ( !asIndex )
+					{
+						data.push_back( entry );
+					}
+					else
+					{
+						QMap<QString, ParsedEntry>::iterator it;
+						if ( ( it = indexNameEntryMap.find(entry.name) ) == indexNameEntryMap.end() )
+						{
+							indexNameEntryMap[entry.name] = entry;
+						}
+						else
+						{
+							it.value().urls.append(entry.urls);
+						}
+					}
+				}
 			}
 
-			entry.name = QString();
-			entry.urls.clear();
-			entry.iconid = defaultimagenum;
-			entry.seealso.clear();
+			entry.clear();
+			indexNames.clear();
 			in_object = false;
 		}
 		else if ( tagword == "param" && in_object )
@@ -513,9 +529,11 @@ bool EBook_CHM::parseFileAndFillArray( const QString& file, QList< ParsedEntry >
 
 			if ( pname == "name" || pname == "keyword" )
 			{
-				// Some help files contain duplicate names, where the second name is empty. Work it around by keeping the first one
-				if ( !pvalue.isEmpty() )
+				if ( !pvalue.isEmpty() && !indexNames.contains( pvalue ) )
+				{
 					entry.name = pvalue;
+					indexNames.push_back( pvalue );
+				}
 			}
 			else if ( pname == "merge" )
 			{
@@ -575,6 +593,11 @@ bool EBook_CHM::parseFileAndFillArray( const QString& file, QList< ParsedEntry >
 		}
 
 		pos = i;
+	}
+
+	if (asIndex)
+	{
+		data = indexNameEntryMap.values();
 	}
 
 	// Dump our array
@@ -1119,10 +1142,4 @@ QString EBook_CHM::urlToPath( const QUrl& link ) const
 	}
 
 	return "";
-}
-
-EBook_CHM::ParsedEntry::ParsedEntry()
-{
-	iconid = 0;
-	indent = 0;
 }
