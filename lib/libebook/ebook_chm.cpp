@@ -92,12 +92,12 @@ void EBook_CHM::close()
 
 QString EBook_CHM::title() const
 {
-	return encodeWithCurrentCodec( m_title );
+	return encodeInternalWithCurrentCodec( m_title );
 }
 
 QUrl EBook_CHM::homeUrl() const
 {
-	return pathToUrl( encodeWithCurrentCodec( m_home ) );
+	return pathToUrl( encodeInternalWithCurrentCodec( m_home ) );
 }
 
 bool EBook_CHM::hasFeature( EBook::Feature code ) const
@@ -125,7 +125,7 @@ bool EBook_CHM::getTableOfContents( QList<EBookTocEntry>& toc ) const
 	// Parse the plain text TOC
 	QList< ParsedEntry > parsed;
 
-	if ( !parseFileAndFillArray( encodeWithCurrentCodec( m_topicsFile ), parsed, false ) )
+	if ( !parseFileAndFillArray( encodeInternalWithCurrentCodec( m_topicsFile ), parsed, false ) )
 		return false;
 
 	// Find out the root offset, and reduce the indent level to it
@@ -159,7 +159,7 @@ bool EBook_CHM::getIndex( QList<EBookIndexEntry>& index ) const
 	// Parse the plain text index
 	QList< ParsedEntry > parsed;
 
-	if ( !parseFileAndFillArray( encodeWithCurrentCodec( m_indexFile ), parsed, true ) )
+	if ( !parseFileAndFillArray( encodeInternalWithCurrentCodec( m_indexFile ), parsed, true ) )
 		return false;
 
 	// Find out the root offset, and reduce the indent level to it
@@ -915,8 +915,12 @@ void EBook_CHM::fillTopicsUrlMap()
 		unsigned int off_url = get_int32_le( ( unsigned int* )( topics.data() + i + 8 ) );
 		off_url = get_int32_le( ( unsigned int* )( urltbl.data() + off_url + 8 ) ) + 8;
 
-		QUrl url = pathToUrl( ( const char* ) urlstr.data() + off_url );
+		QUrl url = pathToUrl( encodeInternalWithCurrentCodec( ( const char* ) urlstr.data() + off_url ) );
 
+		/*
+		 * Title is extracted from the <title> field from html page, try with text codec.
+		 * These values are used in index search and index with multiple topics selection currently.
+		 */
 		if ( off_title < ( unsigned int )strings.size() )
 			m_url2topics[url] = encodeWithCurrentCodec( ( const char* ) strings.data() + off_title );
 		else
