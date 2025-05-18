@@ -586,6 +586,10 @@ bool EBook_CHM::parseFileAndFillArray( const QString& file, QList< ParsedEntry >
 
 bool EBook_CHM::ResolveObject( const QString& fileName, chmUnitInfo* ui ) const
 {
+	/*
+	 * PMGL and PMQI are always in UTF-8
+	 * http://www.russotto.net/chm/chmformat.html
+	 */
 	return m_chmFile != NULL
 	       && ::chm_resolve_object( m_chmFile, qUtf8Printable( fileName ), ui ) ==
 	       CHM_RESOLVE_SUCCESS;
@@ -596,7 +600,7 @@ bool EBook_CHM::hasFile( const QString& fileName ) const
 	chmUnitInfo ui;
 
 	return m_chmFile != NULL
-	       && ::chm_resolve_object( m_chmFile, qPrintable( fileName ), &ui ) ==
+	       && ::chm_resolve_object( m_chmFile, qUtf8Printable( fileName ), &ui ) ==
 	       CHM_RESOLVE_SUCCESS;
 }
 
