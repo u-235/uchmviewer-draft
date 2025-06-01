@@ -63,8 +63,8 @@ struct Document
 		return frequency < doc.frequency;
 	}
 
-	qint16  docNumber;
-	qint16  frequency;
+	qint32  docNumber;
+	qint32  frequency;
 };
 
 QDataStream& operator>>( QDataStream& s, Document& l );
