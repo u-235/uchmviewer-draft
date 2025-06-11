@@ -69,6 +69,7 @@ class WebKitBrowser : public UBrowser::AbstractBrowser
 		QString title() const override;
 
 	protected:
+		void injectJS() override;
 		void loadImpl( const QUrl& url ) override;
 		void setZoomFactorImpl( qreal zoom ) override;
 

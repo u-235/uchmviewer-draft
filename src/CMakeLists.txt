@@ -99,6 +99,7 @@ else ()
         qtwebkit/webkitwidget.h
         )
     list(APPEND MOC_HEADERS qtwebkit/webkitbrowser.h qtwebkit/webkitwidget.h)
+    qt_add_resources(RSRCS qtwebkit/webkit.qrc)
 endif ()
 
 if (USE_DBUS)

@@ -458,7 +458,8 @@ class UBROWSER_API_DECL Browser : public QObject
 		virtual void print( QPrinter* printer, std::function<void ( bool success )> result ) = 0;
 
 	protected:
-		void autoScroll();
+		int autoScroll();
+		void scrollAfterLoad();
 		virtual void setZoomFactorImpl(qreal zoom) = 0;
 
 	private:

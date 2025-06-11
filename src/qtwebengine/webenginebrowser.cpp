@@ -57,6 +57,7 @@ class QPrinter;
 WebEngineBrowser::WebEngineBrowser( UBrowser::ContentProvider::Ptr content, QObject* parent )
 	: UBrowser::AbstractBrowser( content, parent )
 {
+	m_fireRevealIfShow = true;
 	m_widget = new WebEngineWidget( nullptr );
 
 	QWebEngineProfile* pf = new QWebEngineProfile( this );
@@ -218,26 +219,26 @@ QString WebEngineBrowser::title() const
 void WebEngineBrowser::injectJS()
 {
 	QString js;
-	QFile webchannelFile {":/qtwebchannel/qwebchannel.js"};
-	QTextStream webchannelTS {&webchannelFile};
+	const QStringList& jsfiles = QStringList{
+											 {":/qtwebchannel/qwebchannel.js"},
+		{":/ubrowser/webenginebrowser.js"}
+	};
 
-	if ( webchannelFile.open( QIODevice::ReadOnly ) )
-		js.append( webchannelTS.readAll() );
-	else
-		qWarning() << "ERROR in WebEngineBrowser::injectJS()\n"
-		           << "  Unable to load the qwebchannel.js file.";
+	for (const QString& f : jsfiles)
+	{
+		QFile* io = new QFile{f};
+		QTextStream ts{io};
 
-	webchannelFile.close();
-	QFile ubrowserFile {":/ubrowser/webenginebrowser.js"};
-	QTextStream ubrowserTS {&ubrowserFile};
+		if ( io->open( QIODevice::ReadOnly ) )
+			js.append( ts.readAll() );
+		else
+			qWarning() << "ERROR in WebEngineBrowser::injectJS()\n"
+					   << "  Unable to load the " << f << " file.";
 
-	if ( ubrowserFile.open( QIODevice::ReadOnly ) )
-		js.append( ubrowserTS.readAll() );
-	else
-		qWarning() << "ERROR in WebEngineBrowser::injectJS()\n"
-		           << "  Unable to load the webenginebrowser.js file.";
+		io->close();
+		io->deleteLater();
+	}
 
-	ubrowserFile.close();
 	m_widget->page()->runJavaScript( js, BROWSER_SCRIPT_WORLD );
 }
 

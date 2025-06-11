@@ -17,6 +17,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QDebug>
+#include <QFile>
+#include <QIODevice>
 #include <QPalette>
 #include <QString>
 #include <QUrl>
@@ -223,8 +226,35 @@ QString WebKitBrowser::title() const
 	return title;
 }
 
+void WebKitBrowser::injectJS()
+{
+	QString js;
+	const QStringList& jsfiles = QStringList{
+		{":/ubrowser/webkitbrowser.js"}
+	};
+
+	for (const QString& f : jsfiles)
+	{
+		QFile* io = new QFile{f};
+		QTextStream ts{io};
+
+		if ( io->open( QIODevice::ReadOnly ) )
+			js.append( ts.readAll() );
+		else
+			qWarning() << "ERROR in WebKitBrowser::injectJS()\n"
+					   << "  Unable to load the " << f << " file.";
+
+		io->close();
+		io->deleteLater();
+	}
+
+	// https://doc.qt.io/archives/qt-5.5/qtwebkit-bridge.html
+	// https://doc.qt.io/archives/qt-5.5/qwebframe.html
+	m_widget->page()->currentFrame()->addToJavaScriptWindowObject("WebKitBrowser", this);
+	m_widget->page()->currentFrame()->evaluateJavaScript( js );
+}
+
 void WebKitBrowser::loadImpl( const QUrl& url )
 {
-	// Do not use setContent() here, it resets QWebHistory
 	m_widget->load( url );
 }

@@ -44,13 +44,20 @@ class QPoint;
 UBrowser::AbstractBrowser::AbstractBrowser( ContentProvider::Ptr contentProvider,
                                             QObject* parent ) :
 	UBrowser::Browser( contentProvider, parent ),
+	m_fireRevealOnLoad{false},
 	m_fireRevealIfShow{false},
 	m_fireRevealDelay{ABSTRACT_BROWSER_DEFAULT_REVEAL_DELAY},
+	m_pageLoads{false},
+	m_pageReveal{false},
+	m_untimelyPageReveal{false},
+	m_untimelyUrlChanged{false},
 	m_history{new HistoryImpl( this )},
 	m_requestUrl{},
 	m_currentUrl{},
+	m_changedUrl{},
 	m_fragmentScrollInvalid{false},
-	m_fragmentScroll{-1}
+	m_fragmentScroll{-1},
+	m_scrollTop{0}
 {
 	connect( m_history, &History::historyChanged,
 	         this, &AbstractBrowser::onHistoryChanged );
@@ -142,10 +149,8 @@ void UBrowser::AbstractBrowser::selectedCopy()
 
 int UBrowser::AbstractBrowser::scrollTop()
 {
-	if ( m_fragmentScroll >= 0 )
-		return m_fragmentScroll;
-
-	return m_scrollTop;
+	int a = autoScroll();
+	return a >= 0 ? a : m_scrollTop;
 }
 
 void UBrowser::AbstractBrowser::rePageReveal()
@@ -183,7 +188,7 @@ void UBrowser::AbstractBrowser::onLoadFinished( bool successfully )
 
 		if ( m_untimelyPageReveal )
 			rePageReveal();
-		else if ( m_fireRevealIfShow && view()->isVisible() )
+		else if ( m_fireRevealOnLoad || ( m_fireRevealIfShow && view()->isVisible() ) )
 			QTimer::singleShot( m_fireRevealDelay, this, &AbstractBrowser::onPageReveal );
 	}
 
@@ -212,7 +217,7 @@ void UBrowser::AbstractBrowser::onPageReveal()
 
 	qDebug() << "    OK. Handle signal.";
 	m_pageReveal = true;
-	autoScroll();
+	scrollAfterLoad();
 }
 
 void UBrowser::AbstractBrowser::onUrlChanged( const QUrl& url )

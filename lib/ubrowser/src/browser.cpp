@@ -86,7 +86,12 @@ void UBrowser::Browser::setAutoScroll( int pos )
 	}
 }
 
-void UBrowser::Browser::autoScroll()
+int UBrowser::Browser::autoScroll()
+{
+	return m_autoScroll;
+}
+
+void UBrowser::Browser::scrollAfterLoad()
 {
 	if ( m_autoScroll >= 0 )
 	{

@@ -148,7 +148,7 @@ unix:!macx: {
         qtwebengine/webenginebrowser.h \
         qtwebengine/webenginepage.h \
         qtwebengine/webenginewidget.h
-	    RESOURCES += qtwebengine/webengine.qrc
+    RESOURCES += qtwebengine/webengine.qrc
 } else {
     QT += webkit webkitwidgets
     DEFINES += USE_WEBKIT
@@ -158,6 +158,7 @@ unix:!macx: {
     HEADERS += qtwebkit/dataprovider.h \
         qtwebkit/webkitbrowser.h \
         qtwebkit/webkitwidget.h
+    RESOURCES += qtwebkit/webkit.qrc
 }
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat

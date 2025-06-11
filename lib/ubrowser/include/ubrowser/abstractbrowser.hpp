@@ -188,6 +188,7 @@ class UBROWSER_API_DECL AbstractBrowser : public UBrowser::Browser
 		void onPrintFinished( bool ok );
 
 	protected:
+		bool m_fireRevealOnLoad;
 		bool m_fireRevealIfShow;
 		int m_fireRevealDelay;
 

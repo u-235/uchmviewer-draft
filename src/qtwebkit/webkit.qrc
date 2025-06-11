@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ubrowser">
+        <file>webkitbrowser.js</file>
+    </qresource>
+</RCC>
