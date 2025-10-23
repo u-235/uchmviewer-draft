@@ -1,6 +1,8 @@
 # uChmViewer build script with cmake
 #
 #       Common option:
+# USE_QT5            - if defined, build with Qt5 instead of Qt6.
+#                      The default is ON.
 # USE_STATIC_CHMLIB  - if defined, static linkage to the chm library is used.
 # USE_WEBKIT         - if defined, WebKit is used, otherwise WebEngine is used.
 # USE_GETTEXT        - if defined, then GNU Gettext will be used for translation.
@@ -25,7 +27,10 @@ project(uchmviewer HOMEPAGE_URL "https://github.com/eBookProjects/uChmViewer")
 include(cmake/get-version.cmake)
 
 include(cmake/use-in.cmake)
-option(USE_WEBKIT         "Use Qt WebKit"                                   OFF)
+option(USE_QT5            "Use Qt5"                                          ON)
+if (USE_QT5)
+    option(USE_WEBKIT     "Use Qt WebKit"                                   OFF)
+endif ()
 option(USE_STATIC_CHMLIB  "Use static link with chm library"                OFF)
 option(USE_DEPLOY_RUNTIME "Copy runtime dependencies for deployment"        OFF)
 option(USE_GETTEXT        "Use GNU Gettext for translation"                  ON)
@@ -46,34 +51,25 @@ find_package(libzip REQUIRED)
 # Prepare to find Qt modules.
 set(APP_QT_MIN_VERSION 5.9)
 set(APP_QT_MODULES Core Network PrintSupport Widgets Xml)
-# Modules for WebKit or WebEngine.
-if (USE_WEBKIT)
-    set(APP_QT_MIN_VERSION 5.0)
-    list(APPEND APP_QT_MODULES WebKit WebKitWidgets)
-    target_link_libraries(extra INTERFACE Qt::WebKit Qt::WebKitWidgets)
-    target_compile_definitions(extra INTERFACE USE_WEBKIT)
+if (USE_QT5)
+    set(QT Qt5)
+    if (USE_WEBKIT)
+        set(APP_QT_MIN_VERSION 5.0)
+        list(APPEND APP_QT_MODULES WebKit WebKitWidgets)
+        target_link_libraries(extra INTERFACE Qt5::WebKit Qt5::WebKitWidgets)
+        target_compile_definitions(extra INTERFACE USE_WEBKIT)
+    endif ()
 else ()
+    set(QT Qt6)
+    set(APP_QT_MIN_VERSION 6.0)
+    # Since Qt6 QTextCodec moved in the Qt Core5Compat module.
+    list(APPEND APP_QT_MODULES Core5Compat)
+    target_link_libraries(extra INTERFACE Qt6::Core5Compat)
+endif ()
+
+if (NOT USE_WEBKIT)
     list(APPEND APP_QT_MODULES WebEngineWidgets)
     target_link_libraries(extra INTERFACE Qt::WebEngineWidgets)
-endif ()
-
-set(APP_QT_VERSION ${APP_QT_MIN_VERSION} CACHE STRING "Preferred Qt version")
-
-# What version of Qt are we working with?
-if ($CACHE{APP_QT_VERSION} VERSION_LESS 6)
-    find_package(QT $CACHE{APP_QT_VERSION} NAMES Qt5)
-endif ()
-
-if (NOT QT_FOUND)
-    find_package(QT $CACHE{APP_QT_VERSION} NAMES Qt5 Qt6 REQUIRED)
-endif ()
-
-
-set(QT Qt${QT_VERSION_MAJOR})
-# Since Qt 6 QTextCodec moved in the Qt 5 Core Compat module.
-if (QT_VERSION_MAJOR GREATER_EQUAL 6)
-    list(APPEND APP_QT_MODULES Core5Compat)
-    target_link_libraries(extra INTERFACE ${QT}::Core5Compat)
 endif ()
 
 if (USE_DBUS)
@@ -87,9 +83,9 @@ if (USE_MAC_APP)
 endif ()
 
 # Now we know all the required Qt modules.
-find_package(${QT} REQUIRED ${APP_QT_MODULES})
+find_package(${QT} ${APP_QT_MIN_VERSION} REQUIRED ${APP_QT_MODULES})
 
-include(cmake/qt-aliases.cmake)
+include(cmake/qt-aliases.cmake) # only used for Qt <5.15
 include(cmake/install-helper.cmake)
 
 add_compile_options(
