@@ -297,8 +297,8 @@ CMake options
       default is  `OFF`. For static linking, the library is compiled from source
       in the `lib/CHMLib` folder. This folder can be obtained along with the
       sources of the application using the command `git clone --recursive`.
-    - `USE_WEBENGINE=<ON | OFF>` - choosing WebEngine instead of WebKit,
-      default is `OFF`. WebEngine requires Qt version 5.9 or higher.
+    - `USE_WEBKIT=<ON | OFF>` - choosing WebKit instead of WebEngine, default is
+      `OFF`. WebEngine requires Qt version 5.9 or higher.
     - `USE_GETTEXT=<ON | OFF>` - enabling translation of the application,
       default is `ON`. If Gettext is not available, this option will be ignored.
     - `USE_DEPLOY_RUNTIME=<ON | OFF>` - copying runtime dependencies for
@@ -322,9 +322,9 @@ CMake options
       if it is simply unpacked or builds without installation.
     - `CMAKE_BUILD_TYPE=<Debug | Release | RelWithDebInfo | MinSizeRel>`
 
-  For example, configure cmake to build which Qt 5.15 and WebEngine
+  For example, configure cmake to build which Qt 5.15 and WebKit (default is WebEngine)
 
-      cmake -DCMAKE_PREFIX_PATH=~/Qt/5.15/gcc -DUSE_WEBENGINE=ON ../
+        cmake -DCMAKE_PREFIX_PATH=~/Qt/5.15/gcc -DUSE_WEBKIT=ON ../
 
 
 Qmake options
@@ -333,7 +333,7 @@ Qmake options
 The project options for Qmake are the similar to those for CMake.
 
 - `USE_STATIC_CHMLIB=1` if defined, use static CHMLib from git submodule.
-- `USE_WEBENGINE=1` if defined, use QtWebEngine.
+- `USE_WEBKIT=1` if defined, use QtWebKit.
 - `USE_GETTEXT=1` if defined, the `msgfmt` command will be used to compile
   translations.
 - `CHMLIB_ROOT=<path/to/chmlib>` folder to look up the library and headers for

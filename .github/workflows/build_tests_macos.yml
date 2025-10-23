@@ -29,12 +29,12 @@ jobs:
         config:
           - name:    Cmake
             os:      macos-15
-            setup:   'cmake -DCMAKE_OSX_ARCHITECTURES="arm64" -DUSE_STATIC_CHMLIB=ON -DUSE_WEBENGINE=ON .'
+            setup:   'cmake -DCMAKE_OSX_ARCHITECTURES="arm64" -DUSE_STATIC_CHMLIB=ON .'
             build:   'cmake --build . --config Release'
             install: 'sudo cmake --install . --config Release'
           - name:    Qmake
             os:      macos-15
-            setup:   'qmake -r -early "QMAKE_DEFAULT_LIBDIRS=$(xcrun -show-sdk-path)/usr/lib" "QMAKE_APPLE_DEVICE_ARCHS=arm64" "USE_STATIC_CHMLIB=1" "USE_WEBENGINE=1" "LIBZIP_ROOT=/usr/local"'
+            setup:   'qmake -r -early "QMAKE_DEFAULT_LIBDIRS=$(xcrun -show-sdk-path)/usr/lib" "QMAKE_APPLE_DEVICE_ARCHS=arm64" "USE_STATIC_CHMLIB=1" "LIBZIP_ROOT=/usr/local"'
             build:   'make'
             install: 'echo skip'
 
