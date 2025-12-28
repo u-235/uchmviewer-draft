@@ -119,6 +119,36 @@ Packages for __Qt6__:
     qt6-webengine-devel qt6-5compat-devel
 
 
+### Preparation in OpenSuse
+
+In OpenSuse distributions you need the following packages and their
+dependencies:
+
+- `coreutils` `gcc` `make` `cmake` `git`
+- `qt6-base-devel` `qt6-webenginewidgets-devel` and `qt6-qt5compat-devel`
+- `libzip-devel` `chmlib-devel`
+- `gettext`
+
+
+Packages for __Qt5__ and __WebKit__:
+
+    dnf install coreutils gcc make cmake git gettext \
+    libzip-devel chmlib-devel \
+    qt5-qtwebkit-devel
+
+Packages for __Qt5__ and __WebEngine__:
+
+    dnf install coreutils gcc make cmake git gettext \
+    libzip-devel chmlib-devel \
+    qt5-qtwebengine-devel
+
+Packages for __Qt6__:
+
+    dnf install coreutils gcc make cmake git gettext \
+    libzip-devel chmlib-devel \
+    qt6-webengine-devel qt6-5compat-devel
+
+
 ### Preparation in  Windows with MSYS2
 
 Install the following packages:
