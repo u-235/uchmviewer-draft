@@ -3,6 +3,16 @@ TEMPLATE = app
 TARGET = uchmviewer
 MODULES *= ubrowser
 
+!isEmpty(USE_STATIC_QTWEBENGINE) {
+    MODULES *= ubrowser-qtwebengine
+    DEFINES += USE_STATIC_QTWEBENGINE
+}
+
+!isEmpty(USE_STATIC_QTWEBKIT) {
+    MODULES *= ubrowser-qtwebkit
+    DEFINES += USE_STATIC_QTWEBKIT
+}
+
 include(../common.pri)
 
 defined(VERSION, var) {
@@ -36,7 +46,6 @@ HEADERS += \
     tab_index.h \
     tab_search.h \
     version.h \
-    viewwindow.h \
     viewwindowmgr.h \
     navigationpanel.h \
     toolbarmanager.h \
@@ -130,20 +139,6 @@ unix:!macx: {
     SOURCES += dbus_interface.cpp
     CONFIG += dbus
     DEFINES += USE_DBUS
-}
-
-!isEmpty(USE_WEBENGINE) {
-    isEqual(QT_MAJOR_VERSION, 5):lessThan(QT_MINOR_VERSION, 9):error("QtWebEnginew requires at least Qt5.9")
-
-    QT += webenginewidgets
-    DEFINES += USE_WEBENGINE
-    SOURCES += qtwebengine/viewwindow.cpp qtwebengine/dataprovider.cpp
-    HEADERS += qtwebengine/dataprovider.h qtwebengine/viewwindow.h qtwebengine/webenginepage.h
-} else {
-    QT += webkit webkitwidgets
-    DEFINES += USE_WEBKIT
-    SOURCES += qtwebkit/viewwindow.cpp qtwebkit/dataprovider.cpp
-    HEADERS += qtwebkit/dataprovider.h qtwebkit/viewwindow.h
 }
 
 greaterThan(QT_MAJOR_VERSION, 5): QT += core5compat

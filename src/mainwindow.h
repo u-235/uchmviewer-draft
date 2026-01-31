@@ -43,9 +43,15 @@ class NavigationPanel;
 class RecentFiles;
 class Settings;
 class ToolbarManager;
-class ViewWindow;
 class ViewWindowMgr;
 
+namespace UBrowser
+{
+class Browser;
+}
+
+
+#include "pluginmanager.h"
 #include "ui_mainwindow.h"
 
 
@@ -77,7 +83,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		const QString&  getOpenedFileName() { return m_ebookFilename; }
 		const QString&  getOpenedFileBaseName() { return m_ebookFileBasename; }
 
-		ViewWindow* currentBrowser() const;
+		UBrowser::Browser* currentBrowser() const;
 		Settings*    currentSettings() const { return m_currentSettings; }
 		ViewWindowMgr*  viewWindowMgr() const { return m_viewWindowMgr; }
 		NavigationPanel* navigator() const { return m_navPanel; }
@@ -103,7 +109,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 	public slots:
 		// Called from WindowMgr when another browser tab is activated
-		void        browserChanged( ViewWindow* browser );
+		void        browserChanged( UBrowser::Browser* browser );
 
 		// Navigation toolbar icons
 		void        navSetBackEnabled( bool enabled );
@@ -156,8 +162,8 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 
 		// Link activation
 		void        activateUrl( const QUrl& link );
-		bool        onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::OpenMode mode );
-		void        showBrowserContextMenu( ViewWindow* browser,
+		bool        onLinkClicked( UBrowser::Browser* browser, const QUrl& url, UBrowser::OpenMode mode );
+		void        showBrowserContextMenu( UBrowser::Browser* browser,
 		                                    const QPoint& globalPos,
 		                                    const QUrl& link );
 
@@ -194,6 +200,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		QString                 m_ebookFilename;
 		QString                 m_ebookFileBasename;
 
+		PluginManager*          m_pluginManager;
 		Settings*               m_currentSettings;
 		EBook::Ptr              m_ebookFile;
 

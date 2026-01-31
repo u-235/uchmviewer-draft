@@ -48,7 +48,7 @@
 class QMouseEvent;
 class QPoint;
 
-#include <ebook.h>
+#include <ubrowser/browser.hpp>
 #include <ubrowser/contentprovider.hpp>
 #include <ubrowser/settings.hpp>
 #include <ubrowser/types.hpp>
@@ -57,7 +57,6 @@ class QPoint;
 #include "i18n.h"
 #include "mainwindow.h"
 #include "settings.h"
-#include "viewwindow.h"
 
 #include "ui_window_browser.h"
 
@@ -84,14 +83,12 @@ class ViewWindowTabWidget : public QTabWidget
 };
 
 
-ViewWindowMgr::ViewWindowMgr( QWidget* parent )
-	: QWidget( parent ), Ui::TabbedBrowser()
+ViewWindowMgr::ViewWindowMgr( UBrowser::Builder* builder, QWidget* parent )
+	: QWidget( parent ), Ui::TabbedBrowser(),
+	  m_builder{ builder }
 {
 	// UIC
 	setupUi( this );
-
-	// Set up the initial settings
-	applyBrowserSettings();
 
 	// Create the tab widget
 	m_tabWidget = new ViewWindowTabWidget( this );
@@ -151,7 +148,7 @@ void ViewWindowMgr::invalidate()
 	closeAllWindows();
 }
 
-ViewWindow* ViewWindowMgr::current()
+UBrowser::Browser* ViewWindowMgr::current()
 {
 	try
 	{
@@ -163,15 +160,15 @@ ViewWindow* ViewWindowMgr::current()
 	}
 }
 
-ViewWindow* ViewWindowMgr::addNewTab( UBrowser::ContentProvider::Ptr contentProvider,
-                                      bool set_active )
+UBrowser::Browser* ViewWindowMgr::addNewTab( UBrowser::ContentProvider::Ptr contentProvider,
+                                             bool set_active )
 {
-	ViewWindow* browser = new ViewWindow( m_tabWidget );
+	UBrowser::Browser* browser = m_builder->createController( contentProvider, this );
 
 	if ( browser == nullptr )
 		return nullptr;
 
-	browser->setAcceptDrops( false );
+	browser->view()->setAcceptDrops( false );
 
 	editFind->installEventFilter( this );
 
@@ -179,7 +176,7 @@ ViewWindow* ViewWindowMgr::addNewTab( UBrowser::ContentProvider::Ptr contentProv
 	TabData tabdata;
 	tabdata.browser = browser;
 	tabdata.action = new QAction( "window", this ); // temporary name; real name is set in setTabName
-	tabdata.widget = browser;
+	tabdata.widget = browser->view();
 
 	connect( tabdata.action,
 	         SIGNAL( triggered() ),
@@ -194,20 +191,23 @@ ViewWindow* ViewWindowMgr::addNewTab( UBrowser::ContentProvider::Ptr contentProv
 	if ( set_active || m_Windows.size() == 1 )
 		m_tabWidget->setCurrentWidget( tabdata.widget );
 
+	connect( browser, &UBrowser::Browser::historyChanged,
+	         [this]()
+	         { emit historyChanged(); } );
 	// Handle clicking on link in browser window
-	connect( browser, &ViewWindow::linkClicked,
+	connect( browser, &UBrowser::Browser::linkClicked,
 	         [browser, this]( const QUrl & link, UBrowser::OpenMode mode )
 	         { emit linkClicked( browser, link, mode ); } );
 
-	connect( browser, &ViewWindow::urlChanged,
+	connect( browser, &UBrowser::Browser::urlChanged,
 	         [browser, this]( const QUrl & url )
 	         { onBrowserUrlChanged( browser, url ); } );
 
-	connect( browser, &ViewWindow::loadFinished,
+	connect( browser, &UBrowser::Browser::loadFinished,
 	         [browser, this]( bool success )
 	         { onBrowserLoadFinished( browser, success ); } );
 
-	connect( browser, &ViewWindow::contextMenuRequested,
+	connect( browser, &UBrowser::Browser::contextMenuRequested,
 	         [browser, this]( const QPoint & pos, const QUrl & link )
 	         { emit contextMenuRequested( browser, pos, link ); } );
 
@@ -227,7 +227,7 @@ void ViewWindowMgr::closeAllWindows( )
 		closeWindow( m_Windows.first().widget );
 }
 
-void ViewWindowMgr::setTabName( ViewWindow* browser )
+void ViewWindowMgr::setTabName( UBrowser::Browser* browser )
 {
 	try
 	{
@@ -238,7 +238,7 @@ void ViewWindowMgr::setTabName( ViewWindow* browser )
 		if ( title.length() > 25 )
 			title = title.left( 22 ) + "...";
 
-		m_tabWidget->setTabText( m_tabWidget->indexOf( browser ), title );
+		m_tabWidget->setTabText( m_tabWidget->indexOf( browser->view() ), title );
 		tab.action->setText( title );
 		updateCloseButtons();
 	}
@@ -294,8 +294,9 @@ void ViewWindowMgr::closeTab( const TabData& data )
 	m_menuWindow->removeAction( data.action );
 
 	m_tabWidget->removeTab( m_tabWidget->indexOf( data.widget ) );
-	delete data.browser;
+	delete data.widget;
 	delete data.action;
+	data.browser->deleteLater();
 
 	m_Windows.removeOne( data );
 	updateCloseButtons();
@@ -312,7 +313,7 @@ void ViewWindowMgr::restoreSettings( UBrowser::ContentProvider::Ptr contentProvi
 {
 	for ( int i = 0; i < settings.size(); i++ )
 	{
-		ViewWindow* browser = addNewTab( contentProvider, false );
+		UBrowser::Browser* browser = addNewTab( contentProvider, false );
 
 		if ( browser == nullptr )
 			break;
@@ -327,7 +328,7 @@ void ViewWindowMgr::restoreSettings( UBrowser::ContentProvider::Ptr contentProvi
 		if ( url.hasFragment() )
 			path.append( "#" ).append( url.fragment() );
 
-		browser->load( contentProvider->pathToUrl( path ) ); // will call setTabName()
+		browser->load( browser->contentProvider()->pathToUrl( path ) ); // will call setTabName()
 		browser->setAutoScroll( settings[i].scroll_y );
 		browser->setZoomFactor( settings[i].zoom );
 	}
@@ -379,7 +380,7 @@ void ViewWindowMgr::onTabChanged( int newtabIndex )
 	}
 }
 
-void ViewWindowMgr::onBrowserUrlChanged( ViewWindow* browser, const QUrl& url )
+void ViewWindowMgr::onBrowserUrlChanged( UBrowser::Browser* browser, const QUrl& url )
 {
 	if ( browser == current() )
 	{
@@ -388,7 +389,7 @@ void ViewWindowMgr::onBrowserUrlChanged( ViewWindow* browser, const QUrl& url )
 	}
 }
 
-void ViewWindowMgr::onBrowserLoadFinished( ViewWindow* browser, bool success )
+void ViewWindowMgr::onBrowserLoadFinished( UBrowser::Browser* browser, bool success )
 {
 	setTabName( browser );
 	emit loadFinished( browser, success );
@@ -432,7 +433,7 @@ ViewWindowMgr::TabData ViewWindowMgr::findTabData( QWidget* widget ) noexcept( f
 	throw std::invalid_argument( "" );
 }
 
-ViewWindowMgr::TabData ViewWindowMgr::findTabData( ViewWindow* browser ) noexcept( false )
+ViewWindowMgr::TabData ViewWindowMgr::findTabData( UBrowser::Browser* browser ) noexcept( false )
 {
 	for ( int i = 0; i < m_Windows.size(); ++i )
 		if ( m_Windows[i].browser == browser )
@@ -520,9 +521,4 @@ void ViewWindowMgr::copyUrlToClipboard()
 
 	if ( !url.isEmpty() )
 		QApplication::clipboard()->setText( url );
-}
-
-void ViewWindowMgr::applyBrowserSettings()
-{
-	ViewWindow::applySettings( pConfig->browser );
 }
