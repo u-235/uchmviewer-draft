@@ -1,0 +1,6 @@
+{
+  "name"        : "QtWebEngineBrowser",
+  "brief"       : "HTML viewer based on QWebEngine",
+  "description" : "",
+  "license"     : "GPL v3+"
+}
