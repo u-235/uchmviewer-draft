@@ -107,6 +107,21 @@ contains(MODULES, ubrowser-qtwebengine) {
     }
 }
 
+contains(MODULES, ubrowser-qtwebkit) {
+    QT *= core widgets webkit webkitwidgets
+    LIBS += -lubrowser-qtwebkit -lubrowser
+
+    win32:{
+        CONFIG( debug, debug|release ) {
+                LIBS *= -L$$shadowed($${PROJECT_ROOT_DIR}/lib/ubrowser-qtwebkit/debug)
+        } else {
+                LIBS *= -L$$shadowed($${PROJECT_ROOT_DIR}/lib/ubrowser-qtwebkit/release)
+        }
+    } else {
+        LIBS *= -L$$shadowed($${PROJECT_ROOT_DIR}/lib/ubrowser-qtwebkit)
+    }
+}
+
 
 #------------------#
 # iwyu support     #
