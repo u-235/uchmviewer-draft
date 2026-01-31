@@ -21,3 +21,12 @@ libebook.depends = ubrowser
         error(The lib/ubrowser-qtwebengine submodule was not found.)
     }
 }
+
+!isEmpty(USE_STATIC_QTWEBKIT) {
+    exists(ubrowser-qtwebkit/src/qtwebkitbrowser.h) {
+        SUBDIRS += ubrowser-qtwebkit
+        ubrowser-qtwebkit.depends = ubrowser
+    } else {
+        error(The lib/ubrowser-qtwebkit submodule was not found.)
+    }
+}

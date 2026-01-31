@@ -1,0 +1,6 @@
+{
+  "name"        : "QtWebKitBrowser",
+  "brief"       : "HTML viewer based on QWebKit",
+  "description" : "",
+  "license"     : "GPL v3+"
+}
