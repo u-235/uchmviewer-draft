@@ -204,10 +204,7 @@ QString QtWebEngine::Browser::selectedText() const
 
 QString QtWebEngine::Browser::title() const
 {
-	QString title = contentProvider()->topicTitle( url() );
-
-	if ( title.isEmpty() )
-		title = m_widget->page()->title();
+	QString title = m_widget->page()->title();
 
 	// If no title is found, use the path (without the first /)
 	if ( title.isEmpty() )

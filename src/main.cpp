@@ -56,6 +56,18 @@
 
 MainWindow* mainWindow;
 
+#if defined USE_STATIC_QTWEBENGINE || defined USE_STATIC_QTWEBKIT
+	#include <QtPlugin>
+#endif
+
+#ifdef USE_STATIC_QTWEBENGINE
+	Q_IMPORT_PLUGIN( QtWebEngineBuilder )
+#endif
+
+#ifdef USE_STATIC_QTWEBKIT
+	Q_IMPORT_PLUGIN( QtWebKitBuilder )
+#endif
+
 
 void fallbackFonts()
 {
@@ -110,6 +122,14 @@ void fallbackFonts()
 
 int main( int argc, char** argv )
 {
+#ifdef USE_STATIC_QTWEBENGINE
+	Q_INIT_RESOURCE( qtwebengine );
+#endif
+
+#ifdef USE_STATIC_QTWEBKIT
+	Q_INIT_RESOURCE( qtwebkit );
+#endif
+
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	/* Attribute Qt::AA_EnableHighDpiScaling must be set before QCoreApplication is created. */
 #if QT_VERSION >= QT_VERSION_CHECK(5, 6, 0)

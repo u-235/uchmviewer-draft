@@ -25,13 +25,14 @@ project(uchmviewer HOMEPAGE_URL "https://github.com/eBookProjects/uChmViewer")
 include(cmake/get-version.cmake)
 
 include(cmake/use-in.cmake)
-option(USE_WEBENGINE      "Use Qt WebEngine"                                OFF)
 option(USE_STATIC_CHMLIB  "Use static link with chm library"                OFF)
 option(USE_DEPLOY_RUNTIME "Copy runtime dependencies for deployment"        OFF)
 option(USE_GETTEXT        "Use GNU Gettext for translation"                  ON)
 option(USE_MACOS_BUNDLE   "Install as macOS bundle"                          ON)
 use_in(USE_DBUS           "Use D-Bus integration"                       "Linux")
 use_in(USE_MAC_APP        "Use derived QApplication"                   "Darwin")
+option(USE_STATIC_QTWEBENGINE "Use static link with QtWebEngine"            OFF)
+option(USE_STATIC_QTWEBKIT    "Use static link with QtWebKit"               OFF)
 
 # Init cmake
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
@@ -46,16 +47,6 @@ find_package(libzip REQUIRED)
 # Prepare to find Qt modules.
 set(APP_QT_MIN_VERSION 5.0)
 set(APP_QT_MODULES Core Network PrintSupport Widgets Xml)
-# Modules for WebKit or WebEngine.
-if (USE_WEBENGINE)
-    set(APP_QT_MIN_VERSION 5.9)
-    list(APPEND APP_QT_MODULES WebEngineWidgets)
-    target_link_libraries(extra INTERFACE Qt::WebEngineWidgets)
-    target_compile_definitions(extra INTERFACE USE_WEBENGINE)
-else ()
-    list(APPEND APP_QT_MODULES WebKit WebKitWidgets)
-    target_link_libraries(extra INTERFACE Qt::WebKit Qt::WebKitWidgets)
-endif ()
 
 set(APP_QT_VERSION ${APP_QT_MIN_VERSION} CACHE STRING "Preferred Qt version")
 

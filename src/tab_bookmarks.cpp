@@ -30,16 +30,15 @@
 #include <QVariant>
 #include <Qt>
 
+#include <ubrowser/browser.hpp>
 #include <ebook.h>
 
 #include "config.h"
 #include "i18n.h"
 #include "mainwindow.h"
 #include "settings.h"
-#include "viewwindow.h"
 
 #include "tab_bookmarks.h"
-
 
 class BookmarkItem : public QListWidgetItem
 {

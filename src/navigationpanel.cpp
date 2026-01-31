@@ -23,6 +23,7 @@
 #include <QUrl>
 #include <QtGlobal>
 
+#include <ubrowser/browser.hpp>
 #include <ebook.h>
 
 #include "i18n.h"
@@ -34,7 +35,6 @@
 #include "treeitem_toc.h"
 
 #include "navigationpanel.h"
-
 
 NavigationPanel::NavigationPanel( QWidget* parent )
 	: QDockWidget( parent ), Ui::NavigatorPanel()
