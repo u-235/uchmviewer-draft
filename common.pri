@@ -92,6 +92,12 @@ contains(MODULES, ubrowser) {
     }
 }
 
+contains(MODULES, ubrowser-qtwebengine) {
+    LIBS += -L$$shadowed($${PROJECT_ROOT_DIR}/lib/ubrowser-qtwebengine)
+    LIBS += -lubrowser-qtwebengine
+    QT *= core widgets webenginewidgets
+}
+
 
 #------------------#
 # iwyu support     #

@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ubrowser">
+        <file>qtwebenginebrowser.js</file>
+    </qresource>
+</RCC>

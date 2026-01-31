@@ -25,3 +25,11 @@ endif ()
 
 add_subdirectory(libebook)
 add_subdirectory(ubrowser)
+
+if (USE_STATIC_QTWEBENGINE)
+    if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/ubrowser-qtwebengine/src/qtwebenginebrowser.h")
+        add_subdirectory(ubrowser-qtwebengine)
+    else ()
+        message(SEND_ERROR "The lib/ubrowser-qtwebengine submodule was not found.")
+    endif ()
+endif ()
