@@ -17,6 +17,8 @@ set(CPP_SOURCES
     mainwindow.h
     navigationpanel.cpp
     navigationpanel.h
+    pluginmanager.cpp
+    pluginmanager.h
     recentfiles.cpp
     recentfiles.h
     settings.cpp
@@ -46,6 +48,7 @@ set(MOC_HEADERS
     dialog_chooseurlfromlist.h
     dialog_setup.h
     mainwindow.h
+    pluginmanager.h
     recentfiles.h
     tab_bookmarks.h
     tab_contents.h
