@@ -5,6 +5,8 @@
     { include: ['"qtmetamacros.h"', 'private', '<QObject>', 'public'] },
     { include: ['<qobjectdefs.h>', 'private', '<QObject>', 'public'] },
     { include: ['"qobjectdefs.h"', 'private', '<QObject>', 'public'] },
+    { include: ['<qplugin.h>', 'private', '<QStaticPlugin>', 'public'] },
+    { include: ['"qplugin.h"', 'private', '<QStaticPlugin>', 'public'] },
     { include: ['<QtCore/qobjectdefs.h>', 'private', '<QObject>', 'public'] },
     { include: ['"QtCore/qobjectdefs.h"', 'private', '<QObject>', 'public'] },
     { include: ['<qnamespace.h>', 'private', '<Qt>', 'public'] },
