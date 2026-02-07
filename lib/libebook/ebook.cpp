@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QByteArray>
 #include <QMap>
+#include <QTextCodec>
 #include <QtGlobal>
 // As long as qAsConst is used.
 // IWYU pragma: no_include "type_traits"
@@ -28,16 +30,85 @@
 #include "ebook.h"
 #include "ebook_chm.h"
 #include "ebook_epub.h"
+#include "mimehelper.h"
+#include <ubrowser/contentprovider.hpp>
 
 
 EBook::EBook() :
 	m_navigatorLoaded{false},
-	m_navigator{}
+	m_navigator{},
+	m_contentCodec{nullptr}
 {
 }
 
 EBook::~EBook()
 {
+}
+
+QUrl EBook::convertUrlForEbook( const QUrl& browserUrl ) const
+{
+	QUrl result{browserUrl};
+
+	if ( result.scheme() == EBOOK_URL_SCHEME )
+		result.setScheme( urlScheme() );
+
+	return result;
+}
+
+QUrl EBook::convertUrlForBrowser( const QUrl& ebookUrl ) const
+{
+	QUrl result{ebookUrl};
+	result.setScheme( EBOOK_URL_SCHEME );
+	return result;
+}
+
+bool EBook::isValidUrl( const QUrl& browserUrl ) const
+{
+	const QString& scheme = browserUrl.scheme();
+	return ( scheme == EBOOK_URL_SCHEME || scheme == urlScheme() ) &&
+	       isSupportedUrl( convertUrlForEbook( browserUrl ) );
+}
+
+bool EBook::content( UBrowser::ContentData& data, const QUrl& browserUrl )
+{
+	const QUrl& ebookUrl = convertUrlForEbook( browserUrl );
+
+	if ( !getFileContentAsBinary( data.buffer, ebookUrl ) )
+		return false;
+
+	data.asUtf8.clear();
+
+	data.mime = MimeHelper::mimeType( ebookUrl, data.buffer );
+
+	if ( data.mime.startsWith( "text" ) )
+	{
+		if ( m_contentCodec != nullptr )
+			data.asUtf8 = m_contentCodec->toUnicode( data.buffer ).toUtf8();
+		else
+			data.asUtf8 = data.buffer;
+	}
+
+	return true;
+}
+
+QString EBook::topicTitle( const QUrl& browserUrl )
+{
+	return getTopicByUrl( convertUrlForEbook( browserUrl ) );
+}
+
+void EBook::setContentCodec( QTextCodec* codec )
+{
+	m_contentCodec = codec;
+}
+
+QString EBook::encodeContent( const QByteArray& str ) const
+{
+	return ( m_contentCodec ? m_contentCodec->toUnicode( str.constData() ) : str );
+}
+
+QString EBook::encodeContent( const char* str ) const
+{
+	return ( m_contentCodec ? m_contentCodec->toUnicode( str ) : ( QString ) str );
 }
 
 EBook* EBook::loadFile( const QString& archiveName )

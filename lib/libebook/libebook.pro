@@ -3,6 +3,7 @@ TEMPLATE = lib
 TARGET = ebook
 CONFIG *= staticlib
 QT += widgets xml
+MODULES += ubrowser
 
 include(../../common.pri)
 
@@ -18,7 +19,8 @@ HEADERS += \
     helper_search_index.h \
     helperxmlhandler_epubcontainer.h \
     helperxmlhandler_epubcontent.h \
-    helperxmlhandler_epubtoc.h
+    helperxmlhandler_epubtoc.h \
+    mimehelper.h
 
 SOURCES += \
     ebook_chm.cpp \
@@ -31,7 +33,8 @@ SOURCES += \
     helper_search_index.cpp \
     helperxmlhandler_epubcontainer.cpp \
     helperxmlhandler_epubcontent.cpp \
-    helperxmlhandler_epubtoc.cpp
+    helperxmlhandler_epubtoc.cpp \
+    mimehelper.cpp
 
 !isEmpty(USE_STATIC_CHMLIB) {
     INCLUDEPATH *= ../CHMLib/src

@@ -56,7 +56,6 @@ EBook_CHM::EBook_CHM()
 	m_chmFile = NULL;
 	m_filename = m_font = QString();
 
-	m_textCodec = 0;
 	m_textCodecForInternalFiles = 0;
 	m_detectedLCID = 0;
 	m_currentEncoding = "UTF-8";
@@ -83,7 +82,6 @@ void EBook_CHM::close()
 	m_topicsFile.clear();
 	m_indexFile.clear();
 
-	m_textCodec = 0;
 	m_textCodecForInternalFiles = 0;
 	m_detectedLCID = 0;
 	m_currentEncoding = "UTF-8";
@@ -230,7 +228,7 @@ bool EBook_CHM::getTextContent( QString& str, const QString& url, bool internal_
 			buf.resize( length + 1 );
 			buf [length] = '\0';
 
-			str = internal_encoding ? encodeInternalWithCurrentCodec( buf.constData() ) :  encodeWithCurrentCodec( buf.constData() );
+			str = internal_encoding ? encodeInternalWithCurrentCodec( buf.constData() ) :  encodeContent( buf.constData() );
 			return true;
 		}
 	}
@@ -294,7 +292,7 @@ bool EBook_CHM::load( const QString& archiveName )
 	m_filename = filename;
 
 	// Reset encoding
-	m_textCodec = 0;
+	setContentCodec( nullptr );
 	m_textCodecForInternalFiles = 0;
 	m_currentEncoding = "UTF-8";
 
@@ -897,15 +895,17 @@ bool EBook_CHM::changeFileEncoding( const QString& qtencoding )
 	// Encoding could be either simple Qt codepage, or set like CP1251/KOI8, which allows to
 	// set up encodings separately for text (first) and internal files (second)
 	int p = qtencoding.indexOf( '/' );
+	QTextCodec* textCodec;
 
 	if ( p != -1 )
 	{
 		QString global = qtencoding.left( p );
 		QString internal = qtencoding.mid( p + 1 );
 
-		m_textCodec = QTextCodec::codecForName( global.toUtf8() );
+		textCodec = QTextCodec::codecForName( global.toUtf8() );
+		setContentCodec( textCodec );
 
-		if ( !m_textCodec )
+		if ( !textCodec )
 		{
 			qWarning( "Could not set up Text Codec for encoding '%s'", qPrintable( global ) );
 			return false;
@@ -921,9 +921,10 @@ bool EBook_CHM::changeFileEncoding( const QString& qtencoding )
 	}
 	else
 	{
-		m_textCodecForInternalFiles = m_textCodec = QTextCodec::codecForName( qtencoding.toUtf8() );
+		m_textCodecForInternalFiles = textCodec = QTextCodec::codecForName( qtencoding.toUtf8() );
+		setContentCodec( textCodec );
 
-		if ( !m_textCodec )
+		if ( !textCodec )
 		{
 			qWarning( "Could not set up Text Codec for encoding '%s'", qPrintable( qtencoding ) );
 			return false;
@@ -932,7 +933,7 @@ bool EBook_CHM::changeFileEncoding( const QString& qtencoding )
 
 	m_url2topics.clear();
 	fillTopicsUrlMap();
-	m_htmlEntityDecoder.changeEncoding( m_textCodec );
+	m_htmlEntityDecoder.changeEncoding( textCodec );
 	return true;
 }
 

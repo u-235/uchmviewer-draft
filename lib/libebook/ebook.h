@@ -33,6 +33,9 @@
 #endif
 
 class QByteArray;
+class QTextCodec;
+
+#include <ubrowser/contentprovider.hpp>
 
 
 //! Stores a single table of content entry
@@ -82,7 +85,7 @@ class EBookIndexEntry
 
 
 //! Universal ebook files processor supporting both CHM and EPUB. Abstract.
-class EBook
+class EBook : public  UBrowser::ContentProvider
 {
 	public:
 		/**
@@ -99,7 +102,17 @@ class EBook
 
 		//! Default constructor and destructor.
 		EBook();
-		virtual ~EBook();
+		~EBook() override;
+
+		QUrl convertUrlForEbook( const QUrl& browserUrl ) const override;
+
+		QUrl convertUrlForBrowser( const QUrl& ebookUrl ) const override;
+
+		bool isValidUrl( const QUrl& browserUrl ) const override;
+
+		bool content( UBrowser::ContentData& data, const QUrl& browserUrl ) override;
+
+		QString topicTitle( const QUrl& browserUrl ) override;
 
 		/*!
 		 * \brief Attempts to load chm or epub file.
@@ -271,11 +284,16 @@ class EBook
 		virtual bool    load( const QString& archiveName ) = 0;
 		virtual void loadNavigation( Navigator& nav );
 
+		void setContentCodec( QTextCodec* codec );
+		QString encodeContent( const QByteArray& str ) const;
+		QString encodeContent( const char* str ) const;
+
 	private:
 		void checkNavigation();
 
 		bool m_navigatorLoaded;
 		Navigator m_navigator;
+		QTextCodec* m_contentCodec;
 };
 
 

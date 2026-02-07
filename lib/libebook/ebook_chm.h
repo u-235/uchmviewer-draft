@@ -233,18 +233,6 @@ class EBook_CHM : public EBook
 		//!  Retrieves an uncompressed chunk of a file in the .chm.
 		size_t RetrieveObject( const chmUnitInfo* ui, unsigned char* buffer, LONGUINT64 fileOffset, LONGINT64 bufferSize ) const;
 
-		//! Encode the string with the currently selected text codec, if possible. Or return as-is, if not.
-		inline QString encodeWithCurrentCodec( const QByteArray& str ) const
-		{
-			return ( m_textCodec ? m_textCodec->toUnicode( str.constData() ) : str );
-		}
-
-		//! Encode the string with the currently selected text codec, if possible. Or return as-is, if not.
-		inline QString encodeWithCurrentCodec( const char* str ) const
-		{
-			return ( m_textCodec ? m_textCodec->toUnicode( str ) : ( QString ) str );
-		}
-
 		//! Encode the string from internal files with the currently selected text codec, if possible.
 		//! Or return as-is, if not.
 		inline QString encodeInternalWithCurrentCodec( const QByteArray& str ) const
@@ -328,7 +316,6 @@ class EBook_CHM : public EBook
 		QString     m_font;
 
 		//! Chosen text codec
-		QTextCodec* m_textCodec;
 		QTextCodec* m_textCodecForInternalFiles;
 
 		//! Current encoding
