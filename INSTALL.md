@@ -56,7 +56,7 @@ their dependencies:
 - One of the following packages, depending on the required Qt and HTML engine:
   * `libqt5webkit5-dev`
   * `qtwebengine5-dev`
-  * `qt6-webengine-dev` and `qt6-5compat-dev`
+  * `qml6-module-qtwebengine`, `qml6-module-qtwebengine-controlsdelegates`, `qt6-webengine-dev` and `qt6-5compat-dev`
 - `libzip-dev` `libchm-dev`
 - `gettext`
 
@@ -65,7 +65,6 @@ their dependencies:
 
 >Note that starting with Ubuntu 25.04 (Plucky Puffin) and Debian 13 (Trixie),
 >the `libqt5webkit5-dev` package is no longer available.
-
 
 Packages for __Qt5__ and __WebKit__:
 
@@ -83,7 +82,7 @@ Packages for __Qt6__:
 
     apt install build-essential cmake git gettext \
     libzip-dev libchm-dev \
-    qt6-webengine-dev qt6-5compat-dev
+    qml6-module-qtwebengine qml6-module-qtwebengine-controlsdelegates qt6-webengine-dev qt6-5compat-dev
 
 
 ### Preparation in RedHat deriatives
@@ -98,7 +97,6 @@ dependencies:
   * `qt6-qtwebengine-devel` and `qt6-qt5compat-devel`
 - `libzip-devel` `chmlib-devel`
 - `gettext`
-
 
 Packages for __Qt5__ and __WebKit__:
 
@@ -117,6 +115,17 @@ Packages for __Qt6__:
     dnf install coreutils gcc make cmake git gettext \
     libzip-devel chmlib-devel \
     qt6-webengine-devel qt6-5compat-devel
+
+
+### Preparation in OpenSuse
+
+In OpenSuse distributions you need the following packages and their
+dependencies:
+
+- `coreutils` `gcc` `make` `cmake` `git`
+- `qt6-base-devel` `qt6-webenginewidgets-devel` and `qt6-qt5compat-devel`
+- `libzip-devel` `chmlib-devel`
+- `gettext`
 
 
 ### Preparation in  Windows with MSYS2
