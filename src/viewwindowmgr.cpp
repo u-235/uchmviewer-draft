@@ -148,7 +148,6 @@ void ViewWindowMgr::createMenu( QMenu* menuWindow, QAction* actionCloseWindow )
 void ViewWindowMgr::invalidate()
 {
 	closeAllWindows();
-	addNewTab( true );
 }
 
 ViewWindow* ViewWindowMgr::current()
@@ -159,13 +158,17 @@ ViewWindow* ViewWindowMgr::current()
 	}
 	catch ( const std::invalid_argument& )
 	{
-		abort();
+		return nullptr;
 	}
 }
 
 ViewWindow* ViewWindowMgr::addNewTab( bool set_active )
 {
 	ViewWindow* browser = new ViewWindow( m_tabWidget );
+
+	if ( browser == nullptr )
+		return nullptr;
+
 	browser->setAcceptDrops( false );
 
 	editFind->installEventFilter( this );
@@ -304,9 +307,6 @@ void ViewWindowMgr::closeTab( const TabData& data )
 
 void ViewWindowMgr::restoreSettings( EBook* ebook, const Settings::viewindow_saved_settings_t& settings )
 {
-	// Destroy automatically created tab
-	closeWindow( m_Windows.first().widget );
-
 	for ( int i = 0; i < settings.size(); i++ )
 	{
 		ViewWindow* browser = addNewTab( false );
