@@ -127,6 +127,9 @@ bool NavigationPanel::findUrlInContents( const QUrl& url )
 	if ( !m_contentsTab )
 		return false;
 
+	if ( m_contentsTab->currentUrl() == url )
+		return true;
+
 	TreeItem_TOC* treeitem = m_contentsTab->getTreeItem( url );
 
 	if ( treeitem )
@@ -140,6 +143,7 @@ bool NavigationPanel::findUrlInContents( const QUrl& url )
 		return true;
 	}
 
+	m_contentsTab->showItem( nullptr );
 	return false;
 }
 

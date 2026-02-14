@@ -21,6 +21,7 @@
 #include <QMenu>
 #include <QObject>
 #include <QTreeWidget>
+#include <QUrl>
 #include <QVector>
 #include <Qt>
 #include <QtGlobal>
@@ -157,7 +158,17 @@ void TabContents::refillTableOfContents( )
 static TreeItem_TOC* findTreeItem( TreeItem_TOC* item, const QUrl& url, bool ignorefragment )
 {
 	if ( item->containsUrl( url, ignorefragment ) )
+	{
+		if ( item->childCount() != 0 )
+		{
+			TreeItem_TOC* firstChild = dynamic_cast< TreeItem_TOC* >( item->child( 0 ) );
+
+			if ( firstChild != nullptr && firstChild->containsUrl( url, ignorefragment ) )
+				return firstChild;
+		}
+
 		return item;
+	}
 
 	for ( int i = 0; i < item->childCount(); ++i )
 	{
@@ -193,6 +204,16 @@ TreeItem_TOC* TabContents::getTreeItem( const QUrl& url )
 	}
 
 	return 0;
+}
+
+QUrl TabContents::currentUrl() const
+{
+	TreeItem_TOC* item = dynamic_cast< TreeItem_TOC* >( tree->currentItem() );
+
+	if ( item == nullptr )
+		return QUrl{};
+	else
+		return item->getUrl();
 }
 
 void TabContents::showItem( TreeItem_TOC* item )

@@ -54,27 +54,7 @@ QUrl TreeItem_TOC::getUrl() const
 
 bool TreeItem_TOC::containsUrl( const QUrl& url, bool ignorefragment ) const
 {
-	if ( ignorefragment )
-	{
-		// This appears to be a bug in Qt: the url.path() returns a proper path starting with /,
-		// but m_url.path() returns a relative URL starting with no / - so we make sure both are.
-		QString urlpath = url.path();
-		QString ourpath = m_url.path();
-
-		// Memory allocation-wise this must really suck :( however this code is rarely used,
-		// and only for buggy epub/chms.
-		if ( !urlpath.startsWith( '/' ) )
-			urlpath.prepend( '/' );
-
-		if ( !ourpath.startsWith( '/' ) )
-			ourpath.prepend( '/' );
-
-		return urlpath == ourpath;
-	}
-	else
-	{
-		return url == m_url;
-	}
+	return url.matches( m_url, ignorefragment ? QUrl::RemoveFragment : QUrl::None );
 }
 
 int TreeItem_TOC::columnCount() const
