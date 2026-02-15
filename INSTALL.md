@@ -56,7 +56,8 @@ their dependencies:
 - One of the following packages, depending on the required Qt and HTML engine:
   * `libqt5webkit5-dev`
   * `qtwebengine5-dev`
-  * `qml6-module-qtwebengine`, `qml6-module-qtwebengine-controlsdelegates`, `qt6-webengine-dev` and `qt6-5compat-dev`
+  * `qml6-module-qtwebengine`, `qml6-module-qtwebengine-controlsdelegates`,
+    `qt6-webengine-dev` and `qt6-5compat-dev`
 - `libzip-dev` `libchm-dev`
 - `gettext`
 
@@ -82,7 +83,8 @@ Packages for __Qt6__:
 
     apt install build-essential cmake git gettext \
     libzip-dev libchm-dev \
-    qml6-module-qtwebengine qml6-module-qtwebengine-controlsdelegates qt6-webengine-dev qt6-5compat-dev
+    qml6-module-qtwebengine qml6-module-qtwebengine-controlsdelegates \
+    qt6-webengine-dev qt6-5compat-dev
 
 
 ### Preparation in RedHat deriatives
@@ -140,7 +142,7 @@ Install the following packages:
 Packages for __x86_64__:
 
     pacman -Syu
-    pacman -S make mingw-w64-x86_64-gcc \
+    pacman -S git make mingw-w64-x86_64-gcc \
         mingw-w64-x86_64-gettext-runtime mingw-w64-x86_64-gettext-tools \
         mingw-w64-x86_64-qt5-base mingw-w64-x86_64-qtwebkit \
         mingw-w64-x86_64-libzip
@@ -149,7 +151,7 @@ Or using __pacboy__:
 
     pacman -Syu
     pacman -S pactoys
-    pacboy make: gcc:p gettext-runtime:p gettext-tools:p \
+    pacboy git: make: gcc:p gettext-runtime:p gettext-tools:p \
         qt5-base:p qtwebkit:p libzip:p
 
 
@@ -173,8 +175,8 @@ Now you're ready to build the application.
 Manual building
 --------------------------------------------------------------------------------
 
->Note that in Fedora, to select Qt5, you need to type `qmake-qt5` instead of
-`qmake`.
+>Note that on Fedora and MSYS2, to select Qt5, you need to type `qmake-qt5`
+instead of `qmake`.
 
 Build with __Qt5__ and __WebKit__ using __CMake__
 
@@ -274,7 +276,7 @@ Install additional packages.
 Creating an installer and archive with a portable version using the __Qt5__ and
 the __WebKit__
 
-    package/build-win-msys2.sh
+    package/build-win-msys2.sh -q qmake-qt5
 
 
 ### Using Cpack
