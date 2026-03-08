@@ -43,7 +43,6 @@ HEADERS += \
     textencodings.h \
     treeitem_toc.h \
     treeitem_index.h \
-    mimehelper.h \
     showwaitcursor.h \
     i18n.h
 
@@ -66,7 +65,6 @@ SOURCES += \
     textencodings.cpp \
     treeitem_toc.cpp \
     treeitem_index.cpp \
-    mimehelper.cpp \
     i18n.cpp
 
 FORMS += \

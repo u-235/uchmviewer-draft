@@ -56,6 +56,8 @@ class EBook_EPUB : public EBook
 		 */
 		void close() override;
 
+		QString urlScheme() const override;
+
 		/*!
 		 * \brief Gets the title name of the opened ebook.
 		 * \return The name of the opened document, or an empty string if no ebook has been loaded.

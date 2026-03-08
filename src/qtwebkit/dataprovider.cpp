@@ -32,7 +32,7 @@
 
 #include "../config.h"
 #include "../mainwindow.h"
-#include "../mimehelper.h"
+#include "mimehelper.h"
 
 #include "dataprovider.h"
 

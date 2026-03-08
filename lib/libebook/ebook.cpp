@@ -16,7 +16,9 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <QByteArray>
 #include <QMap>
+#include <QTextCodec>
 #include <QtGlobal>
 // As long as qAsConst is used.
 // IWYU pragma: no_include "type_traits"
@@ -28,16 +30,61 @@
 #include "ebook.h"
 #include "ebook_chm.h"
 #include "ebook_epub.h"
+#include "mimehelper.h"
+#include <ubrowser/contentprovider.hpp>
 
 
 EBook::EBook() :
 	m_navigatorLoaded{false},
-	m_navigator{}
+	m_navigator{},
+	m_contentCodec{nullptr}
 {
 }
 
 EBook::~EBook()
 {
+}
+
+bool EBook::isValidUrl(const QUrl& url ) const
+{
+	const QString& scheme = url.scheme();
+	return ( scheme == EBOOK_URL_SCHEME || scheme == urlScheme() ) &&
+		   isSupportedUrl( url );
+}
+
+bool EBook::content(UBrowser::ContentData& data, const QUrl& url )
+{
+	if ( !getFileContentAsBinary( data.buffer, url ) )
+		return false;
+
+	data.asUtf8.clear();
+	
+	data.mime = MimeHelper::mimeType( url, data.buffer );
+
+	if ( data.mime.startsWith( "text" ) )
+	{
+		if ( m_contentCodec != nullptr )
+			data.asUtf8 = m_contentCodec->toUnicode( data.buffer ).toUtf8();
+		else
+			data.asUtf8 = data.buffer;
+	}
+
+	return true;
+}
+
+void EBook::setContentCodec( QTextCodec* codec )
+{
+	m_contentCodec = codec;
+}
+
+QString EBook::encodeContent( const QByteArray& str ) const
+{
+	return ( m_contentCodec ? m_contentCodec->toUnicode( str.constData() ) : str );
+}
+
+QString EBook::encodeContent( const char* str ) const
+{
+	return ( m_contentCodec ? m_contentCodec->toUnicode( str ) : ( QString ) str );
 }
 
 EBook* EBook::loadFile( const QString& archiveName )
