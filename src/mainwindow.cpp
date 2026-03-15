@@ -431,10 +431,10 @@ void MainWindow::showBrowserContextMenu( ViewWindow* browser,
 	{
 		QAction* newTab = m->addAction( i18n( "Open Link in a new tab\tShift+LMB" ) );
 		connect( newTab, &QAction::triggered,
-		         [this, link]() { openPage( link, UBrowser::OPEN_IN_NEW ); } );
+		         [this, link]() { openPage( link, UBrowser::OpenMode::open_in_new ); } );
 		QAction* bckgTab = m->addAction( i18n( "Open Link in a new background tab\tCtrl+LMB" ) );
 		connect( bckgTab, &QAction::triggered,
-		         [this, link]() { openPage( link, UBrowser::OPEN_IN_BACKGROUND ); } );
+		         [this, link]() { openPage( link, UBrowser::OpenMode::open_in_background ); } );
 		m->addSeparator();
 	}
 
@@ -451,11 +451,11 @@ void MainWindow::activateUrl( const QUrl& link )
 	Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
 
 	if ( mods & Qt::ShiftModifier )
-		openPage( link, UBrowser::OPEN_IN_NEW );
+		openPage( link, UBrowser::OpenMode::open_in_new );
 	else if ( mods & Qt::ControlModifier )
-		openPage( link, UBrowser::OPEN_IN_BACKGROUND );
+		openPage( link, UBrowser::OpenMode::open_in_background );
 	else
-		openPage( link, UBrowser::OPEN_IN_CURRENT );
+		openPage( link, UBrowser::OpenMode::open_in_current );
 }
 
 bool MainWindow::openPage( const QUrl& url, UBrowser::OpenMode mode )
@@ -494,10 +494,10 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 	}
 
 
-	if ( browser == nullptr || mode != UBrowser::OPEN_IN_CURRENT )
+	if ( browser == nullptr || mode != UBrowser::OpenMode::open_in_current )
 	{
 		qreal zoom = browser == nullptr ? 1.0 : browser->zoomFactor();
-		browser = m_viewWindowMgr->addNewTab( mode != UBrowser::OPEN_IN_BACKGROUND );
+		browser = m_viewWindowMgr->addNewTab( mode != UBrowser::OpenMode::open_in_background );
 
 		if ( browser == nullptr )
 			return false;
@@ -507,7 +507,7 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 
 	browser->load( url );
 
-	if ( mode != UBrowser::OPEN_IN_BACKGROUND )
+	if ( mode != UBrowser::OpenMode::open_in_background )
 	{
 		// Open all the tree items to show current item (if needed)
 		m_navPanel->findUrlInContents( url );
@@ -803,12 +803,12 @@ QUrl MainWindow::getNewTabLink() const
 
 void MainWindow::onOpenPageInNewTab( )
 {
-	openPage( getNewTabLink(), UBrowser::OPEN_IN_NEW );
+	openPage( getNewTabLink(), UBrowser::OpenMode::open_in_new );
 }
 
 void MainWindow::onOpenPageInNewBackgroundTab( )
 {
-	openPage( getNewTabLink(), UBrowser::OPEN_IN_BACKGROUND );
+	openPage( getNewTabLink(), UBrowser::OpenMode::open_in_background );
 }
 
 void MainWindow::browserChanged( ViewWindow* browser )

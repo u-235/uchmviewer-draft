@@ -124,7 +124,7 @@ class ViewWindow : public QWebEngineView
 	private slots:
 		// Used to restore the scrollbar position and the navigation button status
 		void            onLoadFinished( bool ok );
-		void            onLinkClicked( const QUrl& url, UBrowser::OpenMode mode = UBrowser::OPEN_IN_CURRENT );
+		void            onLinkClicked( const QUrl& url, UBrowser::OpenMode mode = UBrowser::OpenMode::open_in_current );
 
 	private:
 		// Keeps the scrollbar position to move after the page is loaded

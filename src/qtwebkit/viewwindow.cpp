@@ -242,7 +242,7 @@ void ViewWindow::mouseReleaseEvent( QMouseEvent* event )
 
 		if ( !link.isEmpty() )
 		{
-			emit linkClicked( link, UBrowser::OPEN_IN_BACKGROUND );
+			emit linkClicked( link, UBrowser::OpenMode::open_in_background );
 			return;
 		}
 	}
@@ -259,11 +259,11 @@ void ViewWindow::contextMenuEvent( QContextMenuEvent* e )
 void ViewWindow::onLinkClicked( const QUrl& link )
 {
 	if ( ( QApplication::keyboardModifiers() & Qt::ShiftModifier ) != 0 )
-		emit linkClicked( link, UBrowser::OPEN_IN_NEW );
+		emit linkClicked( link, UBrowser::OpenMode::open_in_new );
 	else if ( ( QApplication::keyboardModifiers() & Qt::ControlModifier ) != 0 )
-		emit linkClicked( link, UBrowser::OPEN_IN_BACKGROUND );
+		emit linkClicked( link, UBrowser::OpenMode::open_in_background );
 	else
-		emit linkClicked( link, UBrowser::OPEN_IN_CURRENT );
+		emit linkClicked( link, UBrowser::OpenMode::open_in_current );
 }
 
 void ViewWindow::onLoadFinished( bool )

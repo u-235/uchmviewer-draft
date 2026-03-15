@@ -28,14 +28,14 @@ namespace UBrowser
 /// @addtogroup BrowserAPI
 /// @{
 
-enum OpenMode
+enum class OpenMode
 {
 	/// The link should open in the current tab.
-	OPEN_IN_CURRENT,
+	open_in_current,
 	/// The link should open in the new foregraund tab.
-	OPEN_IN_NEW,
+	open_in_new,
 	/// The link should open in the new backgraund tab.
-	OPEN_IN_BACKGROUND
+	open_in_background
 };
 
 /// @}

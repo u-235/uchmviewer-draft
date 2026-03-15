@@ -71,7 +71,7 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
 		MainWindow( const QStringList& arguments );
 		~MainWindow();
 
-		bool        openPage( const QUrl& url, UBrowser::OpenMode mode = UBrowser::OPEN_IN_CURRENT );
+		bool        openPage( const QUrl& url, UBrowser::OpenMode mode = UBrowser::OpenMode::open_in_current );
 
 		EBook*      chmFile() const { return m_ebookFile; }
 		const QString&  getOpenedFileName() { return m_ebookFilename; }

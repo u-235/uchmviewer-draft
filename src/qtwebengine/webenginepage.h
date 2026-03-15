@@ -99,7 +99,7 @@ class WebEnginePage : public QWebEnginePage
 				 * slot via a queue, but this requires registering the UBrowser::OpenMode type.
 				 */
 				if ( enableEmit )
-					emitLinkClicked( url, UBrowser::OPEN_IN_CURRENT );
+					emitLinkClicked( url, UBrowser::OpenMode::open_in_current );
 
 				return false;
 			}
@@ -129,9 +129,9 @@ class WebEnginePage : public QWebEnginePage
 				Qt::KeyboardModifiers mods = QApplication::keyboardModifiers();
 
 				if ( ( mods & Qt::ShiftModifier ) != 0 || type == QWebEnginePage::WebBrowserTab )
-					emitLinkClicked( m_url, UBrowser::OPEN_IN_NEW );
+					emitLinkClicked( m_url, UBrowser::OpenMode::open_in_new );
 				else
-					emitLinkClicked( m_url, UBrowser::OPEN_IN_BACKGROUND );
+					emitLinkClicked( m_url, UBrowser::OpenMode::open_in_background );
 			}
 
 			return nullptr;

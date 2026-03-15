@@ -397,7 +397,7 @@ void ViewWindowMgr::openNewTab()
 	if ( isEmpty() )
 		return;
 
-	::mainWindow->openPage( current()->url(), UBrowser::OPEN_IN_NEW );
+	::mainWindow->openPage( current()->url(), UBrowser::OpenMode::open_in_new );
 }
 
 void ViewWindowMgr::activateWindow()
