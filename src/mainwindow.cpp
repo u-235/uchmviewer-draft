@@ -63,6 +63,7 @@
 #include <QUrl>
 #include <QVariant>
 #include <QWhatsThis>
+#include <QWidget>
 #include <Qt>
 #include <QtGlobal>
 
@@ -73,13 +74,13 @@
 #include "dialog_setup.h"
 #include "i18n.h"
 #include "navigationpanel.h"
+#include "pluginmanager.h"
 #include "recentfiles.h"
 #include "settings.h"
 #include "textencodings.h"
 #include "toolbarmanager.h"
 #include "ui_dialog_about.h"
 #include "version.h"
-#include "viewwindow.h"
 #include "viewwindowmgr.h"
 
 #include "mainwindow.h"
@@ -119,8 +120,12 @@ MainWindow::MainWindow( const QStringList& arguments )
 
 	m_currentSettings = new Settings();
 
+	m_pluginManager = new PluginManager( this );
+	m_pluginManager->setBrowserBuilder( "static/QtWebEngineBuilder" );
+	m_pluginManager->setBrowserBuilder( "static/QtWebKitBuilder" );
+	m_pluginManager->configureBrowsers( ::pConfig->browser );
 	// Create the view window, which is a central widget
-	m_viewWindowMgr = new ViewWindowMgr( this );
+	m_viewWindowMgr = new ViewWindowMgr( m_pluginManager, this );
 	setCentralWidget( m_viewWindowMgr );
 	// Create a navigation panel
 	m_navPanel = new NavigationPanel( this );
@@ -414,10 +419,10 @@ void MainWindow::refreshCurrentBrowser( )
 	auto browser = currentBrowser();
 
 	if ( browser != nullptr )
-		browser->invalidate();
+		browser->reload();
 }
 
-void MainWindow::showBrowserContextMenu( ViewWindow* browser,
+void MainWindow::showBrowserContextMenu( UBrowser::Browser* browser,
                                          const QPoint& globalPos,
                                          const QUrl& link )
 {
@@ -460,7 +465,7 @@ bool MainWindow::openPage( const QUrl& url, UBrowser::OpenMode mode )
 	return onLinkClicked( currentBrowser(), url, mode );
 }
 
-bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::OpenMode mode )
+bool MainWindow::onLinkClicked( UBrowser::Browser* browser, const QUrl& url, UBrowser::OpenMode mode )
 {
 	QString otherlink;
 
@@ -494,7 +499,7 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 	if ( browser == nullptr || mode != UBrowser::OpenMode::open_in_current )
 	{
 		qreal zoom = browser == nullptr ? 1.0 : browser->zoomFactor();
-		browser = m_viewWindowMgr->addNewTab( mode != UBrowser::OpenMode::open_in_background );
+		browser = m_viewWindowMgr->addNewTab( m_ebookFile, mode != UBrowser::OpenMode::open_in_background );
 
 		if ( browser == nullptr )
 			return false;
@@ -509,7 +514,7 @@ bool MainWindow::onLinkClicked( ViewWindow* browser, const QUrl& url, UBrowser::
 		// Open all the tree items to show current item (if needed)
 		m_navPanel->findUrlInContents( url );
 		// Focus on the view window so keyboard scroll works; do not do it for the background tabs
-		browser->setFocus( Qt::OtherFocusReason );
+		browser->view()->setFocus( Qt::OtherFocusReason );
 	}
 
 	return true;
@@ -782,7 +787,7 @@ bool MainWindow::parseCmdLineArgs( const QStringList& args, bool from_another_ap
 	return false;
 }
 
-ViewWindow* MainWindow::currentBrowser( ) const
+UBrowser::Browser* MainWindow::currentBrowser( ) const
 {
 	return m_viewWindowMgr->current();
 }
@@ -807,7 +812,7 @@ void MainWindow::onOpenPageInNewBackgroundTab( )
 	openPage( getNewTabLink(), UBrowser::OpenMode::open_in_background );
 }
 
-void MainWindow::browserChanged( ViewWindow* browser )
+void MainWindow::browserChanged( UBrowser::Browser* browser )
 {
 	m_navPanel->findUrlInContents( browser->url() );
 }

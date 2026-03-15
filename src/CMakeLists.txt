@@ -2,6 +2,8 @@
 # Need to include generated files.
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+add_executable(uchmviewer WIN32)
+
 # Project files
 set(CPP_SOURCES
     config.cpp
@@ -75,22 +77,14 @@ set(UIS
     window_browser.ui
     )
 
-if (USE_WEBENGINE)
-    list(APPEND CPP_SOURCES
-        qtwebengine/viewwindow.cpp
-        qtwebengine/viewwindow.h
-        qtwebengine/dataprovider.cpp
-        qtwebengine/dataprovider.h
-        )
-    list(APPEND MOC_HEADERS qtwebengine/viewwindow.h  qtwebengine/webenginepage.h)
-else ()
-    list(APPEND CPP_SOURCES
-        qtwebkit/viewwindow.cpp
-        qtwebkit/viewwindow.h
-        qtwebkit/dataprovider.cpp
-        qtwebkit/dataprovider.h
-        )
-    list(APPEND MOC_HEADERS qtwebkit/viewwindow.h)
+if (USE_STATIC_QTWEBENGINE)
+    target_link_libraries(uchmviewer UBrowser::QWebEngine)
+    target_compile_definitions(uchmviewer PRIVATE USE_WEBENGINE)
+endif ()
+
+if (USE_STATIC_QTWEBKIT)
+    target_link_libraries(uchmviewer UBrowser::QWebKit)
+    target_compile_definitions(uchmviewer PRIVATE USE_WEBKIT)
 endif ()
 
 if (USE_DBUS)
@@ -108,7 +102,7 @@ qt_add_resources(RSRCS resources/images.qrc)
 
 qt_wrap_ui(UI_SOURCES ${UIS})
 qt_wrap_cpp(MOC_SOURCES ${MOC_HEADERS})
-add_executable(uchmviewer WIN32 ${CPP_SOURCES} ${RSRCS} ${UI_SOURCES} ${MOC_SOURCES})
+target_sources(uchmviewer PRIVATE ${CPP_SOURCES} ${RSRCS} ${UI_SOURCES} ${MOC_SOURCES})
 target_link_libraries(uchmviewer
     ebook
     chmlib
