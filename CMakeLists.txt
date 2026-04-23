@@ -90,6 +90,10 @@ add_compile_options(
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wall>
     $<$<NOT:$<CXX_COMPILER_ID:MSVC>>:-Wextra>)
 
+foreach (key ${PRINT_DEBUG})
+    add_definitions(-DPRINT_DEBUG_${key})
+endforeach ()
+
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_CXX_STANDARD 11)
 

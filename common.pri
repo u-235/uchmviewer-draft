@@ -36,6 +36,11 @@ win32 {
 }
 
 
+for (key, PRINT_DEBUG) {
+    DEFINES += PRINT_DEBUG_$$key
+}
+
+
 #
 # function findFiles(dir, basename)
 # Returns a list of files with this basename.

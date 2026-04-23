@@ -14,8 +14,13 @@
 # USE_MAC_APP       - if specified, force the use of the UchmviewerApp class
 #                     when building for non-macOS. This can be useful when
 #                     checking sources using IWYU.
+#
+#    Developers flags:
+#
 # CHECK_IWYU        - if defined, checks an includes using Include-What-You-Use.
 #                     see tools/README.md
+# PRINT_DEBUG       - the list of debug print options. Known values:
+#                     ALL PLUGINMANAGER UBROWSER WEBENGINE WEBKIT
 #
 ###############################################################################
 
