@@ -1,0 +1,53 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "qt5",
+      "hidden": true,
+      "cacheVariables": {
+        "APP_QT_VERSION": "5"
+      }
+    },
+    {
+      "name": "qt6",
+      "hidden": true,
+      "cacheVariables": {
+        "APP_QT_VERSION": "6"
+      }
+    },
+    {
+      "name": "webengine",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_STATIC_QTWEBENGINE": true
+      }
+    },
+    {
+      "name": "webkit",
+      "hidden": true,
+      "cacheVariables": {
+        "USE_STATIC_QTWEBKIT": true
+      }
+    },
+    {
+      "name": "qt5-webengine",
+      "inherits": ["qt5", "webengine"],
+      "displayName": "Qt5 & WebEngine"
+    },
+    {
+      "name": "qt5-webkit",
+      "inherits": ["qt5", "webkit"],
+      "displayName": "Qt5 & WebKit"
+    },
+    {
+      "name": "qt6-webengine",
+      "inherits": ["qt6", "webengine"],
+      "displayName": "Qt6 & WebEngine"
+    }
+  ]
+}
