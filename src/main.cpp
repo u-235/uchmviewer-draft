@@ -17,6 +17,7 @@
  */
 
 #include <QCoreApplication>
+#include <QGuiApplication>
 #include <QObject>
 #include <QList>
 #include <QString>
@@ -25,9 +26,6 @@
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
 	#include <QStringList>
 	#include <Qt>
-	#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-		#include <QGuiApplication>
-	#endif
 #else // QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
 	using QStringList = QList<QString>;
 #endif
@@ -155,6 +153,10 @@ int main( int argc, char** argv )
 	QCoreApplication::setOrganizationName( "uChmViewer" );
 	QCoreApplication::setOrganizationDomain( "uChmViewer.net" );
 	QCoreApplication::setApplicationName( "uchmviewer" );
+#if QT_VERSION >= QT_VERSION_CHECK(5, 7, 0)
+	// https://community.kde.org/Guidelines_and_HOWTOs/Wayland_Porting_Notes#Application_Icon
+	QGuiApplication::setDesktopFileName( "uchmviewer" );
+#endif
 
 	// Configuration
 	pConfig = new Config();
