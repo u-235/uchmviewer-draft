@@ -71,12 +71,12 @@ jobs:
             version:    12
             artifact:   "Qt5"
             extra_pack: "libqt5webkit5-dev"
-            flags:      ""
+            flags:      "-w webkit"
           - name:       bullseye
             version:    11
             artifact:   "Qt5"
             extra_pack: "libqt5webkit5-dev"
-            flags:      ""
+            flags:      "-w webkit"
           #- name:       buster
           #  version:    10
           #  extra_pack: "qt5-default qtbase5-dev libqt5webkit5-dev"
@@ -119,17 +119,17 @@ jobs:
             version:    24.04
             artifact:   "Qt5"
             extra_pack: "libqt5webkit5-dev"
-            flags:      ""
+            flags:      "-w webkit"
           - name:       jammy
             version:    22.04
             artifact:   "Qt5"
             extra_pack: "libqt5webkit5-dev"
-            flags:      ""
+            flags:      "-w webkit"
           - name:       focal
             version:    20.04
             artifact:   "Qt5"
             extra_pack: "qt5-default libqt5webkit5-dev"
-            flags:      ""
+            flags:      "-w webkit"
         arch:
           - name: amd64
             id:   linux/amd64
@@ -166,15 +166,15 @@ jobs:
           - version:    43
             artifact:   "Qt5"
             extra_pack: "qt5-qtwebkit-devel"
-            flags:      "-q qmake-qt5"
+            flags:      "-q qmake-qt5 -w webkit"
           - version:    42
             artifact:   "Qt5"
             extra_pack: "qt5-qtwebkit-devel"
-            flags:      "-q qmake-qt5"
+            flags:      "-q qmake-qt5 -w webkit"
           - version:    41
             artifact:   "Qt5"
             extra_pack: "qt5-qtwebkit-devel"
-            flags:      "-q qmake-qt5"
+            flags:      "-q qmake-qt5 -w webkit"
         arch:
           - name: amd64
             id:   linux/amd64
@@ -243,7 +243,7 @@ jobs:
             gettext-tools:p
 
       - name: Build
-        run: packages/build-win-msys2.sh -q qmake-qt5 -s windows -v ${{ needs.setup.outputs.version }}
+        run: packages/build-win-msys2.sh -q qmake-qt5 -w webkit -s windows -v ${{ needs.setup.outputs.version }}
 
       - name: Upload windows installers
         uses: actions/upload-artifact@v6
