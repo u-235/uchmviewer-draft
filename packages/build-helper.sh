@@ -13,7 +13,7 @@ PACKAGE_NAME=uchmviewer
 PACKAGE_LANG_LIST=$(cat "${SOURCE_DIR}/po/languages.txt")
 PACKAGE_QT_QM_LIST="qt_ qtbase_"
 PACKAGE_VERSION=$(cat "${SOURCE_DIR}"/src/version.h | grep 'define\s*APP_VERSION' | awk -F'"' '{print $(NF-1)}')
-PACKAGE_BROWSER=webkit
+PACKAGE_BROWSER=no_browser
 
 # Default settings
 ########################################
@@ -40,8 +40,8 @@ Options:
               Nothing is added by default.
   -v version  Define the package version. By default version gettings from
               the version.h file.
-  -w browser  Define the webengine to be used. Possible values:
-              WebEngine or WebKit (default).
+  -w browser  Define the webengine static plugin to be used. Possible values:
+              WebEngine or WebKit.
 
 It is assumed that the necessary dependencies and tools are already installed
 in the system.
@@ -303,7 +303,11 @@ PACKAGE_DIR       ${PACKAGE_DIR}
     fi
 
     if [ "$PACKAGE_BROWSER" = webengine ]; then
-        QMAKE_OPTIONS="$QMAKE_OPTIONS USE_WEBENGINE=1"
+        QMAKE_OPTIONS="$QMAKE_OPTIONS USE_STATIC_QTWEBENGINE=1"
+    fi
+
+    if [ "$PACKAGE_BROWSER" = webkit ]; then
+        QMAKE_OPTIONS="$QMAKE_OPTIONS USE_STATIC_QTWEBKIT=1"
     fi
 
     title1 "Prepare to build"
