@@ -78,18 +78,7 @@ QtWebEngine::Browser::Browser( UBrowser::ContentProvider::Ptr content, QObject* 
 	             onLinkClicked( convertUrlForEbook( link ), mode );
 	         }, Qt::QueuedConnection );
 
-	m_widget = new QtWebEngine::Widget( nullptr );
-	m_widget->setPage( m_page );
-	connect( m_widget, &QtWebEngine::Widget::contextMenuRequested, m_widget, [this]( const QPoint & globalPos, const QUrl & link )
-	         {
-	             onContextMenuRequested( globalPos, convertUrlForEbook( link ) );
-	         } );
-
-	// Search results highlighter
-	QPalette pal = m_widget->palette();
-	pal.setColor( QPalette::Inactive, QPalette::Highlight, pal.color( QPalette::Active, QPalette::Highlight ) );
-	pal.setColor( QPalette::Inactive, QPalette::HighlightedText, pal.color( QPalette::Active, QPalette::HighlightedText ) );
-	m_widget->setPalette( pal );
+	m_widget = nullptr;
 }
 
 QtWebEngine::Browser::~Browser()
@@ -101,8 +90,24 @@ QString QtWebEngine::Browser::kind() const
 	return UBROWSER_KIND_HTML;
 }
 
-QWidget* QtWebEngine::Browser::view()
+QWidget* QtWebEngine::Browser::view( QWidget* parent )
 {
+	if ( m_widget == nullptr )
+	{
+		m_widget = new QtWebEngine::Widget( parent );
+		m_widget->setPage( m_page );
+		connect( m_widget, &QtWebEngine::Widget::contextMenuRequested, m_widget, [this]( const QPoint & globalPos, const QUrl & link )
+		         {
+		             onContextMenuRequested( globalPos, convertUrlForEbook( link ) );
+		         } );
+
+		// Search results highlighter
+		QPalette pal = m_widget->palette();
+		pal.setColor( QPalette::Inactive, QPalette::Highlight, pal.color( QPalette::Active, QPalette::Highlight ) );
+		pal.setColor( QPalette::Inactive, QPalette::HighlightedText, pal.color( QPalette::Active, QPalette::HighlightedText ) );
+		m_widget->setPalette( pal );
+	}
+
 	return m_widget;
 }
 

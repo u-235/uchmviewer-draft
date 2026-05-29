@@ -51,7 +51,7 @@ class Browser : public UBrowser::AbstractBrowser
 		virtual ~Browser();
 
 		QString kind() const override;
-		QWidget* view() override;
+		QWidget* view( QWidget* parent ) override;
 		static bool testOption( UBrowser::Option option );
 		static bool testFeature( UBrowser::Feature feature );
 		bool hasOption( UBrowser::Option option ) override;
