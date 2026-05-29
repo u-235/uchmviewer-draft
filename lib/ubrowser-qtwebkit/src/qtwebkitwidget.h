@@ -53,9 +53,6 @@ class Widget : public QWebView
 		QUrl anchorAt( const QPoint& pos );
 		void contextMenuEvent( QContextMenuEvent* event ) override;
 		void mouseReleaseEvent( QMouseEvent* event ) override;
-
-	protected slots:
-		void onLinkClicked( const QUrl& link );
 };
 
 } // namespace QtWebKit

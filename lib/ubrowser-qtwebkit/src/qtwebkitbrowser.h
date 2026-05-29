@@ -24,6 +24,8 @@
 #include <QString>
 #include <QtGlobal>
 
+class QWebPage;
+
 #include <ubrowser/abstractbrowser.hpp>
 #include <ubrowser/contentprovider.hpp>
 
@@ -49,7 +51,7 @@ class Browser : public UBrowser::AbstractBrowser
 
 		QString kind() const override;
 
-		QWidget* view() override;
+		QWidget* view( QWidget* parent ) override;
 		static bool testOption( UBrowser::Option option );
 		static bool testFeature( UBrowser::Feature feature );
 		bool hasOption( UBrowser::Option option ) override;
@@ -73,6 +75,7 @@ class Browser : public UBrowser::AbstractBrowser
 		void realSetZoomFactor( qreal zoom ) override;
 
 	private:
+		QWebPage* m_page;
 		QtWebKit::Widget* m_widget;
 		QString m_lastSearchedWord;
 };

@@ -17,7 +17,6 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <QApplication>
 #include <QContextMenuEvent>
 #include <QFlags>
 #include <QMouseEvent>
@@ -37,7 +36,6 @@ class QWidget;
 QtWebKit::Widget::Widget( QWidget* parent )
 	: QWebView( parent )
 {
-	connect( this, &QWebView::linkClicked, this, &QtWebKit::Widget::onLinkClicked );
 }
 
 QtWebKit::Widget::~Widget()
@@ -74,14 +72,4 @@ void QtWebKit::Widget::mouseReleaseEvent( QMouseEvent* event )
 	}
 
 	QWebView::mouseReleaseEvent( event );
-}
-
-void QtWebKit::Widget::onLinkClicked( const QUrl& link )
-{
-	if ( ( QApplication::keyboardModifiers() & Qt::ShiftModifier ) != 0 )
-		emit linkClicked( link, UBrowser::OpenMode::open_in_new );
-	else if ( ( QApplication::keyboardModifiers() & Qt::ControlModifier ) != 0 )
-		emit linkClicked( link, UBrowser::OpenMode::open_in_background );
-	else
-		emit linkClicked( link, UBrowser::OpenMode::open_in_current );
 }

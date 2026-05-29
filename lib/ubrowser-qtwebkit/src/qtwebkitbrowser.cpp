@@ -19,6 +19,8 @@
 
 #include <functional>
 
+
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
 #include <QIODevice>
@@ -46,30 +48,32 @@
 QtWebKit::Browser::Browser( UBrowser::ContentProvider::Ptr provider, QObject* parent )
 	: UBrowser::AbstractBrowser( provider, parent )
 {
-	m_widget = new QtWebKit::Widget( nullptr );
+	m_page = new QWebPage( this );
 	// Use our network emulation layer
-	m_widget->page()->setNetworkAccessManager( new NetworkAccessManager( contentProvider(), this ) );
+	m_page->setNetworkAccessManager( new NetworkAccessManager( contentProvider(), this ) );
 	// All links are going through us
-	m_widget->page()->setLinkDelegationPolicy( QWebPage::DelegateAllLinks );
+	m_page->setLinkDelegationPolicy( QWebPage::DelegateAllLinks );
 
-	connect( m_widget, &QtWebKit::Widget::loadStarted,
+	connect( m_page, &QWebPage::loadStarted,
 	         this, &QtWebKit::Browser::onLoadStarted, Qt::QueuedConnection );
-	connect( m_widget, &QtWebKit::Widget::loadFinished,
+	connect( m_page, &QWebPage::loadFinished,
 	         this, &QtWebKit::Browser::onLoadFinished, Qt::QueuedConnection );
-	connect( m_widget->page()->mainFrame(), &QWebFrame::initialLayoutCompleted,
+	connect( m_page->mainFrame(), &QWebFrame::initialLayoutCompleted,
 	         this, &QtWebKit::Browser::onPageReveal, Qt::QueuedConnection );
-	connect( m_widget, &QtWebKit::Widget::urlChanged,
+	connect( m_page->mainFrame(), &QWebFrame::urlChanged,
 	         this, &QtWebKit::Browser::onUrlChanged, Qt::QueuedConnection );
-	connect( m_widget, &QtWebKit::Widget::linkClicked,
-	         this, &QtWebKit::Browser::onLinkClicked );
-	connect( m_widget, &QtWebKit::Widget::contextMenuRequested,
-	         this, &QtWebKit::Browser::onContextMenuRequested );
+	connect( m_page, &QWebPage::linkClicked,
+	         this, [this]( const QUrl & link )
+	         {
+	             if ( ( QApplication::keyboardModifiers() & Qt::ShiftModifier ) != 0 )
+	             emit linkClicked( link, UBrowser::OpenMode::open_in_new );
+	             else if ( ( QApplication::keyboardModifiers() & Qt::ControlModifier ) != 0 )
+		             emit linkClicked( link, UBrowser::OpenMode::open_in_background );
+		             else
+			             emit linkClicked( link, UBrowser::OpenMode::open_in_current );
+			         } );
 
-	// Search results highlighter
-	QPalette pal = m_widget->palette();
-	pal.setColor( QPalette::Inactive, QPalette::Highlight, pal.color( QPalette::Active, QPalette::Highlight ) );
-	pal.setColor( QPalette::Inactive, QPalette::HighlightedText, pal.color( QPalette::Active, QPalette::HighlightedText ) );
-	m_widget->setPalette( pal );
+	m_widget = nullptr;
 }
 
 QtWebKit::Browser::~Browser()
@@ -81,8 +85,23 @@ QString QtWebKit::Browser::kind() const
 	return UBROWSER_KIND_HTML;
 }
 
-QWidget* QtWebKit::Browser::view()
+QWidget* QtWebKit::Browser::view( QWidget* parent )
 {
+	if ( m_widget == nullptr )
+	{
+		m_widget = new QtWebKit::Widget( parent );
+		m_widget->setPage( m_page );
+		connect( m_widget, &QtWebKit::Widget::linkClicked,
+		         this, &QtWebKit::Browser::onLinkClicked );
+		connect( m_widget, &QtWebKit::Widget::contextMenuRequested,
+		         this, &QtWebKit::Browser::onContextMenuRequested );
+		// Search results highlighter
+		QPalette pal = m_widget->palette();
+		pal.setColor( QPalette::Inactive, QPalette::Highlight, pal.color( QPalette::Active, QPalette::Highlight ) );
+		pal.setColor( QPalette::Inactive, QPalette::HighlightedText, pal.color( QPalette::Active, QPalette::HighlightedText ) );
+		m_widget->setPalette( pal );
+	}
+
 	return m_widget;
 }
 
@@ -129,28 +148,28 @@ bool QtWebKit::Browser::hasFeature( UBrowser::Feature feature ) const
 
 void QtWebKit::Browser::print( QPrinter* printer, std::function<void ( bool success )> result )
 {
-	m_widget->print( printer );
+	m_page->mainFrame()->print( printer );
 	result( true );
 }
 
 qreal QtWebKit::Browser::zoomFactor() const
 {
-	return m_widget->zoomFactor();
+	return m_page->currentFrame()->zoomFactor();
 }
 
 int QtWebKit::Browser::scrollTop()
 {
-	return m_widget->page()->currentFrame()->scrollBarValue( Qt::Vertical );
+	return m_page->currentFrame()->scrollBarValue( Qt::Vertical );
 }
 
 void QtWebKit::Browser::realSetZoomFactor( qreal zoom )
 {
-	m_widget->setZoomFactor( zoom );
+	m_page->currentFrame()->setZoomFactor( zoom );
 }
 
 void QtWebKit::Browser::setScrollTop( int pos )
 {
-	m_widget->page()->currentFrame()->setScrollBarValue( Qt::Vertical, pos );
+	m_page->currentFrame()->setScrollBarValue( Qt::Vertical, pos );
 }
 
 void QtWebKit::Browser::findText( const QString& text,
@@ -179,23 +198,23 @@ void QtWebKit::Browser::findText( const QString& text,
 		// If the search text is different, we run the empty string search
 		// to discard old highlighting
 		if ( m_lastSearchedWord != text )
-			m_widget->findText( "", webkitflags | QWebPage::HighlightAllOccurrences );
+			m_page->findText( "", webkitflags | QWebPage::HighlightAllOccurrences );
 
 		m_lastSearchedWord = text;
 
 		// Now we call search with highlighting enabled, while the main search below will have
 		// it disabled. This leads in both having the highlighting results AND working forward/
 		// backward buttons.
-		m_widget->findText( text, webkitflags | QWebPage::HighlightAllOccurrences );
+		m_page->findText( text, webkitflags | QWebPage::HighlightAllOccurrences );
 	}
 
-	bool found = m_widget->findText( text, webkitflags );
+	bool found = m_page->findText( text, webkitflags );
 	bool wrapped = false;
 
 	// If we didn't find anything, enable the wrap and try again
 	if ( !found )
 	{
-		found = m_widget->findText( text, webkitflags | QWebPage::FindWrapsAroundDocument );
+		found = m_page->findText( text, webkitflags | QWebPage::FindWrapsAroundDocument );
 		wrapped = found;
 	}
 
@@ -204,17 +223,17 @@ void QtWebKit::Browser::findText( const QString& text,
 
 void QtWebKit::Browser::selectAll()
 {
-	m_widget->triggerPageAction( QWebPage::SelectAll );
+	m_page->triggerAction( QWebPage::SelectAll );
 }
 
 QString QtWebKit::Browser::selectedText() const
 {
-	return m_widget->selectedText();
+	return m_page->selectedText();
 }
 
 QString QtWebKit::Browser::title() const
 {
-	QString title = m_widget->page()->mainFrame()->title();
+	QString title = m_page->mainFrame()->title();
 
 	// If no title is found, use the path (without the first /)
 	if ( title.isEmpty() )
@@ -248,11 +267,11 @@ void QtWebKit::Browser::injectJS()
 
 	// https://doc.qt.io/archives/qt-5.5/qtwebkit-bridge.html
 	// https://doc.qt.io/archives/qt-5.5/qwebframe.html
-	m_widget->page()->currentFrame()->addToJavaScriptWindowObject( "QtWebKitBrowser", this );
-	m_widget->page()->currentFrame()->evaluateJavaScript( js );
+	m_page->currentFrame()->addToJavaScriptWindowObject( "QtWebKitBrowser", this );
+	m_page->currentFrame()->evaluateJavaScript( js );
 }
 
 void QtWebKit::Browser::loadPage( const QUrl& url )
 {
-	m_widget->load( url );
+	m_page->mainFrame()->load( url );
 }
