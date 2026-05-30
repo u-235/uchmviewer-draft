@@ -103,9 +103,10 @@ class UBROWSER_API_DECL AbstractBrowser : public UBrowser::Browser
 		void selectedCopy() final;
 
 	protected:
-		virtual void loadPage( const QUrl& url ) = 0;
-
 		virtual void injectJS();
+
+	protected slots:
+		virtual void loadPage( const QUrl& url ) = 0;
 
 	public slots:
 		void saveScrollInHistory();
