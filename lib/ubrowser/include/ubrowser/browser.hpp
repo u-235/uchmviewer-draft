@@ -264,7 +264,7 @@ class UBROWSER_API_DECL Browser : public QObject
 		/**
 		 * @brief Returns a widget that shows the page.
 		 */
-		virtual QWidget* view() = 0;
+		virtual QWidget* view( QWidget* parent = nullptr ) = 0;
 
 		/**
 		 * @brief Checks the support for the setting option.
