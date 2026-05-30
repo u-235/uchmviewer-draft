@@ -173,7 +173,7 @@ UBrowser::Browser* ViewWindowMgr::addNewTab( EBook::Ptr ebook, bool set_active )
 	if ( browser == nullptr )
 		return nullptr;
 
-	browser->view()->setAcceptDrops( false );
+	browser->view( this )->setAcceptDrops( false );
 
 	editFind->installEventFilter( this );
 
