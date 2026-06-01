@@ -103,6 +103,7 @@ class Builder
 		 */
 		virtual UBrowser::Browser* createBrowser(
 		    ContentProvider::Ptr contentProvider,
+		    QWidget* parentWidget,
 		    QObject* parent ) = 0;
 
 		/**
