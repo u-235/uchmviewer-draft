@@ -168,7 +168,7 @@ UBrowser::Browser* ViewWindowMgr::addNewTab( EBook::Ptr ebook, bool set_active )
 	if ( builder == nullptr )
 		return nullptr;
 
-	UBrowser::Browser* browser = builder->createBrowser( ebook, this );
+	UBrowser::Browser* browser = builder->createBrowser( ebook, this, this );
 
 	if ( browser == nullptr )
 		return nullptr;
