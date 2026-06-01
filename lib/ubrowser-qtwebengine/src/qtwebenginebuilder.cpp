@@ -44,9 +44,10 @@ void QtWebEngineBuilder::configure( const UBrowser::Settings& settings )
 
 UBrowser::Browser* QtWebEngineBuilder::createBrowser(
     UBrowser::ContentProvider::Ptr contentProvider,
+    QWidget* parentWidget,
     QObject* parent )
 {
-	return new QtWebEngine::Browser( contentProvider, parent );
+	return new QtWebEngine::Browser( contentProvider, parentWidget, parent );
 }
 
 bool QtWebEngineBuilder::hasOption( UBrowser::Option option ) const

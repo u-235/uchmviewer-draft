@@ -58,7 +58,7 @@ class QPoint;
 #define BROWSER_SCRIPT_WORLD QWebEngineScript::UserWorld
 
 
-QtWebEngine::Browser::Browser( UBrowser::ContentProvider::Ptr content, QObject* parent )
+QtWebEngine::Browser::Browser( UBrowser::ContentProvider::Ptr content, QWidget* parentWidget, QObject* parent )
 	: UBrowser::AbstractBrowser( content, parent )
 {
 	m_page = new QtWebEngine::Page( content, this );
@@ -78,7 +78,7 @@ QtWebEngine::Browser::Browser( UBrowser::ContentProvider::Ptr content, QObject* 
 	             onLinkClicked( convertUrlForEbook( link ), mode );
 	         }, Qt::QueuedConnection );
 
-	m_widget = new QtWebEngine::Widget( nullptr );
+	m_widget = new QtWebEngine::Widget( parentWidget );
 	m_widget->setPage( m_page );
 	connect( m_widget, &QtWebEngine::Widget::contextMenuRequested, m_widget, [this]( const QPoint & globalPos, const QUrl & link )
 	         {
