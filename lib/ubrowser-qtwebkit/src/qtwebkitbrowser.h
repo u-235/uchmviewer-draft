@@ -24,6 +24,8 @@
 #include <QString>
 #include <QtGlobal>
 
+class QWidget;
+
 #include <ubrowser/abstractbrowser.hpp>
 #include <ubrowser/contentprovider.hpp>
 
@@ -44,7 +46,7 @@ class Browser : public UBrowser::AbstractBrowser
 		Q_OBJECT
 
 	public:
-		Browser( UBrowser::ContentProvider::Ptr provider, QObject* parent );
+		Browser( UBrowser::ContentProvider::Ptr provider, QWidget* parentWidget, QObject* parent );
 		~Browser() override;
 
 		QString kind() const override;

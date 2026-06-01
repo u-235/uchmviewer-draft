@@ -38,6 +38,7 @@ class UBROWSER_API_DECL QtWebKitBuilder: public QObject, public UBrowser::Builde
 		void configure( const UBrowser::Settings& settings ) override;
 		UBrowser::Browser* createBrowser(
 		    UBrowser::ContentProvider::Ptr contentProvider,
+		    QWidget* parentWidget,
 		    QObject* parent ) override;
 		bool hasOption( UBrowser::Option option ) const override;
 		bool hasFeature( UBrowser::Feature feature ) const override;

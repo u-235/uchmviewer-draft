@@ -43,10 +43,10 @@
 #include "qtwebkitbrowser.h"
 
 
-QtWebKit::Browser::Browser( UBrowser::ContentProvider::Ptr provider, QObject* parent )
+QtWebKit::Browser::Browser( UBrowser::ContentProvider::Ptr provider, QWidget* parentWidget, QObject* parent )
 	: UBrowser::AbstractBrowser( provider, parent )
 {
-	m_widget = new QtWebKit::Widget( nullptr );
+	m_widget = new QtWebKit::Widget( parentWidget );
 	// Use our network emulation layer
 	m_widget->page()->setNetworkAccessManager( new NetworkAccessManager( contentProvider(), this ) );
 	// All links are going through us
