@@ -1,4 +1,5 @@
 name: macOS Build Tests
+# https://github.com/actions/checkout
 
 on:
   push:
@@ -40,7 +41,7 @@ jobs:
 
     steps:
     - name: checkout
-      uses: actions/checkout@v4
+      uses: actions/checkout@v5
       with:
         submodules: true
 

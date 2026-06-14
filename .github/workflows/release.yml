@@ -1,5 +1,7 @@
 name: release
 # Based on https://github.com/ra3xdh/qucs_s/.github/workflows/deploy.yml
+# https://github.com/actions/checkout
+# https://github.com/actions/upload-artifact
 
 on:
   push:
@@ -29,7 +31,7 @@ jobs:
       version: ${{ steps.get_version.outputs.version }}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Extract version
         id: get_version
@@ -87,7 +89,7 @@ jobs:
       options: --platform ${{matrix.arch.id}}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install dependencies
         run: |
@@ -99,7 +101,7 @@ jobs:
         run: packages/build-deb.sh ${{matrix.distr.flags}} -s debian-${{matrix.distr.name}} -v ${{ needs.setup.outputs.version }}
 
       - name: Upload debian packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: debian-${{matrix.distr.name}}-${{matrix.distr.artifact}}-${{matrix.arch.name}}
           path: '*.deb'
@@ -136,7 +138,7 @@ jobs:
       options: --platform ${{matrix.arch.id}}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Dependencies
         run: |
@@ -147,7 +149,7 @@ jobs:
         run: packages/build-deb.sh ${{matrix.distr.flags}} -s ubuntu-${{matrix.distr.name}} -v ${{ needs.setup.outputs.version }}
 
       - name: Upload ubuntu packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ubuntu-${{matrix.distr.name}}-${{matrix.distr.artifact}}-${{matrix.arch.name}}
           path: '*.deb'
@@ -181,7 +183,7 @@ jobs:
       options: --platform ${{matrix.arch.id}}
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install Dependencies
         run: |
@@ -191,7 +193,7 @@ jobs:
         run: packages/build-rpm.sh ${{matrix.distr.flags}} -s fedora-${{matrix.distr.version}} -v ${{ needs.setup.outputs.version }}
 
       - name: Upload fedora packages
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fedora-${{matrix.distr.version}}-${{matrix.distr.artifact}}-${{matrix.arch.name}}
           path: '*.rpm'
@@ -216,7 +218,7 @@ jobs:
           git config --global core.eol lf
 
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: true
 
@@ -244,7 +246,7 @@ jobs:
         run: packages/build-win-msys2.sh -q qmake-qt5 -s windows -v ${{ needs.setup.outputs.version }}
 
       - name: Upload windows installers
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: windows-${{matrix.msystem}}
           path: |
@@ -256,7 +258,7 @@ jobs:
     needs: [build-debian-packages, build-ubuntu-packages, build-fedora-packages, build-windows-installer]
     steps:
       - name: Download build artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           path: ~/artifacts
           merge-multiple: true
