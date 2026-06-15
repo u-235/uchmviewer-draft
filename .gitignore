@@ -5,6 +5,9 @@ build/
 *.rpm
 *.zip
 
+# Generated docs
+doc/html/
+
 # Qmake project files
 *.pro.user*
 
@@ -16,3 +19,5 @@ compile_commands.json
 # KDev project files
 *.kdev4*
 
+# Qt Creator files
+.qtcreator/
